@@ -62,10 +62,11 @@ merely pulses of light moving through polarizers.
 === Photons ===
 
 I shall model the light as particles, called ‘photons’. Each photon is
-plane-polarized at angle 0 or &pi;/2, but we will call the first case
-‘H’ for horizontal and the latter ‘V’ for vertical. This notation
-makes the mathematics easier to read. The photons are generated in
-complementary pairs, polarized thus: (H,V) or (V,H).
+plane-polarized at angle 0 or ''&pi;''/2, but we will call the first
+case '''H''' for horizontal and the latter '''V''' for vertical. This
+notation makes the mathematics easier to read. The photons are
+generated in complementary pairs, polarized thus: ('''H''','''V''') or
+('''V''','''H''').
 
 === Two-channel polarizers ===
 
@@ -74,7 +75,8 @@ Malus, is inferred to be the probability of a photon being
 retransmitted into that channel. Mathematical consistency requires
 this inference.
 
-Let the angle setting of the polarizer by &phi;. Then the probability
-of a photon being retransmitted into the (+) channel is cos²(''&phi;'')
-for an H photon or sin²(&phi;) for a V photon, and into the (-)
-channel is sin²(&phi;) for an H photon or cos²(&phi;) for a V photon.
+Let the angle setting of the polarizer by ''&phi;''. Then the
+probability of a photon being retransmitted into the '''(+)''' channel
+is cos²(''&phi;'') for an '''H''' photon or sin²(''&phi;'') for a
+'''V''' photon, and into the '''(-)''' channel is sin²(''&phi;'') for
+an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
