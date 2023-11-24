@@ -166,8 +166,8 @@ Thus the general formula for the correlation coefficient is
 |}
 
 This result is the same as that obtained by quantum mechanics. Of
-course, it had to be, because all mathematical methods, applied to the
-same problem, must reach the same result.
+course, it had to be: all mathematical methods, applied to the same
+problem, must reach the same result.
 
 According to the physics orthodoxy, however, it is not possible for us
 to have derived this result from a ‘local realistic’ model of the
