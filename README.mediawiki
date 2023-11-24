@@ -91,4 +91,4 @@ Let us set ''&phi;''<sub>2</sub>=0. In that case on the right side
 every '''H''' photon is retransmitted into the '''(+)''' channel and
 every '''V''' photon into the the '''(-)''' channel. Thus we can
 ignore that there is a beam-splitting polarizer on that side, and
-simply map '''H'''↦'''(+)''', '''V'''&thinsp;↦'''(-)'''.
+simply map '''H'''&thinsp;↦'''(+)''', '''V'''&thinsp;↦'''(-)'''.
