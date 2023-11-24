@@ -53,6 +53,13 @@ orthodoxy is wrong.
 
 ----
 
+Here I shall prove logically that the two-channel optical Bell test,
+of the kind conducted by Alain Aspect in the early 1980s, is not
+‘quantum’. It is not even ‘statistical mechanical’. It is not even
+‘standing waves’, as apparently some have tried to model it. It is
+merely pulses of light moving through polarizers.
 
+I shall model the light as particles, called ‘photons’. Each photon is
+plane-polarized at angle 0 or &pi;/2.
 
 ----
