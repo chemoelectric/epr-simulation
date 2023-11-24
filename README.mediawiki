@@ -109,11 +109,11 @@ makes the correlation coefficient equal the covariance. That is, no
 normalization is needed. It can be computed as follows&mdash;
 
 {|
-|''&rho;'' = ''&rho''<sup>++</sup> + ''&rho''<sup>+-</sup> + ''&rho''<sup>-+</sup> + ''&rho;''<sup>--</sup>
+|''&rho;'' = ''&rho;''<sup>++</sup> + ''&rho;''<sup>+-</sup> + ''&rho;''<sup>-+</sup> + ''&rho;''<sup>--</sup>
 |}
 
 where
 
 {|
-|''&rho''<sup>++</sup> = &frac12;(+1)(+1)sin²''&phi;<sub>01</sub>''
+|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)sin²''&phi;<sub>01</sub>''
 |}
