@@ -36,11 +36,11 @@ at the same conclusion as any other.
 Thus a problem in ‘quantum’ physics can be converted to, say, a
 problem about Girl Scouts delivering cookies to their customers. The
 new problem may be a contrived one, but the conversion ''can'' be
-done. And any method used to solve the problem must arrive at the same
-result as does quantum mechanics, if the solution by quantum mechanics
-be correct. In published papers where a different solution is reached
-(J.S. Bell, John Clauser, etc.), the authors have made mathematical
-errors.
+done. Also, any method used to solve the problem must arrive at the
+same result as does quantum mechanics, if the solution by quantum
+mechanics be correct. In published papers where a different solution
+is reached (J.S. Bell, John Clauser, etc.), the authors have made
+mathematical errors.
 
 ----
 
