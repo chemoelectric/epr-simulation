@@ -182,4 +182,4 @@ experiment. The orthodoxy is wrong. Furthermore, as I have already
 pointed out, they could have worked backwards from this (rotationally
 invariant) answer to infer the derivation above.
 
-\sqrt{2}
+{{math|{{radical|1 &minus; ''e''<sup>2</sup>}}}}
