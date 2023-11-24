@@ -159,6 +159,8 @@ angle settings of the polarizers. Substitution gives
 (''&phi;''<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')&nbsp;&minus;&nbsp;(''&phi;''<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')
 = ''&phi;''<sub>1</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>2</sub>.
 
+=== The general solution ===
+
 Thus the general formula for the correlation coefficient is
 
 {|
