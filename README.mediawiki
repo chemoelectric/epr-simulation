@@ -75,6 +75,6 @@ retransmitted into that channel. Mathematical consistency requires
 this inference.
 
 Let the angle setting of the polarizer by &phi;. Then the probability
-of a photon being retransmitted into the (+) channel is cos²(&phi;)
+of a photon being retransmitted into the (+) channel is cos²(''&phi;'')
 for an H photon or sin²(&phi;) for a V photon, and into the (-)
 channel is sin²(&phi;) for an H photon or cos²(&phi;) for a V photon.
