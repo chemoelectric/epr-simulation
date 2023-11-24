@@ -70,7 +70,7 @@ generated in complementary pairs, polarized thus: ('''H''','''V''') or
 
 Let the left side be indexed 1 and the right side indexed 2, in
 whatever follows. So these are
-(photon<sub>1</sub>,photon<sub>2</sub>).
+(photon<sub>1</sub>,&nbsp;photon<sub>2</sub>)&isin;{('''H''','''V'''),&nbsp;('''V''','''H''')}.
 
 === Two-channel polarizers ===
 
