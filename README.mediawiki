@@ -91,7 +91,7 @@ an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
 === Removing one of the polarizers from the problem ===
 
 Let us set the left and right side polarizers respectively to
-''&phi;<sub>01</sub>''&isin;&real; and ''&phi;''<sub>02</sub>=0. In
+''&phi;''<sub>01</sub>&isin;&real; and ''&phi;''<sub>02</sub>=0. In
 that case on the right side every '''H''' photon is retransmitted into
 the '''(+)''' channel and every '''V''' photon into the the '''(&minus;)'''
 channel. Thus we can ignore that there is a beam-splitting polarizer
@@ -116,11 +116,11 @@ follows&mdash;
 where
 
 {|
-|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²''&phi;<sub>01</sub>''
+|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²''&phi;''<sub>01</sub>
 |-
-|''&rho;''<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²''&phi;<sub>01</sub>''
+|''&rho;''<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²''&phi;''<sub>01</sub>
 |-
-|''&rho;''<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²''&phi;<sub>01</sub>''
+|''&rho;''<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²''&phi;''<sub>01</sub>
 |-
-|''&rho;''<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²''&phi;<sub>01</sub>''
+|''&rho;''<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²''&phi;''<sub>01</sub>
 |}
