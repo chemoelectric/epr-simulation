@@ -69,8 +69,8 @@ generated in complementary pairs, polarized thus: ('''H''','''V''') or
 ('''V''','''H''').
 
 Let the left side be indexed 1 and the right side indexed 2, in
-whatever follows. So these are
-(photon<sub>1</sub>,&nbsp;photon<sub>2</sub>)&isin;{('''H''','''V'''),&nbsp;('''V''','''H''')}.
+whatever follows. So one might write
+(photon<sub>1</sub>,&nbsp;photon<sub>2</sub>)&nbsp;&isin;&nbsp;{('''H''','''V'''),&nbsp;('''V''','''H''')}.
 
 === Two-channel polarizers ===
 
