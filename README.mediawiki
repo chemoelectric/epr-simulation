@@ -183,7 +183,7 @@ pointed out, they could have worked backwards from this (rotationally
 invariant) answer to infer the derivation above.
 
 There is no ‘entanglement’. There is no action at a distance (a notion
-no physicist should ever have accepted for one moment). There is
+no physicist should ever have entertained as possible). There is
 nothing complicated about the experiment. Photons simply encounter
 two-channel polarizers and are retransmitted into one channel or the
 other. Nothing could be simpler. The probabilities of photons being
