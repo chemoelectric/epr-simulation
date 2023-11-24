@@ -68,6 +68,10 @@ notation makes the mathematics easier to read. The photons are
 generated in complementary pairs, polarized thus: ('''H''','''V''') or
 ('''V''','''H''').
 
+Let the left side be indexed 1 and the right side indexed 2, in
+whatever follows. So these are
+(photon<sub>1</sub>,photon<sub>2</sub>).
+
 === Two-channel polarizers ===
 
 The intensity of the light in a polarizer’s channel, by the Law of
@@ -80,3 +84,7 @@ probability of a photon being retransmitted into the '''(+)''' channel
 is cos²(''&phi;'') for an '''H''' photon or sin²(''&phi;'') for a
 '''V''' photon, and into the '''(-)''' channel is sin²(''&phi;'') for
 an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
+
+=== Removing one of the polarizers from the problem ===
+
+Let us set 
