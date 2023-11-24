@@ -70,7 +70,8 @@ generated in complementary pairs, polarized thus:
 
 Let the left side be indexed 1 and the right side indexed 2, in
 whatever follows. So one might write
-{| class="wikitable"
+
+{|
 |(photon<sub>1</sub>,&thinsp;photon<sub>2</sub>)&thinsp;&isin;&thinsp;{('''H''',&thinsp;'''V'''),&thinsp;('''V''',&thinsp;'''H''')}
 |}
 
@@ -89,13 +90,30 @@ an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
 
 === Removing one of the polarizers from the problem ===
 
-Let us set ''&phi;''<sub>2</sub>=0. In that case on the right side
-every '''H''' photon is retransmitted into the '''(+)''' channel and
-every '''V''' photon into the the '''(-)''' channel. Thus we can
-ignore that there is a beam-splitting polarizer on that side, and
-simply map
-{| class="wikitable"
+Let us set the left and right side polarizers respectively to
+''&phi;<sub>01</sub>''&isin;&real; and ''&phi;''<sub>02</sub>=0. In
+that case on the right side every '''H''' photon is retransmitted into
+the '''(+)''' channel and every '''V''' photon into the the '''(-)'''
+channel. Thus we can ignore that there is a beam-splitting polarizer
+on that side, and simply map
+
+{|
 |'''H'''&thinsp;↦'''(+)'''
 |-
-! style="border-style: hidden; outline-style: hidden;" | '''V'''&thinsp;↦'''(-)'''
+|'''V'''&thinsp;↦'''(-)'''
+|}
+
+Assign the value +1 to a photon detected in a '''(+)''' channel and -1
+to a photon detected in a '''(-)''' channel. This choice of values
+makes the correlation coefficient equal the covariance. That is, no
+normalization is needed. It can be computed as follows&mdash;
+
+{|
+|''&rho;'' = ''&rho''<sup>++</sup> + ''&rho''<sup>+-</sup> + ''&rho''<sup>-+</sup> + ''&rho;''<sup>--</sup>
+|}
+
+where
+
+{|
+|''&rho''<sup>++</sup> = &frac12;(+1)(+1)sin²''&phi;<sub>01</sub>''
 |}
