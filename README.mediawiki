@@ -70,7 +70,7 @@ generated in complementary pairs, polarized thus:
 
 Let the left side be indexed 1 and the right side indexed 2, in
 whatever follows. So one might write
-{|style="border-style: none;"
+{|style="border-style: hidden; outline-style: hidden;"
 |(photon<sub>1</sub>,&thinsp;photon<sub>2</sub>)&thinsp;&isin;&thinsp;{('''H''',&thinsp;'''V'''),&thinsp;('''V''',&thinsp;'''H''')}
 |}
 
