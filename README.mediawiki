@@ -165,9 +165,9 @@ Thus the general formula for the correlation coefficient is
 |''&rho;'' = &minus;cos&thinsp;2(''&phi;''<sub>1</sub> &minus; ''&phi;''<sub>2</sub>)
 |}
 
-This result is the same as that obtained by quantum mechanics. Of
-course, it had to be: all mathematical methods, applied to the same
-problem, must reach the same result.
+This result is the same as that obtained by quantum mechanics. It had
+to be: all mathematical methods, applied to the same problem, must
+reach the same result.
 
 According to the physics orthodoxy, however, it is not possible for us
 to have derived this result from a ‘local realistic’ model of the
