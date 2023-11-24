@@ -156,12 +156,10 @@ and
 Clearly ''&phi;''<sub>1</sub> and ''&phi;''<sub>2</sub> can be any
 angle settings of the polarizers:
 ''&phi;''<sub>1</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>2</sub> =
+(''&phi;''<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')&nbsp;&minus;&nbsp;(''&phi;''<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'') =
 ''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> is
 their difference, and &Delta;''&phi;'' is a shared rotational
-offset. Substitution gives
-''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> =
-(''&phi;''<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')&nbsp;&minus;&nbsp;(''&phi;''<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')
-= ''&phi;''<sub>1</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>2</sub>.
+offset.
 
 === The general solution ===
 
