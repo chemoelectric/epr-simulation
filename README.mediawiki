@@ -85,7 +85,7 @@ this inference.
 Let the angle setting of the polarizer by ''&phi;''. Then the
 probability of a photon being retransmitted into the '''(+)''' channel
 is cos²(''&phi;'') for an '''H''' photon or sin²(''&phi;'') for a
-'''V''' photon, and into the '''(-)''' channel is sin²(''&phi;'') for
+'''V''' photon, and into the '''(&minus;)''' channel is sin²(''&phi;'') for
 an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
 
 === Removing one of the polarizers from the problem ===
@@ -93,23 +93,24 @@ an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
 Let us set the left and right side polarizers respectively to
 ''&phi;<sub>01</sub>''&isin;&real; and ''&phi;''<sub>02</sub>=0. In
 that case on the right side every '''H''' photon is retransmitted into
-the '''(+)''' channel and every '''V''' photon into the the '''(-)'''
+the '''(+)''' channel and every '''V''' photon into the the '''(&minus;)'''
 channel. Thus we can ignore that there is a beam-splitting polarizer
 on that side, and simply map
 
 {|
 |'''H'''&thinsp;↦'''(+)'''
 |-
-|'''V'''&thinsp;↦'''(-)'''
+|'''V'''&thinsp;↦'''(&minus;)'''
 |}
 
-Assign the value +1 to a photon detected in a '''(+)''' channel and -1
-to a photon detected in a '''(-)''' channel. This choice of values
-makes the correlation coefficient equal the covariance. That is, no
-normalization is needed. It can be computed as follows&mdash;
+Assign the value +1 to a photon detected in a '''(+)''' channel and
+&minus;1 to a photon detected in a '''(&minus;)''' channel. This
+choice of values makes the correlation coefficient equal the
+covariance. That is, no normalization is needed. It can be computed as
+follows&mdash;
 
 {|
-|''&rho;'' = ''&rho;''<sup>++</sup> + ''&rho;''<sup>+-</sup> + ''&rho;''<sup>-+</sup> + ''&rho;''<sup>--</sup>
+|''&rho;'' = ''&rho;''<sup>++</sup> + ''&rho;''<sup>+&minus;</sup> + ''&rho;''<sup>&minus;+</sup> + ''&rho;''<sup>&minus;&minus;</sup>
 |}
 
 where
@@ -117,9 +118,9 @@ where
 {|
 |''&rho;''<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²''&phi;<sub>01</sub>''
 |-
-|''&rho;''<sup>+-</sup> = &frac12;(+1)(-1)&thinsp;cos²''&phi;<sub>01</sub>''
+|''&rho;''<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²''&phi;<sub>01</sub>''
 |-
-|''&rho;''<sup>-+</sup> = &frac12;(-1)(+1)&thinsp;cos²''&phi;<sub>01</sub>''
+|''&rho;''<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²''&phi;<sub>01</sub>''
 |-
-|''&rho;''<sup>--</sup> = &frac12;(-1)(-1)&thinsp;sin²''&phi;<sub>01</sub>''
+|''&rho;''<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²''&phi;<sub>01</sub>''
 |}
