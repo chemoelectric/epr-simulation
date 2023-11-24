@@ -181,3 +181,11 @@ to have derived this result from a ‘local realistic’ model of the
 experiment. The orthodoxy is wrong. Furthermore, as I have already
 pointed out, they could have worked backwards from this (rotationally
 invariant) answer to infer the derivation above.
+
+There is no ‘entanglement’. There is no action at a distance. There is
+nothing complicated about the experiment. Photons simply encounter
+two-channel polarizers and are retransmitted into one channel or the
+other. Nothing could be simpler. The probabilities of photons being
+retransmitted into particular channels depends on the respective
+settings, but the correlation coefficient depends only on the
+difference between settings.
