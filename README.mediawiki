@@ -115,5 +115,11 @@ normalization is needed. It can be computed as follows&mdash;
 where
 
 {|
-|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)sin²''&phi;<sub>01</sub>''
+|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²''&phi;<sub>01</sub>''
+|-
+|''&rho;''<sup>+-</sup> = &frac12;(+1)(-1)&thinsp;cos²''&phi;<sub>01</sub>''
+|-
+|''&rho;''<sup>-+</sup> = &frac12;(-1)(+1)&thinsp;cos²''&phi;<sub>01</sub>''
+|-
+|''&rho;''<sup>--</sup> = &frac12;(-1)(-1)&thinsp;sin²''&phi;<sub>01</sub>''
 |}
