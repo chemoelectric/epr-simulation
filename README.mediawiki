@@ -97,6 +97,6 @@ simply map
 {|class="wikitable"
 |'''H'''&thinsp;↦'''(+)'''
 |-
-|'''V'''&thinsp;↦'''(-)'''
+|style="border-style: hidden; outline-style: hidden;" '''V'''&thinsp;↦'''(-)'''
 |}
 
