@@ -3,7 +3,7 @@
 A Scheme toolkit for constructing fully ‘local realistic’ simulations
 of EPR-B experiments. It is donated to the public domain.
 
-----
+== This toolkit versus the orthodoxy ==
 
 The orthodox belief in physics (in 2023) is that experiments of the
 type conducted by 2022 Nobel laureate Alain Aspect are distinctly
@@ -19,7 +19,7 @@ That the nonsense is held true by the orthodoxy is not evidence in its
 favor. Unquestionably it is evidence of a social psychological
 disorder.
 
-----
+== The impossibility of ‘irreducibility’ ==
 
 That there actually is no ‘quantum’ physics distinct from physics
 generally is easily shown by the following argument—
@@ -51,7 +51,7 @@ students. Instead they teach students not to question whatever is
 orthodox, even if they happen to know with logical certainty that the
 orthodoxy is wrong.
 
-----
+== The correlation coefficient of the two-channel optical Bell test ==
 
 Here I shall prove logically that the two-channel optical Bell test,
 of the kind conducted by Alain Aspect in the early 1980s, is not
@@ -59,12 +59,8 @@ of the kind conducted by Alain Aspect in the early 1980s, is not
 ‘standing waves’, as apparently some have tried to model it. It is
 merely pulses of light moving through polarizers.
 
-==Photons==
+=== Photons ===
 
 I shall model the light as particles, called ‘photons’. Each photon
 is plane-polarized at angle 0 or &pi;/2. They are generated in
 complementary pairs, polarized thus: (0,&pi/2) or (&pi/2,0).
-
-
-
-----
