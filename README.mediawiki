@@ -170,7 +170,7 @@ Thus the general formula for the correlation coefficient is
 |}
 
 for any
-''&phi;''<sub>1</sub>,&thinsp;''&phi;''<sub>2</sub>&thinsp;isin;&thinsp;&real;.
+''&phi;''<sub>1</sub>,&thinsp;''&phi;''<sub>2</sub>&thinsp;&isin;&thinsp;&real;.
 
 This result is the same as that obtained by quantum mechanics. It had
 to be: all mathematical methods, applied to the same problem, must
