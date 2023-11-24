@@ -60,8 +60,8 @@ of the kind conducted by Alain Aspect in the early 1980s, is not
 merely pulses of light moving through polarizers.
 
 * I shall model the light as particles, called ‘photons’. Each photon
-is plane-polarized at angle 0 or &pi;/2. They are generated in
-complementary pairs, polarized thus: (0,&pi/2) or (&pi/2,0).
+  is plane-polarized at angle 0 or &pi;/2. They are generated in
+  complementary pairs, polarized thus: (0,&pi/2) or (&pi/2,0).
 
 
 
