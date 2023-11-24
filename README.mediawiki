@@ -64,3 +64,11 @@ merely pulses of light moving through polarizers.
 I shall model the light as particles, called ‘photons’. Each photon
 is plane-polarized at angle 0 or &pi;/2. They are generated in
 complementary pairs, polarized thus: (0,&pi/2) or (&pi/2,0).
+
+=== Two-channel polarizers ===
+
+The polarizers are modeled as beam splitters that obey the Law of
+Malus, wherein the intensity of light transmitted into the (+) channel
+is cos²(&phi;-&theta;) and into the (-) channel is
+sin²(&phi;-&theta;), where &phi; is the angle setting of the polarizer
+and &theta; is the polarization angle of the incident photon.
