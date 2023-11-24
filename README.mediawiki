@@ -149,7 +149,8 @@ according to quantum mechanics. From this fact of invariance, one could work
 ''backwards'' to this solution that ''avoids'' quantum mechanics!
 
 Let us make the invariance formal.  Let
-&Delta;''&phi;''&thinsp;&isin;&thinsp;&real;, let
+&Delta;''&phi;''&thinsp;&isin;&thinsp;&real;,
 ''&phi;''<sub>1</sub>&thinsp;=&thinsp;''&phi;''<sub>01</sub>&thinsp;+&thinsp;&Delta;''&phi;'',
 and
-''&phi;''<sub>2</sub>&thinsp;=&thinsp;''&phi;''<sub>02</sub>&thinsp;+&thinsp;&Delta;''&phi;&thinsp;=&thinsp;&Delta;''&phi;''.
+''&phi;''<sub>2</sub>&thinsp;=&thinsp;''&phi;''<sub>02</sub>&thinsp;+&thinsp;&Delta;''&phi;''&thinsp;=&thinsp;&Delta;''&phi;''.
+Then ''&phi;''<sub>01</sub> &minus; ''&phi;''<sub>02</sub> = (&phi;''<sub>01</sub> + &thinsp;&Delta;''&phi;'') &minus; (''&phi;''<sub>02</sub> + &thinsp;&Delta;''&phi;'') = ''&phi;''<sub>1</sub> &minus; ''&phi;''<sub>2</sub>.
