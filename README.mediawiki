@@ -138,7 +138,7 @@ Using a double-angle identity, and taking advantage of
 |}
 
 In the last expression,
-''&phi''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> is the
+''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> is the
 difference between the two settings. It would appear that the
 correlation coefficient is invariant with respect to changes in the
 actual angles, as long as this difference is maintained.
