@@ -1,4 +1,4 @@
-epr-simulation
+=epr-simulation=
 
 A Scheme toolkit for constructing fully ‘local realistic’ simulations
 of EPR-B experiments. It is donated to the public domain.
