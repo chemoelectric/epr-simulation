@@ -182,7 +182,7 @@ reach the same result.
 According to the physics orthodoxy, however, it is not possible for us
 to have derived this result from a ‘local realistic’ model of the
 experiment. The orthodoxy is wrong. We just did it. Furthermore, as I
-have already pointed out, they could have worked backwards from this
+have already pointed out, they could have worked backwards from the
 answer&mdash;which they already had by other means&mdash;to infer the
 derivation above.
 
