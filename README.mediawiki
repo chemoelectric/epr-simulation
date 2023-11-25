@@ -181,9 +181,10 @@ reach the same result.
 
 According to the physics orthodoxy, however, it is not possible for us
 to have derived this result from a ‘local realistic’ model of the
-experiment. The orthodoxy is wrong. Furthermore, as I have already
-pointed out, they could have worked backwards from this (rotationally
-invariant) answer to infer the derivation above.
+experiment. The orthodoxy is wrong. We just did it. Furthermore, as I
+have already pointed out, they could have worked backwards from this
+answer&mdash;which they already had by other means&mdash;to infer the
+derivation above.
 
 There is no ‘entanglement’. There is no action at a distance (a notion
 no physicist should ever have entertained as possible). There is
