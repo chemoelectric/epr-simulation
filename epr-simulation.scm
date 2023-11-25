@@ -25,7 +25,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (define-library (epr-simulation)
 
-  (export)
+  (export HV-source)
 
   (import (scheme base)
           (srfi 27))                    ; Random bits.
