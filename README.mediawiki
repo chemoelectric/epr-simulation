@@ -190,3 +190,14 @@ other. Nothing could be simpler. The probabilities of photons being
 retransmitted into particular channels depends on the respective
 settings, but the correlation coefficient depends only on the
 difference between settings.
+
+Of course, one might argue I have shown only that ‘entanglement’,
+etc., are not ''necessary'' to explain the phenomenon. But let us not
+be silly. There might be particles moving through polarizers. There
+might be continuous electromagnetic waves moving through
+polarizers. But there ''is no'' action at a distance, for including
+action at a distance in the whole of human knowledge would cause
+logical paradoxes. (Thus it should ''never'' be entertained.) There
+are no standing waves in the theory, unless someone should choose to
+contrive some. No recourse to statistical mechanics is necessary, for
+only simple probability theory is needed.
