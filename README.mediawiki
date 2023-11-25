@@ -39,8 +39,8 @@ new problem may be a contrived one, but the conversion ''can'' be
 done. Also, any method used to solve the problem must arrive at the
 same result as does quantum mechanics, if the solution by quantum
 mechanics be correct. In published papers where a different solution
-is reached (J.S. Bell, John Clauser, etc.), the authors have made
-mathematical errors.
+is reached (J.S. Bell, 2022 Nobel laureate John Clauser, etc.), the
+authors have made mathematical errors.
 
 The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
 false, but a logical impossibility.
