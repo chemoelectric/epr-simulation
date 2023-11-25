@@ -145,9 +145,10 @@ actual angles, as long as this difference is maintained.
 
 This is a fact that somehow has escaped the notice of the physics
 orthodoxy, even though it should be apparent from the more general
-solution according to quantum mechanics. Using the invariance, one can
-work ''backwards'' to this particular solution and so know how to
-''avoid'' quantum mechanics!
+solution, even if obtained by quantum mechanics. Using the invariance,
+one can work ''backwards'' to this particular solution&mdash;and so
+know how to derive the same result ''without'' using quantum
+mechanics!
 
 Let us make the invariance more formal.  Let
 &Delta;''&phi;''&thinsp;&isin;&thinsp;&real;,
