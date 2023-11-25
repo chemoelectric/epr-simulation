@@ -147,7 +147,7 @@ This fact somehow has escaped notice of the physics orthodoxy, even
 though it should be apparent from the more general solution, even if
 it were obtained by quantum mechanics. Using the invariance, one can
 work ''backwards'' to the particular solution for
-''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub>&mdash;and
+''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub>, and
 so know how to derive the same result ''without'' using quantum
 mechanics!
 
