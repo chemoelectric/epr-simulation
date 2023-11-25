@@ -1,0 +1,14 @@
+;;; -*- mode: scheme; -*-
+
+((synopsis "Scheme toolkit for simulation of EPR-B experiments")
+ (version "1.0")
+ (author "Barry Schwartz")
+ (license "public-domain")
+ (platform (or linux unix windows))
+ (dependencies
+  r7rs
+  srfi-27)
+ (component-options
+  (csc-options "-O3" "-X" "r7rs" "-R" "r7rs"))
+ (components
+  (extension epr-simulation)))
