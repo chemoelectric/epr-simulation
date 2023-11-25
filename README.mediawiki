@@ -143,12 +143,11 @@ difference between the two settings. It would appear that the
 correlation coefficient is invariant with respect to changes in the
 actual angles, as long as this difference is maintained.
 
-This is a fact that somehow has escaped the notice of the physics
-orthodoxy, even though it should be apparent from the more general
-solution, even if obtained by quantum mechanics. Using the invariance,
-one can work ''backwards'' to this particular solution&mdash;and so
-know how to derive the same result ''without'' using quantum
-mechanics!
+This fact somehow has escaped notice of the physics orthodoxy, even
+though it should be apparent from the more general solution, even if
+obtained by quantum mechanics. Using the invariance, one can work
+''backwards'' to this particular solution&mdash;and so know how to
+derive the same result ''without'' using quantum mechanics!
 
 Let us make the invariance more formal.  Let
 &Delta;''&phi;''&thinsp;&isin;&thinsp;&real;,
