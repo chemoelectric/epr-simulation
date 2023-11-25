@@ -1,4 +1,7 @@
 ;;; -*- mode: scheme; -*-
+;;;
+;;; Egg file for CHICKEN 5.
+;;;
 
 ((synopsis "Scheme toolkit for simulation of EPR-B experiments")
  (version "1.0")
