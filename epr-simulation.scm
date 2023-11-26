@@ -32,17 +32,41 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-photon
           photon?
           photon-polarization-angle)
+  (export <pbs>
+          ;; Polarizing beam-splitter with plane-polarized output.
+          make-pbs
+          pbs?
+          pbs-angle-in
+          pbs-angle-out+
+          pbs-angle-out-)
 
   (import (scheme base)
           (scheme inexact)
-          (scheme write))
+          (only (srfi 144) fl-epsilon))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;          (srfi 27))                    ; Random bits.
 
   (cond-expand
-    (chicken (import (only (chicken base) define-record-printer)))
+    (chicken (import (only (chicken base) define-record-printer)
+                     (scheme write)))
     (else))
 
   (begin
+
+    (cond-expand
+      (chicken (define (write-angle angle port)
+                 (let* ((angle/π (/ angle π))
+                        (angle/π*8 (* 8 angle/π))
+                        (iangle/π*8 (round angle/π*8))
+                        (diff (abs (- angle/π*8 iangle/π*8)))
+                        (exact-enough (<= diff (* 500 fl-epsilon
+                                                  (abs angle/π*8)))))
+                   (display "π×" port)
+                   (let ((angle/π
+                          (if exact-enough
+                              (exact angle/π)
+                              angle/π)))
+                     (write angle/π port)))))
+      (else))
 
     ;; OEIS A019685
     (define π/180 0.0174532925199432957692369076848861271344287188854172545609719144017100911460344944368224156963450948)
@@ -80,16 +104,37 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     (cond-expand
       (chicken (define-record-printer (<photon> rectype port)
-                 (display "<photon π×" port)
-                 (let* ((angle (photon-polarization-angle rectype))
-                        (angle/π (/ angle π)))
-                   (write angle/π port))
+                 (display "<photon " port)
+                 (write-angle (photon-polarization-angle rectype) port)
+                 (display ">" port)))
+      (else))
+
+    (define-record-type <pbs>
+          ;; Polarizing beam-splitter with plane-polarized output.
+      (%%make-pbs angle-in angle-out+ angle-out-)
+      pbs?
+      (angle-in pbs-angle-in)
+      (angle-out+ pbs-angle-out+)
+      (angle-out- pbs-angle-out-))
+
+    (define (make-pbs angle-in angle-out+ angle-out-)
+      (unless (real? angle-in)
+        (error "make-pbs: expected a real number" angle-in))
+      (unless (real? angle-out+)
+        (error "make-pbs: expected a real number" angle-out+))
+      (unless (real? angle-out-)
+        (error "make-pbs: expected a real number" angle-out-))
+      (%%make-pbs angle-in angle-out+ angle-out-))
+
+    (cond-expand
+      (chicken (define-record-printer (<pbs> rectype port)
+                 (display "<pbs " port)
+                 (write-angle (pbs-angle-in rectype) port)
+                 (display " " port)
+                 (write-angle (pbs-angle-out+ rectype) port)
+                 (display " " port)
+                 (write-angle (pbs-angle-out- rectype) port)
                  (display ">" port)))
       (else))
 
     )) ;; end library (epr-simulation)
-
-;; (import (epr-simulation))
-;; (import (format))
-;; (format #t "~A~%" (make-photon π3/8))
-;; (format #t "~A~%" (- (/ π 180) π/180))
