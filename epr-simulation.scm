@@ -38,12 +38,14 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs?
           pbs-angle-in
           pbs-angle-out+
-          pbs-angle-out-)
+          pbs-angle-out-
+          simulate-pbs-activity)
 
   (import (scheme base)
+          (scheme case-lambda)
           (scheme inexact)
+          (only (srfi 27) random-real)
           (only (srfi 144) fl-epsilon))
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;          (srfi 27))                    ; Random bits.
 
   (cond-expand
     (chicken (import (only (chicken base) define-record-printer)
@@ -55,11 +57,11 @@ OTHER DEALINGS IN THE SOFTWARE.
     (cond-expand
       (chicken (define (write-angle angle port)
                  (let* ((angle/π (/ angle π))
-                        (angle/π*8 (* 8 angle/π))
-                        (iangle/π*8 (round angle/π*8))
-                        (diff (abs (- angle/π*8 iangle/π*8)))
+                        (angle/π*64 (* 64 angle/π))
+                        (iangle/π*64 (round angle/π*64))
+                        (diff (abs (- angle/π*64 iangle/π*64)))
                         (exact-enough (<= diff (* 500 fl-epsilon
-                                                  (abs angle/π*8)))))
+                                                  (abs angle/π*64)))))
                    (display "π×" port)
                    (let ((angle/π
                           (if exact-enough
@@ -117,24 +119,49 @@ OTHER DEALINGS IN THE SOFTWARE.
       (angle-out+ pbs-angle-out+)
       (angle-out- pbs-angle-out-))
 
-    (define (make-pbs angle-in angle-out+ angle-out-)
-      (unless (real? angle-in)
-        (error "make-pbs: expected a real number" angle-in))
-      (unless (real? angle-out+)
-        (error "make-pbs: expected a real number" angle-out+))
-      (unless (real? angle-out-)
-        (error "make-pbs: expected a real number" angle-out-))
-      (%%make-pbs angle-in angle-out+ angle-out-))
+    (define make-pbs
+      (case-lambda
+        ((angle-in angle-out+ angle-out-)
+         (unless (real? angle-in)
+           (error "make-pbs: expected a real number" angle-in))
+         (unless (or (not angle-out+) (real? angle-out+))
+           (error "make-pbs: expected a real number or #f"
+                  angle-out+))
+         (unless (or (not angle-out-) (real? angle-out-))
+           (error "make-pbs: expected a real number or #f"
+                  angle-out-))
+         (%%make-pbs angle-in angle-out+ angle-out-))
+        ((angle-in)
+         (make-pbs angle-in #f #f))))
 
     (cond-expand
       (chicken (define-record-printer (<pbs> rectype port)
                  (display "<pbs " port)
                  (write-angle (pbs-angle-in rectype) port)
                  (display " " port)
-                 (write-angle (pbs-angle-out+ rectype) port)
+                 (let ((x (pbs-angle-out+ rectype)))
+                   (if (real? x)
+                     (write-angle x port)
+                     (write x port)))
                  (display " " port)
-                 (write-angle (pbs-angle-out- rectype) port)
+                 (let ((x (pbs-angle-out- rectype)))
+                   (if (real? x)
+                     (write-angle x port)
+                     (write x port)))
                  (display ">" port)))
       (else))
+
+    (define (simulate-pbs-activity pbs photon)
+      ;; Output (#t #f) or (<photon ANGLE-OUT> #f)
+      ;;   if (+) channel is chosen.
+      ;; Output (#f #t) or (#f <photon ANGLE-OUT>)
+      ;;   if (-) channel is chosen.
+      (let ((c (cos (- (pbs-angle-in pbs)
+                       (photon-polarization-angle photon)))))
+        (if (< (random-real) (* c c))
+            (let ((angle-out (pbs-angle-out+ pbs)))
+              `(,(if angle-out (make-photon angle-out) #t) #f))
+            (let ((angle-out (pbs-angle-out- pbs)))
+              `(#f ,(if angle-out (make-photon angle-out) #t))))))
 
     )) ;; end library (epr-simulation)
