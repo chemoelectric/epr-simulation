@@ -31,7 +31,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export <photon>
           make-photon
           photon?
-          photon-polarization-angle)
+          photon-polarization-angle
+          photon-pair-probabilities
+          photon-pair-source)
   (export <pbs>
           ;; Polarizing beam-splitter with plane-polarized output.
           make-pbs
@@ -39,7 +41,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs-angle-in
           pbs-angle-out+
           pbs-angle-out-
-          simulate-pbs-activity)
+          pbs-probabilities
+          pbs-activity)
 
   (import (scheme base)
           (scheme case-lambda)
@@ -111,8 +114,22 @@ OTHER DEALINGS IN THE SOFTWARE.
                  (display ">" port)))
       (else))
 
+    (define (photon-pair-probabilities)
+      (values 0.5 0.5))
+
+    (define photon-pair-source
+      (case-lambda
+        ((angle1 angle2)
+         (let-values (((p₁ _p₂) (photon-pair-probabilities)))
+           (let* ((lessthan (< (random-real) p₁))
+                  (θ₁ (if lessthan angle1 angle2))
+                  (θ₂ (if lessthan angle2 angle1)))
+             (values θ₁ θ₂))))
+        ((angle1) (photon-pair-source angle1 (+ angle1 π/2)))
+        (() (photon-pair-source 0 π/2))))
+
     (define-record-type <pbs>
-          ;; Polarizing beam-splitter with plane-polarized output.
+      ;; Polarizing beam-splitter with plane-polarized output.
       (%%make-pbs angle-in angle-out+ angle-out-)
       pbs?
       (angle-in pbs-angle-in)
@@ -141,27 +158,33 @@ OTHER DEALINGS IN THE SOFTWARE.
                  (display " " port)
                  (let ((x (pbs-angle-out+ rectype)))
                    (if (real? x)
-                     (write-angle x port)
-                     (write x port)))
+                       (write-angle x port)
+                       (write x port)))
                  (display " " port)
                  (let ((x (pbs-angle-out- rectype)))
                    (if (real? x)
-                     (write-angle x port)
-                     (write x port)))
+                       (write-angle x port)
+                       (write x port)))
                  (display ">" port)))
       (else))
 
-    (define (simulate-pbs-activity pbs photon)
-      ;; Output (#t #f) or (<photon ANGLE-OUT> #f)
+    (define (pbs-probabilities pbs photon)
+      (let* ((c (cos (- (pbs-angle-in pbs)
+                        (photon-polarization-angle photon))))
+             (p+ (* c c))
+             (p- (- 1 p+)))
+        (values p+ p-)))
+
+    (define (pbs-activity pbs photon)
+      ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
       ;;   if (+) channel is chosen.
-      ;; Output (#f #t) or (#f <photon ANGLE-OUT>)
+      ;; Output (values #f #t) or (values #f <photon ANGLE-OUT>)
       ;;   if (-) channel is chosen.
-      (let ((c (cos (- (pbs-angle-in pbs)
-                       (photon-polarization-angle photon)))))
-        (if (< (random-real) (* c c))
+      (let-values (((p+ _p-) (pbs-probabilities pbs photon)))
+        (if (< (random-real) p+)
             (let ((angle-out (pbs-angle-out+ pbs)))
-              `(,(if angle-out (make-photon angle-out) #t) #f))
+              (values (if angle-out (make-photon angle-out) #t) #f))
             (let ((angle-out (pbs-angle-out- pbs)))
-              `(#f ,(if angle-out (make-photon angle-out) #t))))))
+              (values #f (if angle-out (make-photon angle-out) #t))))))
 
     )) ;; end library (epr-simulation)
