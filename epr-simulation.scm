@@ -32,17 +32,20 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-photon
           photon?
           photon-polarization-angle
-          photon-pair-probabilities
-          photon-pair-source)
+          *photon-pair-probability* ; Parameter, default 0.5
+          photon-pair-probabilities ; Two values, default 0.5, 0.5
+          photon-pair-amplitudes    ; Two values, default √0.5, √0.5
+          photon-pair-source)       ; Two photons, complementary pair.
   (export <pbs>
           ;; Polarizing beam-splitter with plane-polarized output.
           make-pbs
           pbs?
-          pbs-angle-in
-          pbs-angle-out+
-          pbs-angle-out-
-          pbs-probabilities
-          pbs-activity)
+          pbs-angle-in      ; Angle wrt the incident photon.
+          pbs-angle-out+    ; Output angle wrt the next arm, or #f.
+          pbs-angle-out-    ; Output angle wrt to the next arm, or #f.
+          pbs-probabilities ; Probabilities given an incident photon.
+          pbs-amplitudes  ; QM amplitudes given an incident amplitude.
+          pbs-activity)   ; Photon activity given an incident photon.
 
   (import (scheme base)
           (scheme case-lambda)
@@ -114,17 +117,36 @@ OTHER DEALINGS IN THE SOFTWARE.
                  (display ">" port)))
       (else))
 
+    (define *photon-pair-probability*
+      (make-parameter
+       0.5
+       (lambda (p₁)
+         (unless (and (real? p₁) (<= 0 p₁) (<= p₁ 1))
+           (error
+            "*photon-pair-probability*: expected real number in [0,1]"
+            p₁)))))
+
     (define (photon-pair-probabilities)
-      (values 0.5 0.5))
+      (let* ((p₁ (*photon-pair-probability*))
+             (p₂ (- 1 p₁)))
+        (values p₁ p₂)))
+
+    (define (photon-pair-amplitudes)
+      ;; Absolute values of quantum-mechanical amplitudes. These are
+      ;; just the square roots of the probabilities.
+      (call-with-values photon-pair-probabilities
+        (lambda (p₁ p₂)
+          (values (sqrt p₁) (sqrt p₂)))))
 
     (define photon-pair-source
       (case-lambda
         ((angle1 angle2)
-         (let-values (((p₁ _p₂) (photon-pair-probabilities)))
-           (let* ((lessthan (< (random-real) p₁))
-                  (θ₁ (if lessthan angle1 angle2))
-                  (θ₂ (if lessthan angle2 angle1)))
-             (values θ₁ θ₂))))
+         (call-with-values photon-pair-probabilities
+           (lambda (p₁ _p₂)
+             (let* ((lessthan (< (random-real) p₁))
+                    (θ₁ (if lessthan angle1 angle2))
+                    (θ₂ (if lessthan angle2 angle1)))
+               (values θ₁ θ₂)))))
         ((angle1) (photon-pair-source angle1 (+ angle1 π/2)))
         (() (photon-pair-source 0 π/2))))
 
@@ -174,6 +196,15 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p+ (* c c))
              (p- (- 1 p+)))
         (values p+ p-)))
+
+    (define (pbs-amplitudes pbs photon)
+      ;; Absolute values of quantum-mechanical amplitudes. These are
+      ;; just the square roots of the probabilities. Quantum
+      ;; mechanical solution of this problem, though mistakenly
+      ;; considered by the orthodoxy to have physical meaning, is
+      ;; merely an obsfuscated way of doing the probability theory.
+      (let-values (((p+ p-) (pbs-probabilities pbs photon)))
+        (values (sqrt p+) (sqrt p-))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
