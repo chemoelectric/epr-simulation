@@ -7,6 +7,7 @@
  (version "1.0")
  (author "Barry Schwartz")
  (license "public-domain")
+ (category math)
  (dependencies
   r7rs
   srfi-27                               ; random bits
