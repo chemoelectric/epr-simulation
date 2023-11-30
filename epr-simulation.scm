@@ -124,7 +124,8 @@ OTHER DEALINGS IN THE SOFTWARE.
          (unless (and (real? p₁) (<= 0 p₁) (<= p₁ 1))
            (error
             "*photon-pair-probability*: expected real number in [0,1]"
-            p₁)))))
+            p₁))
+         p₁)))
 
     (define (photon-pair-probabilities)
       (let* ((p₁ (*photon-pair-probability*))
@@ -146,7 +147,7 @@ OTHER DEALINGS IN THE SOFTWARE.
              (let* ((lessthan (< (random-real) p₁))
                     (θ₁ (if lessthan angle1 angle2))
                     (θ₂ (if lessthan angle2 angle1)))
-               (values θ₁ θ₂)))))
+               (values (make-photon θ₁) (make-photon θ₂))))))
         ((angle1) (photon-pair-source angle1 (+ angle1 π/2)))
         (() (photon-pair-source 0 π/2))))
 
