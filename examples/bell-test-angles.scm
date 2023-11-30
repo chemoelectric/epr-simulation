@@ -76,17 +76,34 @@ OTHER DEALINGS IN THE SOFTWARE.
       (,φ₂ ,θ₂ + ,(square (* Aphot₂ Apbs₂₂+)))
       (,φ₂ ,θ₂ - ,(square (* Aphot₂ Apbs₂₂-))))))
 
-(define (quantum-mechanical-correlation-coefficient probabilities)
+(define (quantum-mechanical-correlation probabilities)
+  ;; The correlation coefficient, assigning +1 to (+) detections and
+  ;; -1 to (-) detections.
   (match probabilities
     (((_ _ _ P11+) (_ _ _ P11-) (_ _ _ P12+) (_ _ _ P12-)
       (_ _ _ P21+) (_ _ _ P21-) (_ _ _ P22+) (_ _ _ P22-))
-     ;; Times two, because this is half of the possible photon
+     ;;
+     ;; Times 2, because this is half of the possible photon
      ;; pairings. The other half are excluded: (θ₁,θ₁) and (θ₂,θ₂)
      ;; never occur.
+     ;;
      (* 2 (+ (* P11+ P22+) (* P12+ P21+)
              (* P11- P22-) (* P12- P21-)
              (- (* P12+ P21-)) (- (* P11+ P22-))
-             (- (* P12- P21+)) (- (* P11- P22+)))))))
+             (- (* P12- P21+)) (- (* P11- P22+))))
+     ;;
+     ;; By the way, one could also use the formula
+     ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)) for the correlation
+     ;; coefficient. Here we are calculating it using the general
+     ;; formula for correlation. See
+     ;; https://en.wikipedia.org/w/index.php?title=Covariance_and_correlation&oldid=1144835290
+     ;; for a very terse presentation.
+     ;;
+     ;; In this case the covariance and the correlation coefficient
+     ;; are equal, thanks to our choice of +1 and -1 as the numeric
+     ;; values.
+     ;;
+     )))
 
 (define (simulate-one-event φ₁ φ₂)
   (define pbs₁ (make-pbs φ₁))
@@ -98,7 +115,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       (,phot₂ ,(if detect₂+ '+ '-)))))
 
 (write (quantum-mechanical-probabilities 0 π/8))(newline)
-(write (quantum-mechanical-correlation-coefficient (quantum-mechanical-probabilities 0 π/8)))(newline)
+(write (quantum-mechanical-correlation (quantum-mechanical-probabilities 0 π/8)))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)
