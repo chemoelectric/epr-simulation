@@ -29,8 +29,8 @@ OTHER DEALINGS IN THE SOFTWARE.
         (epr-simulation))
 
 (cond-expand
-  (chicken (import (format)))
-  (gauche (import (srfi 28))))    ; FIXME: not tested yet with Gauche.
+  (chicken (import (format))
+           (import (matchable))))
 
 (define bell-test-angles
   `((0 π/8)
@@ -38,16 +38,67 @@ OTHER DEALINGS IN THE SOFTWARE.
     (π/4 π/8)
     (π/4 π3/8)))
 
-(define (simulate-one-event φᴸ φᴿ)
-  (let ((pbsᴸ (make-pbs φᴸ))
-        (pbsᴿ (make-pbs φᴿ)))
-    (let*-values (((Pᴸ Pᴿ) (photon-pair-probabilities))
-                  ((Aᴸ Aᴿ) (photon-pair-amplitudes))
-                  ((ξᴸ ξᴿ) (photon-pair-source 0 π/2))
-                  ((detectedᴸ+ detectedᴸ-) (pbs-activity pbsᴸ ξᴸ))
-                  ((detectedᴿ+ detectedᴿ-) (pbs-activity pbsᴿ ξᴿ)))
-      `(,(if detectedᴸ+ '+ '-) ,(if detectedᴿ+ '+ '-)))))
+(define θ₁ 0)
+(define θ₂ π/2)
 
+(define (quantum-mechanical-probabilities φ₁ φ₂)
+  ;;
+  ;; These calculations are just ordinary probability calculations,
+  ;; but conducted with square roots of probabilities and then squared
+  ;; in a final step. In quantum mechanics one would write these steps
+  ;; as operations on vectors in a linear state space, but that makes
+  ;; no difference. Physics orthodoxy has bestowed physical meaning on
+  ;; the vectors in this state space, but we see here that the vectors
+  ;; are simply a bookkeeping method for probability calculations.
+  ;;
+  ;; The ‘physical meaning’ of a superposition is not worth a moment’s
+  ;; contemplation, and certainly is not ‘entanglement’. The
+  ;; superposition is merely a way of grouping together some numbers
+  ;; for calculational convenience.
+  ;;
+  ;; We could have done the same calculations using
+  ;; photon-pair-probabilities and pbs-probabilities, then leaving out
+  ;; the ‘square’ operations.
+  ;;
+  (define pbs₁ (make-pbs φ₁))
+  (define pbs₂ (make-pbs φ₂))
+  (let*-values (((Aphot₁ Aphot₂) (photon-pair-amplitudes))
+                ((Apbs₁₁+ Apbs₁₁-) (pbs-amplitudes pbs₁ θ₁))
+                ((Apbs₁₂+ Apbs₁₂-) (pbs-amplitudes pbs₁ θ₂))
+                ((Apbs₂₁+ Apbs₂₁-) (pbs-amplitudes pbs₂ θ₁))
+                ((Apbs₂₂+ Apbs₂₂-) (pbs-amplitudes pbs₂ θ₂)))
+    `((,φ₁ ,θ₁ + ,(square (* Aphot₁ Apbs₁₁+)))
+      (,φ₁ ,θ₁ - ,(square (* Aphot₁ Apbs₁₁-)))
+      (,φ₁ ,θ₂ + ,(square (* Aphot₂ Apbs₁₂+)))
+      (,φ₁ ,θ₂ - ,(square (* Aphot₂ Apbs₁₂-)))
+      (,φ₂ ,θ₁ + ,(square (* Aphot₁ Apbs₂₁+)))
+      (,φ₂ ,θ₁ - ,(square (* Aphot₁ Apbs₂₁-)))
+      (,φ₂ ,θ₂ + ,(square (* Aphot₂ Apbs₂₂+)))
+      (,φ₂ ,θ₂ - ,(square (* Aphot₂ Apbs₂₂-))))))
+
+(define (quantum-mechanical-correlation-coefficient probabilities)
+  (match probabilities
+    (((_ _ _ P11+) (_ _ _ P11-) (_ _ _ P12+) (_ _ _ P12-)
+      (_ _ _ P21+) (_ _ _ P21-) (_ _ _ P22+) (_ _ _ P22-))
+     ;; Times two, because this is half of the possible photon
+     ;; pairings. The other half are excluded: (θ₁,θ₁) and (θ₂,θ₂)
+     ;; never occur.
+     (* 2 (+ (* P11+ P22+) (* P12+ P21+)
+             (* P11- P22-) (* P12- P21-)
+             (- (* P12+ P21-)) (- (* P11+ P22-))
+             (- (* P12- P21+)) (- (* P11- P22+)))))))
+
+(define (simulate-one-event φ₁ φ₂)
+  (define pbs₁ (make-pbs φ₁))
+  (define pbs₂ (make-pbs φ₂))
+  (let*-values (((phot₁ phot₂) (photon-pair-source θ₁ θ₂))
+                ((detect₁+ _detect₁-) (pbs-activity pbs₁ phot₁))
+                ((detect₂+ _detect₂-) (pbs-activity pbs₂ phot₂)))
+    `((,phot₁ ,(if detect₁+ '+ '-))
+      (,phot₂ ,(if detect₂+ '+ '-)))))
+
+(write (quantum-mechanical-probabilities 0 π/8))(newline)
+(write (quantum-mechanical-correlation-coefficient (quantum-mechanical-probabilities 0 π/8)))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)

@@ -139,17 +139,13 @@ OTHER DEALINGS IN THE SOFTWARE.
         (lambda (p₁ p₂)
           (values (sqrt p₁) (sqrt p₂)))))
 
-    (define photon-pair-source
-      (case-lambda
-        ((angle1 angle2)
-         (call-with-values photon-pair-probabilities
-           (lambda (p₁ _p₂)
-             (let* ((lessthan (< (random-real) p₁))
-                    (θ₁ (if lessthan angle1 angle2))
-                    (θ₂ (if lessthan angle2 angle1)))
-               (values (make-photon θ₁) (make-photon θ₂))))))
-        ((angle1) (photon-pair-source angle1 (+ angle1 π/2)))
-        (() (photon-pair-source 0 π/2))))
+    (define (photon-pair-source angle1 angle2)
+      (call-with-values photon-pair-probabilities
+        (lambda (p₁ _p₂)
+          (let* ((lessthan (< (random-real) p₁))
+                 (θ₁ (if lessthan angle1 angle2))
+                 (θ₂ (if lessthan angle2 angle1)))
+            (values (make-photon θ₁) (make-photon θ₂))))))
 
     (define-record-type <pbs>
       ;; Polarizing beam-splitter with plane-polarized output.
@@ -191,20 +187,20 @@ OTHER DEALINGS IN THE SOFTWARE.
                  (display ">" port)))
       (else))
 
-    (define (pbs-probabilities pbs photon)
-      (let* ((c (cos (- (pbs-angle-in pbs)
-                        (photon-polarization-angle photon))))
-             (p+ (* c c))
+    (define (pbs-probabilities pbs photon-pola-angle)
+      (let* ((p+ (square (cos (- (pbs-angle-in pbs)
+                                 photon-pola-angle))))
              (p- (- 1 p+)))
         (values p+ p-)))
 
-    (define (pbs-amplitudes pbs photon)
+    (define (pbs-amplitudes pbs photon-pola-angle)
       ;; Absolute values of quantum-mechanical amplitudes. These are
       ;; just the square roots of the probabilities. Quantum
       ;; mechanical solution of this problem, though mistakenly
       ;; considered by the orthodoxy to have physical meaning, is
       ;; merely an obsfuscated way of doing the probability theory.
-      (let-values (((p+ p-) (pbs-probabilities pbs photon)))
+      (let-values (((p+ p-)
+                    (pbs-probabilities pbs photon-pola-angle)))
         (values (sqrt p+) (sqrt p-))))
 
     (define (pbs-activity pbs photon)
@@ -212,11 +208,15 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;;   if (+) channel is chosen.
       ;; Output (values #f #t) or (values #f <photon ANGLE-OUT>)
       ;;   if (-) channel is chosen.
-      (let-values (((p+ _p-) (pbs-probabilities pbs photon)))
+      (let-values (((p+ _p-)
+                    (pbs-probabilities
+                     pbs (photon-polarization-angle photon))))
         (if (< (random-real) p+)
             (let ((angle-out (pbs-angle-out+ pbs)))
-              (values (if angle-out (make-photon angle-out) #t) #f))
+              (values (if angle-out (make-photon angle-out) #t)
+                      #f))
             (let ((angle-out (pbs-angle-out- pbs)))
-              (values #f (if angle-out (make-photon angle-out) #t))))))
+              (values #f
+                      (if angle-out (make-photon angle-out) #t))))))
 
     )) ;; end library (epr-simulation)
