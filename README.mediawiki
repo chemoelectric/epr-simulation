@@ -3,6 +3,12 @@
 An R⁷RS Scheme toolkit for constructing fully ‘local realistic’
 simulations of EPR-B experiments. It is donated to the public domain.
 
+The linear state space representation employed in quantum mechanics is
+primarily a limited and obfuscated way to keep track of probability
+theory calculations. ''It has no physical meaning.'' Here we do the
+same calculations straightforwardly and, in this case, much more
+easily and comprehensibly.
+
 == This toolkit versus the orthodoxy ==
 
 The orthodox belief in physics (in 2023) is that experiments of the
