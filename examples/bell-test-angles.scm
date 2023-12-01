@@ -69,14 +69,14 @@ OTHER DEALINGS IN THE SOFTWARE.
                 ((Apbs₁₂+ Apbs₁₂-) (pbs-amplitudes pbs₁ θ₂))
                 ((Apbs₂₁+ Apbs₂₁-) (pbs-amplitudes pbs₂ θ₁))
                 ((Apbs₂₂+ Apbs₂₂-) (pbs-amplitudes pbs₂ θ₂)))
-    `((,φ₁ ,θ₁ + ,(square (* √2 Aphot₁ Apbs₁₁+)))
-      (,φ₁ ,θ₁ - ,(square (* √2 Aphot₁ Apbs₁₁-)))
-      (,φ₁ ,θ₂ + ,(square (* √2 Aphot₂ Apbs₁₂+)))
-      (,φ₁ ,θ₂ - ,(square (* √2 Aphot₂ Apbs₁₂-)))
-      (,φ₂ ,θ₁ + ,(square (* √2 Aphot₁ Apbs₂₁+)))
-      (,φ₂ ,θ₁ - ,(square (* √2 Aphot₁ Apbs₂₁-)))
-      (,φ₂ ,θ₂ + ,(square (* √2 Aphot₂ Apbs₂₂+)))
-      (,φ₂ ,θ₂ - ,(square (* √2 Aphot₂ Apbs₂₂-))))))
+    `(((,φ₁ ,θ₁ +) . ,(square (* √2 Aphot₁ Apbs₁₁+)))
+      ((,φ₁ ,θ₁ -) . ,(square (* √2 Aphot₁ Apbs₁₁-)))
+      ((,φ₁ ,θ₂ +) . ,(square (* √2 Aphot₂ Apbs₁₂+)))
+      ((,φ₁ ,θ₂ -) . ,(square (* √2 Aphot₂ Apbs₁₂-)))
+      ((,φ₂ ,θ₁ +) . ,(square (* √2 Aphot₁ Apbs₂₁+)))
+      ((,φ₂ ,θ₁ -) . ,(square (* √2 Aphot₁ Apbs₂₁-)))
+      ((,φ₂ ,θ₂ +) . ,(square (* √2 Aphot₂ Apbs₂₂+)))
+      ((,φ₂ ,θ₂ -) . ,(square (* √2 Aphot₂ Apbs₂₂-))))))
 
 (define (quantum-mechanical-correlation probabilities)
   ;;
@@ -85,11 +85,19 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; coefficient equals the covariance.
   ;;
   ;; By the way, one could also use the closed solution
-  ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)).
+  ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)). This solution has been
+  ;; derived from quantum mechanics—but ALSO by the author, using ONLY
+  ;; probability theory, WITHOUT quantum mechanics. The closed
+  ;; solution ALSO follows from classical coherence theory, if one
+  ;; assumes any of various statistical mechanical points of view.
+  ;;
+  ;; Orthodox ‘quantum’ physics is astoundingly WRONG about the Bell
+  ;; test, despite having awarded Nobel Prizes for it. You are
+  ;; witnessing that wrongness here.
   ;;
   (match probabilities
-    (((_ _ _ P11+) (_ _ _ P11-) (_ _ _ P12+) (_ _ _ P12-)
-      (_ _ _ P21+) (_ _ _ P21-) (_ _ _ P22+) (_ _ _ P22-))
+    (((_ . P11+) (_ . P11-) (_ . P12+) (_ . P12-)
+      (_ . P21+) (_ . P21-) (_ . P22+) (_ . P22-))
      (let ((P1122++ (* 1/2 P11+ P22+))
            (P1122+- (* 1/2 P11+ P22-))
            (P1122-+ (* 1/2 P11- P22+))
