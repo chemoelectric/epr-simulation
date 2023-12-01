@@ -98,6 +98,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   (match probabilities
     (((_ . P11+) (_ . P11-) (_ . P12+) (_ . P12-)
       (_ . P21+) (_ . P21-) (_ . P22+) (_ . P22-))
+     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME: THIS IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!! IT IS THE CLAUSER MISTAKE!!!!!!!!!
      (let ((P1122++ (* 1/2 P11+ P22+))
            (P1122+- (* 1/2 P11+ P22-))
            (P1122-+ (* 1/2 P11- P22+))
@@ -120,7 +121,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       (,phot₂ ,(if detect₂+ '+ '-)))))
 
 (write (quantum-mechanical-probabilities 0 π/8))(newline)
-(write (quantum-mechanical-correlation (quantum-mechanical-probabilities 0 π/8)))(newline)
+(write (quantum-mechanical-correlation (quantum-mechanical-probabilities π/4 π/8)))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)
 (write (simulate-one-event 0 π/8))(newline)
