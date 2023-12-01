@@ -41,6 +41,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define θ₁ 0)
 (define θ₂ π/2)
 
+(define √2 (sqrt 2))
+
 (define (quantum-mechanical-probabilities φ₁ φ₂)
   ;;
   ;; These calculations are just ordinary probability calculations,
@@ -56,9 +58,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; superposition is merely a way of grouping together some numbers
   ;; for calculational convenience.
   ;;
-  ;; We could have done the same calculations using
-  ;; photon-pair-probabilities and pbs-probabilities, then leaving out
-  ;; the ‘square’ operations.
+  ;; We could have done very similar, more straightforward
+  ;; calculations using photon-pair-probabilities and
+  ;; pbs-probabilities.
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
@@ -67,43 +69,38 @@ OTHER DEALINGS IN THE SOFTWARE.
                 ((Apbs₁₂+ Apbs₁₂-) (pbs-amplitudes pbs₁ θ₂))
                 ((Apbs₂₁+ Apbs₂₁-) (pbs-amplitudes pbs₂ θ₁))
                 ((Apbs₂₂+ Apbs₂₂-) (pbs-amplitudes pbs₂ θ₂)))
-    `((,φ₁ ,θ₁ + ,(square (* Aphot₁ Apbs₁₁+)))
-      (,φ₁ ,θ₁ - ,(square (* Aphot₁ Apbs₁₁-)))
-      (,φ₁ ,θ₂ + ,(square (* Aphot₂ Apbs₁₂+)))
-      (,φ₁ ,θ₂ - ,(square (* Aphot₂ Apbs₁₂-)))
-      (,φ₂ ,θ₁ + ,(square (* Aphot₁ Apbs₂₁+)))
-      (,φ₂ ,θ₁ - ,(square (* Aphot₁ Apbs₂₁-)))
-      (,φ₂ ,θ₂ + ,(square (* Aphot₂ Apbs₂₂+)))
-      (,φ₂ ,θ₂ - ,(square (* Aphot₂ Apbs₂₂-))))))
+    `((,φ₁ ,θ₁ + ,(square (* √2 Aphot₁ Apbs₁₁+)))
+      (,φ₁ ,θ₁ - ,(square (* √2 Aphot₁ Apbs₁₁-)))
+      (,φ₁ ,θ₂ + ,(square (* √2 Aphot₂ Apbs₁₂+)))
+      (,φ₁ ,θ₂ - ,(square (* √2 Aphot₂ Apbs₁₂-)))
+      (,φ₂ ,θ₁ + ,(square (* √2 Aphot₁ Apbs₂₁+)))
+      (,φ₂ ,θ₁ - ,(square (* √2 Aphot₁ Apbs₂₁-)))
+      (,φ₂ ,θ₂ + ,(square (* √2 Aphot₂ Apbs₂₂+)))
+      (,φ₂ ,θ₂ - ,(square (* √2 Aphot₂ Apbs₂₂-))))))
 
 (define (quantum-mechanical-correlation probabilities)
+  ;;
   ;; The correlation coefficient, assigning +1 to (+) detections and
-  ;; -1 to (-) detections.
+  ;; -1 to (-) detections. With this assignment, the correlation
+  ;; coefficient equals the covariance.
+  ;;
+  ;; By the way, one could also use the closed solution
+  ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)).
+  ;;
   (match probabilities
     (((_ _ _ P11+) (_ _ _ P11-) (_ _ _ P12+) (_ _ _ P12-)
       (_ _ _ P21+) (_ _ _ P21-) (_ _ _ P22+) (_ _ _ P22-))
-     ;;
-     ;; Times 2, because this is half of the possible photon
-     ;; pairings. The other half are excluded: (θ₁,θ₁) and (θ₂,θ₂)
-     ;; never occur.
-     ;;
-     (* 2 (+ (* P11+ P22+) (* P12+ P21+)
-             (* P11- P22-) (* P12- P21-)
-             (- (* P12+ P21-)) (- (* P11+ P22-))
-             (- (* P12- P21+)) (- (* P11- P22+))))
-     ;;
-     ;; By the way, one could also use the formula
-     ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)) for the correlation
-     ;; coefficient. Here we are calculating it using the general
-     ;; formula for correlation. See
-     ;; https://en.wikipedia.org/w/index.php?title=Covariance_and_correlation&oldid=1144835290
-     ;; for a very terse presentation.
-     ;;
-     ;; In this case the covariance and the correlation coefficient
-     ;; are equal, thanks to our choice of +1 and -1 as the numeric
-     ;; values.
-     ;;
-     )))
+     (let ((s1122++ (* 1/2 P11+ P22+))
+           (s1122+- (* 1/2 P11+ P22-))
+           (s1122-+ (* 1/2 P11- P22+))
+           (s1122-- (* 1/2 P11- P22-))
+           (s1221++ (* 1/2 P12+ P21+))
+           (s1221+- (* 1/2 P12+ P21-))
+           (s1221-+ (* 1/2 P12- P21+))
+           (s1121-- (* 1/2 P12- P21-)))
+       (let ((sum-alike (+ s1122++ s1122-- s1221++ s1121--))
+             (sum-unalike (+ s1122+- s1122-+ s1221+- s1221-+)))
+         (- sum-alike sum-unalike))))))
 
 (define (simulate-one-event φ₁ φ₂)
   (define pbs₁ (make-pbs φ₁))
