@@ -27,15 +27,18 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define-library (epr-simulation)
 
   (export π/180 π/8 π/4 π3/8 π/2 π)
+
   (export degrees->radians radians->degrees)
+
   (export <photon>
+          ;; A plane-polarized photon.
           make-photon
           photon?
           photon-polarization-angle
           *photon-pair-probability* ; Parameter, default 0.5
           photon-pair-probabilities ; Two values, default 0.5, 0.5
-          photon-pair-amplitudes    ; Two values, default √0.5, √0.5
           photon-pair-source)       ; Two photons, complementary pair.
+
   (export <pbs>
           ;; Polarizing beam-splitter with plane-polarized output.
           make-pbs
@@ -44,8 +47,20 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs-angle-out+    ; Output angle wrt the next arm, or #f.
           pbs-angle-out-    ; Output angle wrt to the next arm, or #f.
           pbs-probabilities ; Probabilities given an incident photon.
-          pbs-amplitudes  ; QM amplitudes given an incident amplitude.
-          pbs-activity)   ; Photon activity given an incident photon.
+          pbs-activity)     ; Activity given an incident photon.
+
+    (export <sgm>
+          ;; A two-channel device that behaves like a Stern-Gerlach
+          ;; magnet.
+          make-sgm
+          sgm?
+          sgm-angle-in                ; Angle wrt the incident object.
+          sgm-cos²-rule-particles     ; Particles that obey cos² rule.
+          sgm-cos2-rule-particles     ; Synonym.
+          sgm-sin²-rule-particles     ; Particles that obey sin² rule.
+          sgm-sin2-rule-particles     ; Synonym.
+          sgm-probabilities  ; Probabilities given an incident object.
+          sgm-activity)      ; Activity given an incident object.
 
   (import (scheme base)
           (scheme case-lambda)
@@ -132,13 +147,6 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p₂ (- 1 p₁)))
         (values p₁ p₂)))
 
-    (define (photon-pair-amplitudes)
-      ;; Absolute values of quantum-mechanical amplitudes. These are
-      ;; just the square roots of the probabilities.
-      (call-with-values photon-pair-probabilities
-        (lambda (p₁ p₂)
-          (values (sqrt p₁) (sqrt p₂)))))
-
     (define (photon-pair-source angle1 angle2)
       (call-with-values photon-pair-probabilities
         (lambda (p₁ _p₂)
@@ -148,7 +156,8 @@ OTHER DEALINGS IN THE SOFTWARE.
             (values (make-photon θ₁) (make-photon θ₂))))))
 
     (define-record-type <pbs>
-      ;; Polarizing beam-splitter with plane-polarized output.
+      ;; Polarizing beam-splitter with plane-polarized output. (A
+      ;; two-channel polarizer.)
       (%%make-pbs angle-in angle-out+ angle-out-)
       pbs?
       (angle-in pbs-angle-in)
@@ -193,16 +202,6 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p- (- 1 p+)))
         (values p+ p-)))
 
-    (define (pbs-amplitudes pbs photon-pola-angle)
-      ;; Absolute values of quantum-mechanical amplitudes. These are
-      ;; just the square roots of the probabilities. Quantum
-      ;; mechanical solution of this problem, though mistakenly
-      ;; considered by the orthodoxy to have physical meaning, is
-      ;; merely an obsfuscated way of doing the probability theory.
-      (let-values (((p+ p-)
-                    (pbs-probabilities pbs photon-pola-angle)))
-        (values (sqrt p+) (sqrt p-))))
-
     (define (pbs-activity pbs photon)
       ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
       ;;   if (+) channel is chosen.
@@ -218,5 +217,66 @@ OTHER DEALINGS IN THE SOFTWARE.
             (let ((angle-out (pbs-angle-out- pbs)))
               (values #f
                       (if angle-out (make-photon angle-out) #t))))))
+
+    (define-record-type <sgm>
+      ;; Any two-channel device similar to a Stern-Gerlach magnet.
+      ;; Such a device divides the particle beam into proportions
+      ;; cos²(φ/2) and sin²(φ/2). Which particles go which way will be
+      ;; part of the design of the device. They are specified by lists
+      ;; and distinguished by the ‘equal?’ predicate.
+      (%%make-sgm angle-in cos²-rule-particles sin²-rule-particles)
+      sgm?
+      (angle-in sgm-angle-in)
+      (cos²-rule-particles sgm-cos²-rule-particles)
+      (sin²-rule-particles sgm-sin²-rule-particles))
+
+    (define sgm-cos2-rule-particles sgm-cos²-rule-particles)
+    (define sgm-sin2-rule-particles sgm-sin²-rule-particles)
+
+    (define (make-sgm angle-in
+                      cos²-rule-particles sin²-rule-particles)
+      (unless (real? angle-in)
+        (error "make-sgm: expected a real number" angle-in))
+      (unless (and (pair? cos²-rule-particles)
+                   (list? cos²-rule-particles))
+        (error "make-sgm: expected a non-empty list"
+               cos²-rule-particles))
+      (unless (and (pair? sin²-rule-particles)
+                   (list? sin²-rule-particles))
+        (error "make-sgm: expected a non-empty list"
+               sin²-rule-particles))
+      (%%make-sgm angle-in cos²-rule-particles sin²-rule-particles))
+
+    (cond-expand
+      (chicken (define-record-printer (<sgm> rectype port)
+                 (display "<sgm " port)
+                 (write-angle (sgm-angle-in rectype) port)
+                 (display " " port)
+                 (write (sgm-cos²-rule-particles rectype) port)
+                 (display " " port)
+                 (write (sgm-sin²-rule-particles rectype) port)
+                 (display ">" port)))
+      (else))
+
+    (define (sgm-probabilities sgm particle-kind)
+      (define φ/2 (* 0.5 (sgm-angle-in sgm)))
+      (cond ((member particle-kind (sgm-cos²-rule-particles sgm))
+             (let* ((p+ (square (cos φ/2)))
+                    (p- (- 1 p+)))
+               (values p+ p-)))
+            ((member particle-kind (sgm-sin²-rule-particles sgm))
+             (let* ((p+ (square (sin φ/2)))
+                    (p- (- 1 p+)))
+               (values p+ p-)))
+            (else (error
+                   "sgm-probabilities: not a recognized particle kind"
+                   particle-kind))))
+
+    (define (sgm-activity sgm particle-kind)
+      ;; Let the particle pass through into an appropriate channel.
+      (let-values (((p+ _p-) (sgm-probabilities sgm particle-kind)))
+        (if (< (random-real) p+)
+            (values particle-kind #f)
+            (values #f particle-kind))))
 
     )) ;; end library (epr-simulation)

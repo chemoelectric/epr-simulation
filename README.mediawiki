@@ -89,7 +89,8 @@ whatever follows. So one might write
 The intensity of the light in a polarizer’s channel, by the Law of
 Malus, is inferred to be the probability of a photon being
 retransmitted into that channel. Mathematical consistency requires
-this inference.
+this inference. The same probability may be deduced from quantum
+mechanics.
 
 Let the angle setting of the polarizer by ''&phi;''. Then the
 probability of a photon being retransmitted into the '''(+)''' channel
