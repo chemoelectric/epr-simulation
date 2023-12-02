@@ -43,9 +43,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;        mechanics NEVER is necessary to solve a problem.
 ;;;
 ;;; All the activity is ‘local realistic’ (as opposed to non-local
-;;; preposterous). No educated person should give ‘action at a
-;;; distance’ even a moment’s credence. It is logically inconsistent
-;;; with the bulk of human knowledge.
+;;; preposterous, which future generations will laugh at.)
 ;;;
 
 (import (scheme base)
@@ -69,8 +67,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (define (detection-probabilities φ₁ φ₂)
   ;;
-  ;; The probabilities of detections is solved below easily, without
-  ;; quantum mechanics.
+  ;; The probabilities of detections are solved for below easily,
+  ;; without quantum mechanics. NO OTHER SOLUTIONS ARE POSSIBLE. They
+  ;; are required for mathematical consistency.
   ;;
   ;; The calculation via quantum mechanics is merely the following
   ;; made more difficult. One factors the probabilities into complex
@@ -81,9 +80,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;;
   ;; The orthodoxy in physics attributes physical meaning to these
   ;; vector components, their linear combinations, and their
-  ;; amplitudes. There is no physical meaning. It is merely a way to
-  ;; do probability calculations, employed by people who do not know
-  ;; probability theory.
+  ;; amplitudes. There is no physical meaning. The orthodoxy is
+  ;; wrong. They also do not know probability theory nor understand
+  ;; what they are doing with their linear algebra.
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
