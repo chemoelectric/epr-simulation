@@ -42,8 +42,19 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;    (2) All methods must reach the same result. Therefore quantum
 ;;;        mechanics NEVER is necessary to solve a problem.
 ;;;
-;;; All the activity is ‘local realistic’ (as opposed to non-local
-;;; preposterous, which future generations will laugh at.)
+;;; All the activity is ‘local realistic’.
+;;;
+;;; (The alternative to ‘local realistic’ is ‘non-local preposterous’,
+;;; which future generations will mock relentlessly. ‘Instantaneous
+;;; action at a distance’ had to be and was eliminated both from
+;;; Galilean relativity and Newton’s law of universal gravitation, for
+;;; otherwise there is a gap in the structure of human knowledge. The
+;;; person who did both eliminations was Albert Einstein. But then
+;;; ‘instantaneous action at a distance’ was restored by the risible,
+;;; incredible incompetence of those who did not take seriously the
+;;; argument of Einstein, Podolsky, and Rosen (EPR). A better argument
+;;; is (1) and (2) above, but the argument of EPR should have sufficed
+;;; until this, likely unshakeable one was found.)
 ;;;
 
 (import (scheme base)
@@ -119,6 +130,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define *events-per-test-angle* (make-parameter 100000))
 
 (define (detection-frequencies φ₁ φ₂)
+  ;; Simulate events and compute frequencies of the different
+  ;; detection patterns.
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
   (define N (*events-per-test-angle*))
@@ -149,6 +162,40 @@ OTHER DEALINGS IN THE SOFTWARE.
     ((V - H +) ,(/ NV-H+ N))
     ((V - H -) ,(/ NV-H- N))))
 
+(define (estimate-correlation detection-freqs)
+  ;; Use detection frequencies and trigonometry to estimate the value
+  ;; of -cos(2(φ₁-φ₂)=-(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)).
+  (define (get-freq pattern)
+    (cadr (assoc pattern detection-freqs)))
+  (let ((fH+V+ (get-freq '(H + V +)))
+        (fH+V- (get-freq '(H + V -)))
+        (fH-V+ (get-freq '(H - V +)))
+        (fH-V- (get-freq '(H - V -)))
+        (fV+H+ (get-freq '(V + H +)))
+        (fV+H- (get-freq '(V + H -)))
+        (fV-H+ (get-freq '(V - H +)))
+        (fV-H- (get-freq '(V - H -))))
+    ;; Compute estimates of products of squares of cosines and sines.
+    (let ((cos²φ₁sin²φ₂ (+ fH+V+ fV-H-))
+          (cos²φ₁cos²φ₂ (+ fH+V- fV-H+))
+          (sin²φ₁sin²φ₂ (+ fH-V+ fV+H-))
+          (sin²φ₁cos²φ₂ (+ fH-V- fV+H+)))
+      ;; Take square roots. All the test angles are in Quadrant I, and
+      ;; so only positive square roots will be needed. (Be careful!
+      ;; You have to account for the quadrants of φ₁ and φ₂, and so
+      ;; sometimes need a NEGATIVE square root when doing this kind of
+      ;; calculation.)
+      (let ((cosφ₁sinφ₂ (sqrt cos²φ₁sin²φ₂))
+            (cosφ₁cosφ₂ (sqrt cos²φ₁cos²φ₂))
+            (sinφ₁sinφ₂ (sqrt sin²φ₁sin²φ₂))
+            (sinφ₁cosφ₂ (sqrt sin²φ₁cos²φ₂)))
+        ;; Use angle-difference identities. See, for instance, the CRC
+        ;; Handbook of Mathematical Sciences, 6th edition, page 170.
+        (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
+              (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
+          ;; That is it. We have everthing we need.
+          (- (square sin<φ₁-φ₂>) (square cos<φ₁-φ₂>)))))))
+
 (define (angle->string angle)
   (let* ((angle/π (/ angle π))
          (angle/π*64 (* 64 angle/π))
@@ -172,22 +219,49 @@ OTHER DEALINGS IN THE SOFTWARE.
 (format #t "~2T  (H + V -)  horizontal photon in (+) channel of pbs₁,~%")
 (format #t "~2T             vertical photon in (-) channel of pbs₂, etc.~%")
 
+;;; See
+;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
+;;; Be aware that the contents of the page is mostly wrong. That is
+;;; proven by this simulation. This contrast calculation is included
+;;; to emphasize our proof.
+(define S-nominal 0)   ;; For computing a CHSH contrast.
+(define S-estimated 0) ;; For computing a CHSH contrast.
+(define i 1)           ;; For computing a CHSH contrast.
+
 (format #t "~%")
 (do ((test-angles bell-test-angles (cdr test-angles)))
     ((null? test-angles))
   (let* ((φ₁ (caar test-angles))
          (φ₂ (cadar test-angles))
          (probs-list (detection-probabilities φ₁ φ₂))
-         (freqs-list (detection-frequencies φ₁ φ₂)))
-    (format #t "~2Ttest angles:  ~16Tφ₁ = ~A~33Tφ₂ = ~A~%"
+         (freqs-list (detection-frequencies φ₁ φ₂))
+         (nominal-correlation (- (cos (* 2 (- φ₁ φ₂)))))
+         (estimated-correlation (estimate-correlation freqs-list)))
+    (set! S-nominal
+      ((if (= i 2) - +) S-nominal nominal-correlation))
+    (set! S-estimated
+      ((if (= i 2) - +) S-estimated estimated-correlation))
+    (set! i (+ i 1))
+    (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
             (angle->string φ₁) (angle->string φ₂))
-    (format #t "~4Tdetection~18Tnominal~32Tsimulated~%")
-    (format #t "~4Tpattern~18Tprobability~32Tfrequency~%")
+    (format #t "                       nominal     simulated~%")
     (do ((patterns pattern-list (cdr patterns)))
         ((null? patterns))
       (let* ((patt (car patterns))
              (prob (cadr (assoc patt probs-list)))
              (freq (cadr (assoc patt freqs-list))))
-        (format #t "~4T~A~18T~8,5F~32T~8,5F~%"
+        (format #t "  ~A freq~14,5@F~14,5@F~%"
                 patt (inexact prob) (inexact freq))))
+    (format #t "     correlation~14,5@F~14,5@F~%"
+            nominal-correlation estimated-correlation)
     (format #t "~%")))
+(format #t "                       nominal     simulated~%")
+(format #t "    CHSH S value~14,5@F~14,5@F~%"
+        S-nominal S-estimated)
+(format #t "~%")
+(format #t "  (See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
+(format #t "  for a page concerning the claim this result cannot be~%")
+(format #t "  gotten without ‘quantum entanglement’. Note ‘quantum~%")
+(format #t "  correlation’ is simply the correlation coefficient.~%")
+(format #t "  There is nothing ‘quantum’ about it.)~%")
+(format #t "~%")
