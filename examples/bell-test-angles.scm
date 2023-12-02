@@ -49,7 +49,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;
 
 (import (scheme base)
+        (scheme case-lambda)
         (scheme write)
+        (only (srfi 144) fl-epsilon)
         (epr-simulation))
 
 (cond-expand
@@ -57,10 +59,10 @@ OTHER DEALINGS IN THE SOFTWARE.
            (import (matchable))))
 
 (define bell-test-angles
-  `((0 π/8)
-    (0 π3/8)
-    (π/4 π/8)
-    (π/4 π3/8)))
+  `((0 ,π/8)
+    (0 ,π3/8)
+    (,π/4 ,π/8)
+    (,π/4 ,π3/8)))
 
 (define θH 0)
 (define θV π/2)
@@ -101,40 +103,6 @@ OTHER DEALINGS IN THE SOFTWARE.
       ((V + H -) ,(* PV₁H₂ PV₁+ PH₂-))
       ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
       ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
-
-
-;; (define (quantum-mechanical-correlation probabilities)
-;;   ;;
-;;   ;; The correlation coefficient, assigning +1 to (+) detections and
-;;   ;; -1 to (-) detections. With this assignment, the correlation
-;;   ;; coefficient equals the covariance.
-;;   ;;
-;;   ;; By the way, one could also use the closed solution
-;;   ;; -cos(2(θ₁-θ₂))=-(cos²(θ₁-θ₂)-sin²(θ₁-θ₂)). This solution has been
-;;   ;; derived from quantum mechanics—but ALSO by the author, using ONLY
-;;   ;; probability theory, WITHOUT quantum mechanics. The closed
-;;   ;; solution ALSO follows from classical coherence theory, if one
-;;   ;; assumes any of various statistical mechanical points of view.
-;;   ;;
-;;   ;; Orthodox ‘quantum’ physics is astoundingly WRONG about the Bell
-;;   ;; test, despite having awarded Nobel Prizes for it. You are
-;;   ;; witnessing that wrongness here.
-;;   ;;
-;;   (match probabilities
-;;     (((_ . P11+) (_ . P11-) (_ . P12+) (_ . P12-)
-;;       (_ . P21+) (_ . P21-) (_ . P22+) (_ . P22-))
-;;      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME: THIS IS WRONG!!!!!!!!!!!!!!!!!!!!!!!!! IT IS THE CLAUSER MISTAKE!!!!!!!!!
-;;      (let ((P1122++ (* 1/2 P11+ P22+))
-;;            (P1122+- (* 1/2 P11+ P22-))
-;;            (P1122-+ (* 1/2 P11- P22+))
-;;            (P1122-- (* 1/2 P11- P22-))
-;;            (P1221++ (* 1/2 P12+ P21+))
-;;            (P1221+- (* 1/2 P12+ P21-))
-;;            (P1221-+ (* 1/2 P12- P21+))
-;;            (P1121-- (* 1/2 P12- P21-)))
-;;        (let ((sum-alike (+ P1122++ P1122-- P1221++ P1121--))
-;;              (sum-unalike (+ P1122+- P1122-+ P1221+- P1221-+)))
-;;          (- sum-alike sum-unalike))))))
 
 (define (photon->symbol phot)
   (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
@@ -182,26 +150,45 @@ OTHER DEALINGS IN THE SOFTWARE.
     ((V - H +) ,(/ NV-H+ N))
     ((V - H -) ,(/ NV-H- N))))
 
-(write (detection-probabilities 0 π/8))(newline)
-(write (map (lambda (x) (cons (car x) (inexact (cadr x)))) (detection-frequencies 0 π/8)))(newline)
-;; (write (quantum-mechanical-correlation (quantum-mechanical-probabilities π/4 π/8)))(newline)
-(write (simulate-one-event (make-pbs 0) (make-pbs π/8)))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
+(define (angle->string angle)
+  (let* ((angle/π (/ angle π))
+         (angle/π*64 (* 64 angle/π))
+         (iangle/π*64 (round angle/π*64))
+         (diff (abs (- angle/π*64 iangle/π*64)))
+         (exact-enough (<= diff (* 500 fl-epsilon
+                                   (abs angle/π*64)))))
+    (string-append
+     "π×" (let ((angle/π (if exact-enough (exact angle/π) angle/π)))
+            (number->string angle/π)))))
+
+(define pattern-list
+  '((H + V +) (H + V -) (H - V +) (H - V -)
+    (V + H +) (V + H -) (V - H +) (V - H -)))
+
+(format #t "~%")
+
+(format #t "~2Tlegend:~%")
+(format #t "~2T  (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "~2T             vertical photon in (+) channel of pbs₂,~%")
+(format #t "~2T  (H + V -)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "~2T             vertical photon in (-) channel of pbs₂, etc.~%")
+
+(format #t "~%")
+(do ((test-angles bell-test-angles (cdr test-angles)))
+    ((null? test-angles))
+  (let* ((φ₁ (caar test-angles))
+         (φ₂ (cadar test-angles))
+         (probs-list (detection-probabilities φ₁ φ₂))
+         (freqs-list (detection-frequencies φ₁ φ₂)))
+    (format #t "~2Ttest angles:  ~16Tφ₁ = ~A~33Tφ₂ = ~A~%"
+            (angle->string φ₁) (angle->string φ₂))
+    (format #t "~4Tdetection~18Tnominal~32Tsimulated~%")
+    (format #t "~4Tpattern~18Tprobability~32Tfrequency~%")
+    (do ((patterns pattern-list (cdr patterns)))
+        ((null? patterns))
+      (let* ((patt (car patterns))
+             (prob (cadr (assoc patt probs-list)))
+             (freq (cadr (assoc patt freqs-list))))
+        (format #t "~4T~A~18T~8,5F~32T~8,5F~%"
+                patt (inexact prob) (inexact freq))))
+    (format #t "~%")))

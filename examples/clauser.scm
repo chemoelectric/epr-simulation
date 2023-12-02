@@ -33,10 +33,10 @@ OTHER DEALINGS IN THE SOFTWARE.
            (import (matchable))))
 
 (define bell-test-angles
-  `((0 π/8)
-    (0 π3/8)
-    (π/4 π/8)
-    (π/4 π3/8)))
+  `((0 ,π/8)
+    (0 ,π3/8)
+    (,π/4 ,π/8)
+    (,π/4 ,π3/8)))
 
 (define θ₁ 0)
 (define θ₂ π/2)
