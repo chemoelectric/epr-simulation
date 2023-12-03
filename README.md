@@ -50,7 +50,7 @@ the same result as does quantum mechanics, if the solution by quantum
 mechanics were itself correct.
 
 The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
-false: it is a firmly logical impossibility.
+false: it is a logically solid impossibility.
 
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
