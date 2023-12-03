@@ -70,15 +70,16 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (define (detection-probabilities φ₁ φ₂)
   ;;
-  ;; The probabilities of detections are solved for below without
+  ;; The probabilities of detections are computed below without
   ;; quantum mechanics. This is the solution demanded by probability
-  ;; theory.
+  ;; theory. It is merely the division of possible events into their
+  ;; proper proportions.
   ;;
   ;; The calculation via quantum mechanics is merely the following,
   ;; obfuscated. The orthodoxy in physics attributes physical meaning
   ;; to this obfuscated, more difficult calculation. There is no
-  ;; physical meaning. It is simply a peculiar way to do the
-  ;; calculation.
+  ;; physical meaning. It is simply a peculiar way to do the same
+  ;; calculation as here.
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
