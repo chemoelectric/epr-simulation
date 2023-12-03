@@ -3,16 +3,10 @@
 An R⁷RS Scheme toolkit for constructing fully ‘local realistic’
 simulations of EPR-B experiments. It is donated to the public domain.
 
-The linear state space representation employed in quantum mechanics is
-primarily a limited and obfuscated way to keep track of probability
-theory calculations. *It has no physical meaning.* Here we do the
-same calculations straightforwardly and, in this case, much more
-easily and comprehensibly.
-
-(*Note: Below appear the names of 2022 Nobel Prize winners in
-Physics. Despite the Nobel Prize, the physics for which it was awarded
-is wrong. This toolkit is to help you construct simulations that prove
-it is wrong.*)
+*This toolkit is to help you construct simulations that prove widely
+accepted physics wrong, including physics for which the Nobel Prize
+was awarded in 2022. Some example simulations are included in the
+package.*
 
 ## This toolkit versus widespread beliefs
 
@@ -36,7 +30,7 @@ arguments, such as the following.
 ## The impossibility of ‘irreducibility’
 
 That there is no ‘quantum’ physics distinct from physics generally can
-actually be shown *logically* by the following argument&mdash;
+actually be shown *logically* by the following argument—
 
 Once a *physics* problem is put into words, it becomes a word
 problem in *mathematics*. It is no longer in the realm of
@@ -73,18 +67,13 @@ using quantum mechanics.
 ### Photons
 
 I shall model the light as particles, called ‘photons’. Each photon is
-plane-polarized at angle 0 or $ \pi / 2 $, but we will call the first
-case **H** for horizontal and the latter **V** for vertical. This
-notation makes the mathematics easier to read. The photons are
-generated in complementary pairs, polarized thus:
-(**H**,&thinsp;**V**) or (**V**,&thinsp;**H**).
+plane-polarized at angle 0 or π/2, but we will call the first case H
+for horizontal and the latter V for vertical. This notation makes the
+mathematics easier to read. The photons are generated in complementary
+pairs, polarized thus: (H, V) or (V, H).
 
-Let the left side be indexed 1 and the right side indexed 2, in
-whatever follows. So one might write
-
-{|
-|(photon<sub>1</sub>,&thinsp;photon<sub>2</sub>)&thinsp;&isin;&thinsp;{(**H**,&thinsp;**V**),&thinsp;(**V**,&thinsp;**H**)}
-|}
+Let the left side be subscripted ₁ and the right side subscripted ₂,
+in whatever follows.
 
 ### Two-channel polarizers
 
@@ -94,100 +83,66 @@ retransmitted into that channel. Mathematical consistency requires
 this inference. The same probability may be deduced from quantum
 mechanics.
 
-Let the angle setting of the polarizer by *&phi;*. Then the
-probability of a photon being retransmitted into the **(+)** channel
-is cos²(*&phi;*) for an **H** photon or sin²(*&phi;*) for a
-**V** photon, and into the **(&minus;)** channel is sin²(*&phi;*) for
-an **H** photon or cos²(*&phi;*) for a **V** photon.
+Let the angle setting of the polarizer by φ. Then the probability of a
+photon being retransmitted into the (+) channel is cos²(φ) for an H
+photon or sin²(φ) for a V photon, and into the (−) channel is sin²(φ)
+for an H photon or cos²(φ) for a V photon.
 
 ### Removing one of the polarizers from the problem
 
-Let us set the left and right side polarizers respectively to
-*&phi;*<sub>01</sub>&thinsp;&isin;&thinsp;&real; and
-*&phi;*<sub>02</sub>&thinsp;=&thinsp;0. In that case on the right
-side every **H** photon is retransmitted into the **(+)** channel
-and every **V** photon into the **(&minus;)** channel. Thus we can
-ignore that there is a polarizing beam splitter on that side, and
-simply map
+Let us set the left and right side polarizers respectively to φ₀₁ ∈ ℜ
+and φ₀₂ = 0. In that case on the right side every H photon is
+retransmitted into the (+) channel and every V photon into the
+(−) channel. Thus we can ignore that there is a polarizing beam
+splitter on that side, and simply map
 
-{|
-|**H**&thinsp;↦**(+)**
-|-
-|**V**&thinsp;↦**(&minus;)**
-|}
+    H ↦ (+)
+    V ↦ (−)
 
-Assign the value +1 to a photon detected in a **(+)** channel and
-&minus;1 to a photon detected in a **(&minus;)** channel. This
-choice of values makes the correlation coefficient equal the
-covariance. That is, no normalization is needed. It can be computed
-(with some care) as follows&mdash;
+Assign the value +1 to a photon detected in a (+) channel and −1 to a
+photon detected in a (−) channel. This choice of values makes the
+correlation coefficient equal the covariance. That is, no
+normalization is needed. It can be computed (with some care) as
+follows—
 
-{|
-|*&rho;* = *&rho;*<sup>++</sup> + *&rho;*<sup>+&minus;</sup> + *&rho;*<sup>&minus;+</sup> + *&rho;*<sup>&minus;&minus;</sup>
-|}
+    ρ = ½(+1)(+1) sin²φ₀₁ + ½(+1)(−1) cos²φ₀₁
+          + ½(−1)(+1) cos²φ₀₁ + ½(−1)(−1) sin²φ₀₁
 
-where
+Using a double-angle identity, and taking advantage of φ₀₂ = 0, this
+becomes
 
-{|
-|*&rho;*<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²*&phi;*<sub>01</sub>
-|-
-|*&rho;*<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²*&phi;*<sub>01</sub>
-|-
-|*&rho;*<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²*&phi;*<sub>01</sub>
-|-
-|*&rho;*<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²*&phi;*<sub>01</sub>
-|}
+    ρ = −(cos²φ₀₁ − sin²φ₀₁)
+      = −cos(2φ₀₁)
+      = −cos(2(φ₀₁ − φ₀₂))
 
-Using a double-angle identity, and taking advantage of
-*&phi;*<sub>02</sub> being equal to zero, this becomes
+In the last expression, φ₀₁ − φ₀₂ is the difference between the two
+polarizer settings. It would appear that the correlation coefficient
+is invariant as long as this difference is maintained. *This
+invariance is profound. It is what gives us the solution without
+quantum mechanics.*
 
-{|
-|*&rho;* || = &minus;(cos²*&phi;*<sub>01</sub> &minus; sin²*&phi;*<sub>01</sub>)
-|-
-|&nbsp;    || = &minus;cos&thinsp;2*&phi;*<sub>01</sub>
-|-
-|&nbsp;    || = &minus;cos&thinsp;2(*&phi;*<sub>01</sub> &minus; *&phi;*<sub>02</sub>)
-|}
-
-In the last expression,
-*&phi;*<sub>01</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>02</sub> is the
-difference between the two settings. It would appear that the
-correlation coefficient is invariant with respect to changes in the
-actual angles, as long as this difference is maintained.
-
-Let us make the invariance more formal.  Let
-&Delta;*&phi;*&thinsp;&isin;&thinsp;&real;,
-*&phi;*<sub>1</sub>&thinsp;=&thinsp;*&phi;*<sub>01</sub>&thinsp;+&thinsp;&Delta;*&phi;*,
-and
-*&phi;*<sub>2</sub>&thinsp;=&thinsp;*&phi;*<sub>02</sub>&thinsp;+&thinsp;&Delta;*&phi;*&thinsp;=&thinsp;&Delta;*&phi;*.
-Clearly *&phi;*<sub>1</sub> and *&phi;*<sub>2</sub> can be any
-angle settings of the polarizers:
-*&phi;*<sub>1</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>2</sub> =
-(*&phi;*<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;*&phi;*)&nbsp;&minus;&nbsp;(*&phi;*<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;*&phi;*) =
-*&phi;*<sub>01</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>02</sub> is
-their difference, and &Delta;*&phi;* is a shared rotational
-offset.
+Let us make the invariance more formal. Let Δφ ∈ ℜ, φ₁ = φ₀₁ + Δφ, and
+φ₂ = φ₀₂ + Δφ = Δφ.  Clearly φ₁ and φ₂ can be *any* settings of the
+polarizers: φ₁ − φ₂ = (φ₀₁ +  Δφ) − (φ₀₂ +  Δφ) = φ₀₁ − φ₀₂ is their
+difference, and Δφ is a shared rotational offset.
 
 ### The general solution, derived without quantum mechanics
 
 Thus the general formula for the correlation coefficient is
 
-{|
-|*&rho;* = &minus;cos&thinsp;2(*&phi;*<sub>1</sub> &minus; *&phi;*<sub>2</sub>)
-|}
+    ρ = −cos(2(φ₁ − φ₂))
 
-for any
-*&phi;*<sub>1</sub>,&thinsp;*&phi;*<sub>2</sub>&thinsp;&isin;&thinsp;&real;.
+for any φ₁, φ₂ ∈ ℜ.
 
 This result is the same as that obtained by quantum mechanics. It had
 to be: all mathematical methods, applied to the same problem, must
 reach the same result.
 
-Physicists compute this function *only* by quantum mechanics, call
-it ‘quantum correlation’, and think it peculiarly ‘quantum’. However,
-let us suppose they had noticed you could rotate the polarizing beam
-splitter (PBS) settings together, without affecting the correlation,
-so that one of the PBS was at zero degrees. Then they could have
-worked backwards and found the derivation given above. They would thus
-have proven that ‘quantum correlation’ is in fact simply the
-‘correlation’ and that Einstein, Podolsky, and Rosen were correct.
+Physicists currently (2023) compute this function *only* by quantum
+mechanics, call it ‘quantum correlation’, and think it peculiarly
+‘quantum’. However, let us suppose they had noticed you could rotate
+the polarizer settings together, without affecting the correlation, so
+one of the polarizers was at zero degrees. One could then have worked
+backwards and found the derivation given above, thus proving that
+‘quantum correlation’ is simply the correlation, and that Einstein,
+Podolsky, and Rosen were correct.
