@@ -9,10 +9,7 @@ theory calculations. ''It has no physical meaning.'' Here we do the
 same calculations straightforwardly and, in this case, much more
 easily and comprehensibly.
 
-(''Note: Below appear the names of 2022 Nobel Prize winners in
-Physics. Despite the Nobel Prize, the physics for which it was awarded
-is wrong. This toolkit is to help you construct simulations that prove
-it is wrong.'')
+(''Note: Below appear the names of 2022 Nobel Prize winners in Physics. Despite the Nobel Prize, the physics for which it was awarded is wrong. This toolkit is to help you construct simulations that prove it is wrong.'')
 
 == This toolkit versus the orthodoxy ==
 
