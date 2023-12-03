@@ -206,13 +206,5 @@ settings, but the correlation coefficient depends only on the
 difference between settings.
 
 Of course, one might argue I have shown only that ‘entanglement’,
-etc., are not ''necessary'' to explain the correlations. But let us
-not be silly. There might be particles moving through
-polarizers. There might be continuous electromagnetic waves moving
-through polarizers, with photodetectors that trigger randomly (a
-‘local realistic’ model by A.&nbsp;F. Kracklauer that also gives the
-correct result). But there ''is no'' action at a distance, for
-including action at a distance in the whole of human knowledge would
-cause logical paradoxes. (Thus it should ''never'' be entertained.)
-Whatever the actual mechanism, it would not be ‘quantum’ (non-local
-preposterous) but rather ‘local realistic’ (action by contact).
+etc., are not ''necessary'' to explain the correlations. Such an
+argument could be used to define the term ‘desperation’.
