@@ -11,20 +11,24 @@ easily and comprehensibly.
 
 (''Note: Below appear the names of 2022 Nobel Prize winners in Physics. Despite the Nobel Prize, the physics for which it was awarded is wrong. This toolkit is to help you construct simulations that prove it is wrong.'')
 
-== This toolkit versus the orthodoxy ==
+== This toolkit versus widespread beliefs ==
 
-The orthodox belief in physics (in 2023) is that experiments of the
-type conducted by Alain Aspect are distinctly ‘quantum’ and distinct
-from ‘classical’ physics. There is supposed to be an ‘entangled pair’
+Widespread belief in physics (in 2023) is that experiments of the type
+conducted by Alain Aspect are distinctly ‘quantum’ and distinct from
+‘classical’ physics. There is supposed to be an ‘entangled pair’
 rather than distinct particles, and ‘instantaneous action at a
 distance’ resulting in distinct particles.
 
-All of this is easily proven to be nonsense, for instance empirically
-by simulations constructed using this toolkit.
+All of this is easily proven false, for instance empirically by
+simulations constructed using this toolkit.
 
-That the nonsense is held true by the orthodoxy is not evidence in its
-favor. Belief in orthodoxy is not scientific method, it is deference
-to authority. To use this package is scientific method.
+Widespread belief is not evidence in favor of a theory. Belief in
+orthodoxy is not scientific method, it is deference to authority. To
+conduct experiments by writing simulations is an example of scientific
+method.
+
+Another example of scientific method is to make solid logical
+arguments, such as the following.
 
 == The impossibility of ‘irreducibility’ ==
 
@@ -49,15 +53,17 @@ the same result as does quantum mechanics, if the solution by quantum
 mechanics were itself correct.
 
 The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
-false: it is a logical impossibility.
+false: it is a firmly logical impossibility.
 
-Thus, in the published papers (such as those by J.S. Bell, John
-Clauser, etc.) where a solution for EPR-B correlations is reached that
-is different from what quantum mechanics gives, the authors ''have''
-made mathematical errors. The solution from quantum mechanics ''is''
-correct, therefore their solutions are wrong. I will prove the
-solution given by quantum mechanics&mdash;by deriving it below, but
-''without'' using quantum mechanics.
+Thus, in the published papers (such as those by J. S. Bell, John
+Clauser, etc.) where a ‘local realistic’ solution for EPR-B
+correlations is reached that is different from what quantum mechanics
+gives, the authors ''definitely'' have made errors. There is not the
+least doubt about it, because the solution from quantum mechanics
+''is'' correct.
+
+I will prove that below, by deriving the same expression ''without''
+using quantum mechanics.
 
 == The correlation coefficient of the two-channel optical Bell test ==
 
