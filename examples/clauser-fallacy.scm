@@ -140,8 +140,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; represent the difference between settings. This is then the
   ;; general answer, believe it or not. Adding any necessary number Δφ
   ;; to both φ₁ and φ₂ covers all possible cases. This should have
-  ;; become obvious from the correlation expression itself, and worked
-  ;; backwards to a proof of EPR!)
+  ;; become obvious from the correlation expression itself
+  ;; [-cos(2(φ₁-φ₂))] and worked backwards to a proof of EPR! The
+  ;; expression is invariant under such rotations by Δφ.)
   ;;
   (define (get-prob pattern)
     (cadr (assoc pattern probabilities)))
@@ -156,7 +157,34 @@ OTHER DEALINGS IN THE SOFTWARE.
     (- (+ PH+V+ PH-V- PV+H+ PV-H-)
        (+ PH+V- PH-V+ PV+H- PV-H+))))
 
-  
+(define (photon->symbol phot)
+  (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
+
+(define (simulate-one-event pbs₁ pbs₂)
+
+  (let*-values (((phot₁ phot₂) (photon-pair-source θH θV))
+
+                ((detect₁+ _detect₁-)
+                 ;; phot₁ simply gets counted. (The following is
+                 ;; equivalent to a PBS set to zero.)
+                 (if (eq? (photon->symbol phot₁) 'H)
+                     (values #t #f)
+                     (values #f #t)))
+
+                ;; But phot₂ goes through two PBSes.
+                ((phot₂+ phot₂-) (pbs-activity pbs₁ phot₂))
+                ((detect₂++ _detect₂+-) (pbs-activity pbs₂ phot₂+))
+                ((detect₂-+ _detect₂--) (pbs-activity pbs₂ phot₂-)))
+
+    (let ((detect₂+ (or detect₂++ detect₂-+))
+          (detect₂- (or detect₂+- detect₂--)))
+
+      ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
+      ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
+      ;; etc.
+      `(,(photon->symbol phot₁) ,(if detect₁+ '+ '-)
+        ,(photon->symbol phot₂) ,(if detect₂+ '+ '-)))))
+
 
 ;; (define (simulate-one-event φ₁ φ₂)
 ;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME: Simulate the Clauser experiment.

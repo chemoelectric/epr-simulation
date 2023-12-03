@@ -9,64 +9,60 @@ theory calculations. ''It has no physical meaning.'' Here we do the
 same calculations straightforwardly and, in this case, much more
 easily and comprehensibly.
 
+(Note: Below appear the names of 2022 Nobel Prize winners in
+Physics. Despite the Nobel Prize, the physics for which it was awarded
+is wrong. This toolkit is to help you construct simulations that prove
+it is wrong.)
+
 == This toolkit versus the orthodoxy ==
 
 The orthodox belief in physics (in 2023) is that experiments of the
-type conducted by 2022 Nobel laureate Alain Aspect are distinctly
-‘quantum’ and prove the existence of this distinction from ‘classical’
-physics. There is supposed to be a kind of ‘entanglement’ rather than
-distinct particles, and action at a distance that resolves the
-‘entanglement’ into distinct particles.
+type conducted by Alain Aspect are distinctly ‘quantum’ and distinct
+from ‘classical’ physics. There is supposed to be an ‘entangled pair’
+rather than distinct particles, and ‘instantaneous action at a
+distance’ resulting in distinct particles.
 
 All of this is easily proven to be nonsense, for instance empirically
 by simulations constructed using this toolkit.
 
 That the nonsense is held true by the orthodoxy is not evidence in its
-favor. It is evidence that something has gone terribly wrong in our
-society.
+favor. Belief in orthodoxy is not scientific method, it is deference
+to authority. To use this package is scientific method.
 
 == The impossibility of ‘irreducibility’ ==
 
-That there actually is no ‘quantum’ physics distinct from physics
-generally is easily shown by the following argument—
+That there is no ‘quantum’ physics distinct from physics generally can
+actually be shown ''logically'' by the following argument&mdash;
 
 Once a ''physics'' problem is put into words, it becomes a word
 problem in ''mathematics''. It is no longer in the realm of
-physics. As ''mathematics'', the problem is subject to the rules of
-''that'' field of study. One of those rules is that mathematics has no
-fixed subject matter. Any problem in mathematics can be translated
-into an endless number of problems concerning different
-topics. Furthermore, any method used to solve a problem must arrive at
-the same conclusion as any other.
+physics. As ''mathematics'', the problem is subject to the principles
+of ''that'' field of study. One of those principles is that
+mathematics has no fixed subject matter. Any problem in mathematics
+can be translated into an endless number of problems concerning
+different topics. Furthermore, any method used to solve a problem must
+arrive at the same conclusion as any other.
 
 Thus a problem in ‘quantum’ physics can be converted to, say, a
-problem about Girl Scouts delivering cookies to their customers. The
+problem about Girl Scouts delivering cookies to their customers, or a
+problem about radio signals, or a problem about abstract symbols. The
 new problem may be a contrived one, but the conversion ''can'' be
-done. Also, any method used to solve the problem must arrive at the
-same result as does quantum mechanics, if the solution by quantum
-mechanics be correct. In published papers where a different solution
-is reached (those by J.S. Bell, 2022 Nobel laureate John Clauser,
-etc.), the authors ''have'' made mathematical errors.
+done. Also, any method used to solve the problem ''must'' arrive at
+the same result as does quantum mechanics, if the solution by quantum
+mechanics were itself correct.
 
 The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
-false. It is a logical impossibility.
+false: it is a logical impossibility.
 
-However, university students in physics are not taught to use logic or
-scientific method. They are taught to be orthodox. They will quote
-existing literature and cite peer review. They will do yet more
-experiments based on that faulty literature. They will not attempt
-disproof of the faulty mathematics. They will not run novel
-experiments, such as simulations made using this toolkit, or any of
-the many mechanical and electronic equivalents to the Bell test one
-can invent. (See, for instance, my own ‘Stern-Gerlach Shutters’.)
+Thus, in the published papers (such as those by J.S. Bell, John
+Clauser, etc.) where a solution for EPR-B correlations is reached that
+is different from what quantum mechanics gives, the authors ''have''
+made mathematical errors. The solution from quantum mechanics ''is''
+correct, therefore their solutions are wrong. I will prove the
+solution given by quantum mechanics&mdash;by deriving it below, but
+''without'' using quantum mechanics.
 
 == The correlation coefficient of the two-channel optical Bell test ==
-
-Here I shall prove logically that the two-channel optical Bell test,
-of the kind conducted by Alain Aspect in the early 1980s, is not
-‘quantum’. It is not even ‘statistical mechanical’. It is not even
-‘standing waves’, as apparently some have tried to model it. It is
-merely pulses of light moving through polarizers.
 
 === Photons ===
 
@@ -105,7 +101,7 @@ Let us set the left and right side polarizers respectively to
 ''&phi;''<sub>02</sub>&thinsp;=&thinsp;0. In that case on the right
 side every '''H''' photon is retransmitted into the '''(+)''' channel
 and every '''V''' photon into the '''(&minus;)''' channel. Thus we can
-ignore that there is a beam-splitting polarizer on that side, and
+ignore that there is a polarizing beam splitter on that side, and
 simply map
 
 {|
@@ -153,14 +149,6 @@ difference between the two settings. It would appear that the
 correlation coefficient is invariant with respect to changes in the
 actual angles, as long as this difference is maintained.
 
-This fact somehow has escaped notice of the physics orthodoxy, even
-though it should be apparent from the more general solution, even if
-it were obtained by quantum mechanics. Using the invariance, one can
-work ''backwards'' to the particular solution for
-''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub>, and
-so know how to derive the same result ''without'' using quantum
-mechanics!
-
 Let us make the invariance more formal.  Let
 &Delta;''&phi;''&thinsp;&isin;&thinsp;&real;,
 ''&phi;''<sub>1</sub>&thinsp;=&thinsp;''&phi;''<sub>01</sub>&thinsp;+&thinsp;&Delta;''&phi;'',
@@ -189,22 +177,11 @@ This result is the same as that obtained by quantum mechanics. It had
 to be: all mathematical methods, applied to the same problem, must
 reach the same result.
 
-According to the physics orthodoxy, however, it is not possible for us
-to have derived this result from a ‘local realistic’ model of the
-experiment. The orthodoxy is wrong. We just did it. Furthermore, as I
-have already pointed out, they could have worked backwards from the
-answer&mdash;which they already had by other means&mdash;to infer the
-derivation above.
-
-There is no ‘entanglement’. There is no action at a distance (a notion
-no physicist should ever have entertained as possible). There is
-nothing complicated about the experiment. Photons simply encounter
-two-channel polarizers and are retransmitted into one channel or the
-other. Nothing could be simpler. The probabilities of photons being
-retransmitted into particular channels depends on the respective
-settings, but the correlation coefficient depends only on the
-difference between settings.
-
-Of course, one might argue I have shown only that ‘entanglement’,
-etc., are not ''necessary'' to explain the correlations. Such an
-argument could be used to define the term ‘desperation’.
+Physicists compute this function ''only'' by quantum mechanics, call
+it ‘quantum correlation’, and think it peculiarly ‘quantum’. However,
+let us suppose they had noticed you could rotate the polarizing beam
+splitter (PBS) settings together, without affecting the correlation,
+so that one of the PBS was at zero degrees. Then they could have
+worked backwards and found the derivation given above. They would thus
+have proven that ‘quantum correlation’ is in fact simply the
+‘correlation’ and that Einstein, Podolsky, and Rosen were correct.
