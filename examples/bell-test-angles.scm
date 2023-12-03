@@ -119,7 +119,7 @@ OTHER DEALINGS IN THE SOFTWARE.
     `(,(photon->symbol phot₁) ,(if detect₁+ '+ '-)
       ,(photon->symbol phot₂) ,(if detect₂+ '+ '-))))
 
-(define *events-per-test-angle* (make-parameter 100000))
+(define *events-per-test-angle* (make-parameter 1000000))
 
 (define (detection-frequencies φ₁ φ₂)
   ;; Simulate events and compute frequencies of the different

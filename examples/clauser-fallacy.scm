@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ;;;
 ;;;               Author : Barry Schwartz
-;;; Date first completed : ??????????????????????
+;;; Date first completed : 3 December 2023
 ;;;
 ;;; Simulation of what the mistaken analysis of John Clauser and
 ;;; others ACTUALLY seems to represent. See, for instance,
@@ -161,61 +161,165 @@ OTHER DEALINGS IN THE SOFTWARE.
   (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
 
 (define (simulate-one-event pbs₁ pbs₂)
-
   (let*-values (((phot₁ phot₂) (photon-pair-source θH θV))
-
-                ((detect₁+ _detect₁-)
-                 ;; phot₁ simply gets counted. (The following is
-                 ;; equivalent to a PBS set to zero.)
-                 (if (eq? (photon->symbol phot₁) 'H)
-                     (values #t #f)
-                     (values #f #t)))
-
+                ;; phot₁ simply gets counted. (The following is
+                ;; equivalent to a PBS set to zero.)
+                ((detect₁+) (eq? (photon->symbol phot₁) 'H))
                 ;; But phot₂ goes through two PBSes.
                 ((phot₂+ phot₂-) (pbs-activity pbs₁ phot₂))
-                ((detect₂++ _detect₂+-) (pbs-activity pbs₂ phot₂+))
-                ((detect₂-+ _detect₂--) (pbs-activity pbs₂ phot₂-)))
+                ((detect₂+ _detect₂-)
+                 (if phot₂+
+                     (pbs-activity pbs₂ phot₂+)
+                     (pbs-activity pbs₂ phot₂-))))
+    ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
+    ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
+    ;; etc.
+    `(,(photon->symbol phot₁) ,(if detect₁+ '+ '-)
+      ,(photon->symbol phot₂) ,(if detect₂+ '+ '-))))
 
-    (let ((detect₂+ (or detect₂++ detect₂-+))
-          (detect₂- (or detect₂+- detect₂--)))
+(define *events-per-test-angle* (make-parameter 1000000))
 
-      ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
-      ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
-      ;; etc.
-      `(,(photon->symbol phot₁) ,(if detect₁+ '+ '-)
-        ,(photon->symbol phot₂) ,(if detect₂+ '+ '-)))))
+(define (detection-frequencies φ₁ φ₂)
+  ;; Simulate events and compute frequencies of the different
+  ;; detection patterns.
 
+  ;; The first PBS outputs photons whose polarization angles we need
+  ;; to take into account.
+  (define pbs₁ (make-pbs φ₁ φ₁ (+ φ₁ π/2)))
 
-;; (define (simulate-one-event φ₁ φ₂)
-;;   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME: Simulate the Clauser experiment.
-;;   (define pbs₁ (make-pbs φ₁))
-;;   (define pbs₂ (make-pbs φ₂))
-;;   (let*-values (((phot₁ phot₂) (photon-pair-source θ₁ θ₂))
-;;                 ((detect₁+ _detect₁-) (pbs-activity pbs₁ phot₁))
-;;                 ((detect₂+ _detect₂-) (pbs-activity pbs₂ phot₂)))
-;;     `((,phot₁ ,(if detect₁+ '+ '-))
-;;       (,phot₂ ,(if detect₂+ '+ '-)))))
+  ;; The second PBS outputs photons into photodetectors. We can ignore
+  ;; polarization.
+  (define pbs₂ (make-pbs φ₂))
 
-;; (write (quantum-mechanical-probabilities 0 π/8))(newline)
-(write (compute-correlation (detection-probabilities 0 π/8)))(newline)
-(write (compute-correlation (detection-probabilities π/4 π/8)))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
-;; (write (simulate-one-event 0 π/8))(newline)
+  (define N (*events-per-test-angle*))
+  (define NH+V+ 0) (define NH+V- 0)
+  (define NH-V+ 0) (define NH-V- 0)
+  (define NV+H+ 0) (define NV+H- 0)
+  (define NV-H+ 0) (define NV-H- 0)
+  (do ((i 0 (+ i 1)))
+      ((= i N))
+    (match (simulate-one-event pbs₁ pbs₂)
+      ('(H + V +) (set! NH+V+ (+ NH+V+ 1)))
+      ('(H + V -) (set! NH+V- (+ NH+V- 1)))
+      ('(H - V +) (set! NH-V+ (+ NH-V+ 1)))
+      ('(H - V -) (set! NH-V- (+ NH-V- 1)))
+      ('(V + H +) (set! NV+H+ (+ NV+H+ 1)))
+      ('(V + H -) (set! NV+H- (+ NV+H- 1)))
+      ('(V - H +) (set! NV-H+ (+ NV-H+ 1)))
+      ('(V - H -) (set! NV-H- (+ NV-H- 1)))))
+  ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
+  ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
+  ;; etc.
+  `(((H + V +) ,(/ NH+V+ N))
+    ((H + V -) ,(/ NH+V- N))
+    ((H - V +) ,(/ NH-V+ N))
+    ((H - V -) ,(/ NH-V- N))
+    ((V + H +) ,(/ NV+H+ N))
+    ((V + H -) ,(/ NV+H- N))
+    ((V - H +) ,(/ NV-H+ N))
+    ((V - H -) ,(/ NV-H- N))))
+
+(define (estimate-correlation detection-freqs)
+  ;; Use detection frequencies and trigonometry to estimate the value
+  ;; of -cos(2(φ₁-φ₂)=-(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)).
+  (define (get-freq pattern)
+    (cadr (assoc pattern detection-freqs)))
+  (let ((fH+V+ (get-freq '(H + V +)))
+        (fH+V- (get-freq '(H + V -)))
+        (fH-V+ (get-freq '(H - V +)))
+        (fH-V- (get-freq '(H - V -)))
+        (fV+H+ (get-freq '(V + H +)))
+        (fV+H- (get-freq '(V + H -)))
+        (fV-H+ (get-freq '(V - H +)))
+        (fV-H- (get-freq '(V - H -))))
+    ;; Compute estimates of products of squares of cosines and sines.
+    (let ((cos²φ₁sin²φ₂ (+ fH+V+ fV-H-))
+          (cos²φ₁cos²φ₂ (+ fH+V- fV-H+))
+          (sin²φ₁sin²φ₂ (+ fH-V+ fV+H-))
+          (sin²φ₁cos²φ₂ (+ fH-V- fV+H+)))
+      ;; Take square roots. All the test angles are in Quadrant I, and
+      ;; so only positive square roots will be needed. (Be careful!
+      ;; You have to account for the quadrants of φ₁ and φ₂, and so
+      ;; sometimes need a NEGATIVE square root when doing this kind of
+      ;; calculation.)
+      (let ((cosφ₁sinφ₂ (sqrt cos²φ₁sin²φ₂))
+            (cosφ₁cosφ₂ (sqrt cos²φ₁cos²φ₂))
+            (sinφ₁sinφ₂ (sqrt sin²φ₁sin²φ₂))
+            (sinφ₁cosφ₂ (sqrt sin²φ₁cos²φ₂)))
+        ;; Use angle-difference identities. See, for instance, the CRC
+        ;; Handbook of Mathematical Sciences, 6th edition, page 170.
+        (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
+              (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
+          ;; That is it. We have everthing we need.
+          (- (square sin<φ₁-φ₂>) (square cos<φ₁-φ₂>)))))))
+
+(define (angle->string angle)
+  (let* ((angle/π (/ angle π))
+         (angle/π*64 (* 64 angle/π))
+         (iangle/π*64 (round angle/π*64))
+         (diff (abs (- angle/π*64 iangle/π*64)))
+         (exact-enough (<= diff (* 500 fl-epsilon
+                                   (abs angle/π*64)))))
+    (string-append
+     "π×" (let ((angle/π (if exact-enough (exact angle/π) angle/π)))
+            (number->string angle/π)))))
+
+(define pattern-list
+  '((H + V +) (H + V -) (H - V +) (H - V -)
+    (V + H +) (V + H -) (V - H +) (V - H -)))
+
+(format #t "~%")
+
+(format #t "~2Tlegend:~%")
+(format #t "~2T  (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "~2T             vertical photon in (+) channel of pbs₂,~%")
+(format #t "~2T  (H + V -)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "~2T             vertical photon in (-) channel of pbs₂, etc.~%")
+
+;;; See
+;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
+(define S-nominal 0)   ;; For computing a CHSH contrast.
+(define S-estimated 0) ;; For computing a CHSH contrast.
+(define i 1)           ;; For computing a CHSH contrast.
+
+(format #t "~%")
+(do ((test-angles bell-test-angles (cdr test-angles)))
+    ((null? test-angles))
+  (let* ((φ₁ (caar test-angles))
+         (φ₂ (cadar test-angles))
+         (probs-list (detection-probabilities φ₁ φ₂))
+         (freqs-list (detection-frequencies φ₁ φ₂))
+         (nominal-correlation (compute-correlation probs-list))
+         (estimated-correlation (estimate-correlation freqs-list)))
+    (set! S-nominal
+      ((if (= i 2) - +) S-nominal nominal-correlation))
+    (set! S-estimated
+      ((if (= i 2) - +) S-estimated estimated-correlation))
+    (set! i (+ i 1))
+    (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
+            (angle->string φ₁) (angle->string φ₂))
+    (format #t "                       nominal     simulated~%")
+    (do ((patterns pattern-list (cdr patterns)))
+        ((null? patterns))
+      (let* ((patt (car patterns))
+             (prob (cadr (assoc patt probs-list)))
+             (freq (cadr (assoc patt freqs-list))))
+        (format #t "  ~A freq~14,5@F~14,5@F~%"
+                patt (inexact prob) (inexact freq))))
+    (format #t "   \"correlation\"~14,5@F~14,5@F~%"
+            nominal-correlation estimated-correlation)
+    (format #t "~%")))
+(format #t "                       nominal     simulated~%")
+(format #t "    CHSH S value~14,5@F~14,5@F~%"
+        S-nominal S-estimated)
+(format #t "~%")
+(format #t "  (See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
+(format #t "  for a discussion in which an experiment of the kind~%")
+(format #t "  simulated here is mistaken for an EPR-B Bell test.~%")
+(format #t "  Notice the simulation does NOT produce the predicted~%")
+(format #t "  frequencies of events, but DOES approximate the~%")
+(format #t "  predicted correlations. This happens because Clauser-~%")
+(format #t "  style calculations of the correlation coefficient are~%")
+(format #t "  done incorrectly, and give answers for an experiment~%")
+(format #t "  such as we simulate here, instead of the Bell test.)~%")
+(format #t "~%")
