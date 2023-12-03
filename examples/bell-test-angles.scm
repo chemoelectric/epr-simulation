@@ -70,22 +70,15 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (define (detection-probabilities φ₁ φ₂)
   ;;
-  ;; The probabilities of detections are solved for below easily,
-  ;; without quantum mechanics. NO OTHER SOLUTIONS ARE POSSIBLE. They
-  ;; are required for mathematical consistency.
+  ;; The probabilities of detections are solved for below without
+  ;; quantum mechanics. This is the solution demanded by probability
+  ;; theory.
   ;;
-  ;; The calculation via quantum mechanics is merely the following
-  ;; made more difficult. One factors the probabilities into complex
-  ;; conjugate pairs, then uses those factors as amplitudes of vector
-  ;; components in a linear state space. In the end, one multiplies
-  ;; conjugate pairs of calculated amplitudes and thus gets back
-  ;; probabilities.
-  ;;
-  ;; The orthodoxy in physics attributes physical meaning to these
-  ;; vector components, their linear combinations, and their
-  ;; amplitudes. There is no physical meaning. The orthodoxy is
-  ;; wrong. They also do not know probability theory nor understand
-  ;; what they are doing with their linear algebra.
+  ;; The calculation via quantum mechanics is merely the following,
+  ;; obfuscated. The orthodoxy in physics attributes physical meaning
+  ;; to this obfuscated, more difficult calculation. There is no
+  ;; physical meaning. It is simply a peculiar way to do the
+  ;; calculation.
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
@@ -97,14 +90,21 @@ OTHER DEALINGS IN THE SOFTWARE.
     ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
     ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
     ;; etc.
-    `(((H + V +) ,(* PH₁V₂ PH₁+ PV₂+))
-      ((H + V -) ,(* PH₁V₂ PH₁+ PV₂-))
-      ((H - V +) ,(* PH₁V₂ PH₁- PV₂+))
-      ((H - V -) ,(* PH₁V₂ PH₁- PV₂-))
-      ((V + H +) ,(* PV₁H₂ PV₁+ PH₂+))
-      ((V + H -) ,(* PV₁H₂ PV₁+ PH₂-))
-      ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
-      ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
+    (let ((probs `(((H + V +) ,(* PH₁V₂ PH₁+ PV₂+))
+                   ((H + V -) ,(* PH₁V₂ PH₁+ PV₂-))
+                   ((H - V +) ,(* PH₁V₂ PH₁- PV₂+))
+                   ((H - V -) ,(* PH₁V₂ PH₁- PV₂-))
+                   ((V + H +) ,(* PV₁H₂ PV₁+ PH₂+))
+                   ((V + H -) ,(* PV₁H₂ PV₁+ PH₂-))
+                   ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
+                   ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
+
+      ;; Sanity check: verify that the probabilities add up to 1.
+      (let ((sum (apply + (map cadr probs))))
+        (unless (<= (abs (- sum 1)) (* 500 fl-epsilon))
+          (error "detection-probabilities: probabilities do not add up to 1")))
+
+      probs)))
 
 (define (photon->symbol phot)
   (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
