@@ -25,6 +25,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 |#
 
 ;;;
+;;;               Author : Barry Schwartz
+;;; Date first completed : 2 December 2023
+;;;
 ;;; Simulation of a two-channel optical Bell test. See, for instance,
 ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
 ;;;
@@ -42,19 +45,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;    (2) All methods must reach the same result. Therefore quantum
 ;;;        mechanics NEVER is necessary to solve a problem.
 ;;;
-;;; All the activity is ‘local realistic’.
-;;;
-;;; (The alternative to ‘local realistic’ is ‘non-local preposterous’,
-;;; which future generations will mock relentlessly. ‘Instantaneous
-;;; action at a distance’ had to be and was eliminated both from
-;;; Galilean relativity and Newton’s law of universal gravitation, for
-;;; otherwise there is a gap in the structure of human knowledge. The
-;;; person who did both eliminations was Albert Einstein. But then
-;;; ‘instantaneous action at a distance’ was restored by the risible,
-;;; incredible incompetence of those who did not take seriously the
-;;; argument of Einstein, Podolsky, and Rosen (EPR). A better argument
-;;; is (1) and (2) above, but the argument of EPR should have sufficed
-;;; until this, likely unshakeable one was found.)
+;;; All the activity is ‘local realistic’. (The author will not accept
+;;; the existence of ‘instantaneous action at a distance’.)
 ;;;
 
 (import (scheme base)
@@ -260,8 +252,8 @@ OTHER DEALINGS IN THE SOFTWARE.
         S-nominal S-estimated)
 (format #t "~%")
 (format #t "  (See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
-(format #t "  for a page concerning the claim this result cannot be~%")
+(format #t "  for a page making the false claim this result cannot be~%")
 (format #t "  gotten without ‘quantum entanglement’. Note ‘quantum~%")
-(format #t "  correlation’ is simply the correlation coefficient.~%")
-(format #t "  There is nothing ‘quantum’ about it.)~%")
+(format #t "  correlation’ is simply the correlation coefficient when~%")
+(format #t "  computed by quantum mechanics rather than other means.)~%")
 (format #t "~%")
