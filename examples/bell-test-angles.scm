@@ -50,7 +50,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;
 
 (import (scheme base)
-        (scheme case-lambda)
         (scheme write)
         (only (srfi 144) fl-epsilon)
         (epr-simulation))
