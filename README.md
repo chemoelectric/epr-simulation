@@ -1,17 +1,20 @@
-=epr-simulation=
+# epr-simulation
 
 An R⁷RS Scheme toolkit for constructing fully ‘local realistic’
 simulations of EPR-B experiments. It is donated to the public domain.
 
 The linear state space representation employed in quantum mechanics is
 primarily a limited and obfuscated way to keep track of probability
-theory calculations. ''It has no physical meaning.'' Here we do the
+theory calculations. *It has no physical meaning.* Here we do the
 same calculations straightforwardly and, in this case, much more
 easily and comprehensibly.
 
-(''Note: Below appear the names of 2022 Nobel Prize winners in Physics. Despite the Nobel Prize, the physics for which it was awarded is wrong. This toolkit is to help you construct simulations that prove it is wrong.'')
+(*Note: Below appear the names of 2022 Nobel Prize winners in
+Physics. Despite the Nobel Prize, the physics for which it was awarded
+is wrong. This toolkit is to help you construct simulations that prove
+it is wrong.*)
 
-== This toolkit versus widespread beliefs ==
+## This toolkit versus widespread beliefs
 
 Widespread belief in physics (in 2023) is that experiments of the type
 conducted by Alain Aspect are distinctly ‘quantum’ and distinct from
@@ -30,15 +33,15 @@ method.
 Another example of scientific method is to make solid logical
 arguments, such as the following.
 
-== The impossibility of ‘irreducibility’ ==
+## The impossibility of ‘irreducibility’
 
 That there is no ‘quantum’ physics distinct from physics generally can
-actually be shown ''logically'' by the following argument&mdash;
+actually be shown *logically* by the following argument&mdash;
 
-Once a ''physics'' problem is put into words, it becomes a word
-problem in ''mathematics''. It is no longer in the realm of
-physics. As ''mathematics'', the problem is subject to the principles
-of ''that'' field of study. One of those principles is that
+Once a *physics* problem is put into words, it becomes a word
+problem in *mathematics*. It is no longer in the realm of
+physics. As *mathematics*, the problem is subject to the principles
+of *that* field of study. One of those principles is that
 mathematics has no fixed subject matter. Any problem in mathematics
 can be translated into an endless number of problems concerning
 different topics. Furthermore, any method used to solve a problem must
@@ -47,8 +50,8 @@ arrive at the same conclusion as any other.
 Thus a problem in ‘quantum’ physics can be converted to, say, a
 problem about Girl Scouts delivering cookies to their customers, or a
 problem about radio signals, or a problem about abstract symbols. The
-new problem may be a contrived one, but the conversion ''can'' be
-done. Also, any method used to solve the problem ''must'' arrive at
+new problem may be a contrived one, but the conversion *can* be
+done. Also, any method used to solve the problem *must* arrive at
 the same result as does quantum mechanics, if the solution by quantum
 mechanics were itself correct.
 
@@ -58,32 +61,32 @@ false: it is a firmly logical impossibility.
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
 correlations is reached that is different from what quantum mechanics
-gives, the authors ''definitely'' have made errors. There is not the
+gives, the authors *definitely* have made errors. There is not the
 least doubt about it, because the solution from quantum mechanics
-''is'' correct.
+*is* correct.
 
-I will prove that below, by deriving the same expression ''without''
+I will prove that below, by deriving the same expression *without*
 using quantum mechanics.
 
-== The correlation coefficient of the two-channel optical Bell test ==
+## The correlation coefficient of the two-channel optical Bell test
 
-=== Photons ===
+### Photons
 
 I shall model the light as particles, called ‘photons’. Each photon is
-plane-polarized at angle 0 or ''&pi;''/2, but we will call the first
-case '''H''' for horizontal and the latter '''V''' for vertical. This
+plane-polarized at angle 0 or $ \pi / 2 $, but we will call the first
+case **H** for horizontal and the latter **V** for vertical. This
 notation makes the mathematics easier to read. The photons are
 generated in complementary pairs, polarized thus:
-('''H''',&thinsp;'''V''') or ('''V''',&thinsp;'''H''').
+(**H**,&thinsp;**V**) or (**V**,&thinsp;**H**).
 
 Let the left side be indexed 1 and the right side indexed 2, in
 whatever follows. So one might write
 
 {|
-|(photon<sub>1</sub>,&thinsp;photon<sub>2</sub>)&thinsp;&isin;&thinsp;{('''H''',&thinsp;'''V'''),&thinsp;('''V''',&thinsp;'''H''')}
+|(photon<sub>1</sub>,&thinsp;photon<sub>2</sub>)&thinsp;&isin;&thinsp;{(**H**,&thinsp;**V**),&thinsp;(**V**,&thinsp;**H**)}
 |}
 
-=== Two-channel polarizers ===
+### Two-channel polarizers
 
 The intensity of the light in a polarizer’s channel, by the Law of
 Malus, is inferred to be the probability of a photon being
@@ -91,96 +94,96 @@ retransmitted into that channel. Mathematical consistency requires
 this inference. The same probability may be deduced from quantum
 mechanics.
 
-Let the angle setting of the polarizer by ''&phi;''. Then the
-probability of a photon being retransmitted into the '''(+)''' channel
-is cos²(''&phi;'') for an '''H''' photon or sin²(''&phi;'') for a
-'''V''' photon, and into the '''(&minus;)''' channel is sin²(''&phi;'') for
-an '''H''' photon or cos²(''&phi;'') for a '''V''' photon.
+Let the angle setting of the polarizer by *&phi;*. Then the
+probability of a photon being retransmitted into the **(+)** channel
+is cos²(*&phi;*) for an **H** photon or sin²(*&phi;*) for a
+**V** photon, and into the **(&minus;)** channel is sin²(*&phi;*) for
+an **H** photon or cos²(*&phi;*) for a **V** photon.
 
-=== Removing one of the polarizers from the problem ===
+### Removing one of the polarizers from the problem
 
 Let us set the left and right side polarizers respectively to
-''&phi;''<sub>01</sub>&thinsp;&isin;&thinsp;&real; and
-''&phi;''<sub>02</sub>&thinsp;=&thinsp;0. In that case on the right
-side every '''H''' photon is retransmitted into the '''(+)''' channel
-and every '''V''' photon into the '''(&minus;)''' channel. Thus we can
+*&phi;*<sub>01</sub>&thinsp;&isin;&thinsp;&real; and
+*&phi;*<sub>02</sub>&thinsp;=&thinsp;0. In that case on the right
+side every **H** photon is retransmitted into the **(+)** channel
+and every **V** photon into the **(&minus;)** channel. Thus we can
 ignore that there is a polarizing beam splitter on that side, and
 simply map
 
 {|
-|'''H'''&thinsp;↦'''(+)'''
+|**H**&thinsp;↦**(+)**
 |-
-|'''V'''&thinsp;↦'''(&minus;)'''
+|**V**&thinsp;↦**(&minus;)**
 |}
 
-Assign the value +1 to a photon detected in a '''(+)''' channel and
-&minus;1 to a photon detected in a '''(&minus;)''' channel. This
+Assign the value +1 to a photon detected in a **(+)** channel and
+&minus;1 to a photon detected in a **(&minus;)** channel. This
 choice of values makes the correlation coefficient equal the
 covariance. That is, no normalization is needed. It can be computed
 (with some care) as follows&mdash;
 
 {|
-|''&rho;'' = ''&rho;''<sup>++</sup> + ''&rho;''<sup>+&minus;</sup> + ''&rho;''<sup>&minus;+</sup> + ''&rho;''<sup>&minus;&minus;</sup>
+|*&rho;* = *&rho;*<sup>++</sup> + *&rho;*<sup>+&minus;</sup> + *&rho;*<sup>&minus;+</sup> + *&rho;*<sup>&minus;&minus;</sup>
 |}
 
 where
 
 {|
-|''&rho;''<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²''&phi;''<sub>01</sub>
+|*&rho;*<sup>++</sup> = &frac12;(+1)(+1)&thinsp;sin²*&phi;*<sub>01</sub>
 |-
-|''&rho;''<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²''&phi;''<sub>01</sub>
+|*&rho;*<sup>+&minus;</sup> = &frac12;(+1)(&minus;1)&thinsp;cos²*&phi;*<sub>01</sub>
 |-
-|''&rho;''<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²''&phi;''<sub>01</sub>
+|*&rho;*<sup>&minus;+</sup> = &frac12;(&minus;1)(+1)&thinsp;cos²*&phi;*<sub>01</sub>
 |-
-|''&rho;''<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²''&phi;''<sub>01</sub>
+|*&rho;*<sup>&minus;&minus;</sup> = &frac12;(&minus;1)(&minus;1)&thinsp;sin²*&phi;*<sub>01</sub>
 |}
 
 Using a double-angle identity, and taking advantage of
-''&phi;''<sub>02</sub> being equal to zero, this becomes
+*&phi;*<sub>02</sub> being equal to zero, this becomes
 
 {|
-|''&rho;'' || = &minus;(cos²''&phi;''<sub>01</sub> &minus; sin²''&phi;''<sub>01</sub>)
+|*&rho;* || = &minus;(cos²*&phi;*<sub>01</sub> &minus; sin²*&phi;*<sub>01</sub>)
 |-
-|&nbsp;    || = &minus;cos&thinsp;2''&phi;''<sub>01</sub>
+|&nbsp;    || = &minus;cos&thinsp;2*&phi;*<sub>01</sub>
 |-
-|&nbsp;    || = &minus;cos&thinsp;2(''&phi;''<sub>01</sub> &minus; ''&phi;''<sub>02</sub>)
+|&nbsp;    || = &minus;cos&thinsp;2(*&phi;*<sub>01</sub> &minus; *&phi;*<sub>02</sub>)
 |}
 
 In the last expression,
-''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> is the
+*&phi;*<sub>01</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>02</sub> is the
 difference between the two settings. It would appear that the
 correlation coefficient is invariant with respect to changes in the
 actual angles, as long as this difference is maintained.
 
 Let us make the invariance more formal.  Let
-&Delta;''&phi;''&thinsp;&isin;&thinsp;&real;,
-''&phi;''<sub>1</sub>&thinsp;=&thinsp;''&phi;''<sub>01</sub>&thinsp;+&thinsp;&Delta;''&phi;'',
+&Delta;*&phi;*&thinsp;&isin;&thinsp;&real;,
+*&phi;*<sub>1</sub>&thinsp;=&thinsp;*&phi;*<sub>01</sub>&thinsp;+&thinsp;&Delta;*&phi;*,
 and
-''&phi;''<sub>2</sub>&thinsp;=&thinsp;''&phi;''<sub>02</sub>&thinsp;+&thinsp;&Delta;''&phi;''&thinsp;=&thinsp;&Delta;''&phi;''.
-Clearly ''&phi;''<sub>1</sub> and ''&phi;''<sub>2</sub> can be any
+*&phi;*<sub>2</sub>&thinsp;=&thinsp;*&phi;*<sub>02</sub>&thinsp;+&thinsp;&Delta;*&phi;*&thinsp;=&thinsp;&Delta;*&phi;*.
+Clearly *&phi;*<sub>1</sub> and *&phi;*<sub>2</sub> can be any
 angle settings of the polarizers:
-''&phi;''<sub>1</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>2</sub> =
-(''&phi;''<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'')&nbsp;&minus;&nbsp;(''&phi;''<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;''&phi;'') =
-''&phi;''<sub>01</sub>&nbsp;&minus;&nbsp;''&phi;''<sub>02</sub> is
-their difference, and &Delta;''&phi;'' is a shared rotational
+*&phi;*<sub>1</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>2</sub> =
+(*&phi;*<sub>01</sub>&nbsp;+&nbsp;&thinsp;&Delta;*&phi;*)&nbsp;&minus;&nbsp;(*&phi;*<sub>02</sub>&nbsp;+&nbsp;&thinsp;&Delta;*&phi;*) =
+*&phi;*<sub>01</sub>&nbsp;&minus;&nbsp;*&phi;*<sub>02</sub> is
+their difference, and &Delta;*&phi;* is a shared rotational
 offset.
 
-=== The general solution, derived without quantum mechanics ===
+### The general solution, derived without quantum mechanics
 
 Thus the general formula for the correlation coefficient is
 
 {|
-|''&rho;'' = &minus;cos&thinsp;2(''&phi;''<sub>1</sub> &minus; ''&phi;''<sub>2</sub>)
+|*&rho;* = &minus;cos&thinsp;2(*&phi;*<sub>1</sub> &minus; *&phi;*<sub>2</sub>)
 |}
 
 for any
-''&phi;''<sub>1</sub>,&thinsp;''&phi;''<sub>2</sub>&thinsp;&isin;&thinsp;&real;.
+*&phi;*<sub>1</sub>,&thinsp;*&phi;*<sub>2</sub>&thinsp;&isin;&thinsp;&real;.
 
 This result is the same as that obtained by quantum mechanics. It had
 to be: all mathematical methods, applied to the same problem, must
 reach the same result.
 
-Physicists compute this function ''only'' by quantum mechanics, call
+Physicists compute this function *only* by quantum mechanics, call
 it ‘quantum correlation’, and think it peculiarly ‘quantum’. However,
 let us suppose they had noticed you could rotate the polarizing beam
 splitter (PBS) settings together, without affecting the correlation,
