@@ -34,30 +34,39 @@ arguments, such as the following.
 That there is no ‘quantum’ physics distinct from physics generally can
 actually be shown *logically* by the following argument—
 
-Once a *physics* problem is put into words, it becomes a word
-problem in *mathematics*. It is no longer in the realm of
-physics. As *mathematics*, the problem is subject to the principles
-of *that* field of study. One of those principles is that
-mathematics has no fixed subject matter. Any problem in mathematics
-can be translated into an endless number of problems concerning
-different topics. Furthermore, any method used to solve a problem must
-arrive at the same conclusion as any other.
+Once a *physics* problem is put into words, it becomes a word problem
+in *mathematics*. It is no longer in the realm of physics. As
+*mathematics*, the problem is subject to the principles of *that*
+field of study. One of those principles is that mathematics has no
+fixed subject matter. Any word problem in mathematics can be
+translated into an endless number of problems concerning different
+topics. Furthermore, any method used to solve a problem must arrive at
+the same conclusion as any other.
 
 Thus a problem in ‘quantum’ physics can be converted to, say, a
 problem about Girl Scouts delivering cookies to their customers, or a
 problem about radio signals, or a problem about abstract symbols. The
 new problem may be a contrived one, but the conversion *can* be
-done. Also, any method used to solve the problem *must* arrive at
-the same result as does quantum mechanics, if the solution by quantum
-mechanics were itself correct.
+done. This this is so is proven empirically by the fact a person can
+always devise a procedure to contrive the new problem. Also, any
+method used to solve the problem *must* arrive at the same result as
+does quantum mechanics, if the solution by quantum mechanics were
+itself correct. This is so because otherwise mathematics would be
+uselessly inconsistent.
 
-The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
-false: it is a logically solid impossibility.  That is, there is
-really no such thing as ‘quantum’ physics distinct from ‘classical’
-physics. There are, rather, problems that have been believed soluble
-*only* by quantum mechanical methods, but which actually can be solved
-by *any* reasonable mathematical methods—and any method used must
-reach the same result.
+What is more, quantum mechanics is itself not a fundamental
+mathematical field, but an application of linear algebra, probability
+theory, etc. Any problem in ‘quantum’ physics surely could be solved
+by someone aware of those fields of study but not of quantum mechanics
+itself.
+
+Therefore the supposed ‘irreducibility’ of ‘quantum’ physics is not
+merely false: it is so implausible we might as well declare it
+impossible. That is, there is really *no such thing* as ‘quantum’
+physics distinct from ‘classical’ physics. There are, rather, problems
+that have been believed soluble *only* by quantum mechanical methods,
+but which actually can be solved by *any* reasonable mathematical
+methods—all of which must reach the same result.
 
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
@@ -84,11 +93,11 @@ in whatever follows.
 
 ### Two-channel polarizers
 
-The intensity of the light in a polarizer’s channel, by the Law of
-Malus, is inferred to be the probability of a photon being
-retransmitted into that channel. Mathematical consistency requires
-this inference. The same probability may be deduced from quantum
-mechanics.
+The intensity of the light in a polarizer’s channel, by the [Law of
+Malus](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Malus's_law_and_other_properties),
+is inferred to be the probability of a photon being retransmitted into
+that channel. Mathematical consistency requires this inference. The
+same probability may be deduced from quantum mechanics.
 
 Let the angle setting of the polarizer by φ. Then the probability of a
 photon being retransmitted into the (+) channel is cos²(φ) for an H
