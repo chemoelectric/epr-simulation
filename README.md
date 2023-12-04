@@ -64,23 +64,27 @@ itself.
 
 Therefore the supposed ‘irreducibility’ of ‘quantum’ physics is not
 merely false: it is so implausible we might as well declare it
-impossible. That is, there is really *no such thing* as ‘quantum’
-physics distinct from ‘classical’ physics. There are, rather, problems
-that have been believed soluble *only* by quantum mechanical methods,
-but which actually can be solved by *any* reasonable mathematical
-methods—all of which must reach the same result.
+impossible. *There does not exist ‘quantum’ physics distinct from
+‘classical’ physics*. The distinction is a myth. Rather, there are
+problems that have been believed soluble *only* by quantum mechanical
+methods, but which actually can be solved by *any* reasonable
+mathematical methods—*all of which must reach the same result*.
 
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
 correlations is reached that is different from what quantum mechanics
-gives, the authors *definitely* have made errors. There is not the
-least doubt about it, because the solution from quantum mechanics
-*is* correct.
+gives, the authors *definitely* have made errors. For the solution
+from quantum mechanics *is* correct.
 
-I will prove that below, by deriving the same expression *without*
-using quantum mechanics.
+I will prove that below, by deriving the same expression
+independently.
 
 ## The correlation coefficient of the two-channel optical Bell test
+
+(*Note: I use the name* ρ *for the correlation coefficient because
+that is a common name for it in probability theory. This usage has no
+connection to the use of* ρ *in physics to represent a density
+function.*)
 
 ### Photons
 
