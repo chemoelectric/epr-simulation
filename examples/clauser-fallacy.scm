@@ -51,16 +51,23 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;; Bell’s original notation) is NOT an expectation for an EPR-B
 ;;; experiment.
 ;;;
-;;;    IT IS AN EXPECTATION FOR A SINGLE PHOTON PASSING THROUGH TWO
-;;;    POLARIZING BEAM SPLITTERS IN SERIES!
+;;;    IT IS AN EXPECTATION FOR A SINGLE PHOTON HAVING TO PASS THROUGH
+;;;    TWO POLARIZERS!
 ;;;
 ;;; This should be intuitive once pointed out. It explains why, in the
 ;;; analyses of Clauser, the correlations are supposed to disappear
 ;;; when a Bell test angle is changed from zero to π/4. An ideal
 ;;; polarizing beam splitter set to zero could literally be left out
 ;;; of the apparatus, without effect. One will get the same results as
-;;; in the EPR-B experiment. A polarizing beam splitter set to π/4, on
-;;; the other hand, will obstruct the particle beam.
+;;; in the EPR-B experiment. A polarizer set to π/4, on the other
+;;; hand, will obstruct the normal flow of the particle beam.
+;;;
+;;; In general it might be necessary to remove some of the photon
+;;; pairs from the data counted: to treat them as ‘absorbed’ by a
+;;; polarizer. The author has not thoroughly explored the topic of
+;;; what ‘Clauser-style’ mis-analysis of EPR-B experiments actually
+;;; represents. The following simulation is meant to be suggestive
+;;; only.
 ;;;
 
 (import (scheme base)
@@ -126,14 +133,8 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; -1 to (-) detections. With this assignment, the correlation
   ;; coefficient equals the covariance.
   ;;
-  ;; This will be a ‘Clauser-style’ calculation, for polarizing beam
-  ;; splitters in series.
-  ;;
-  ;; The orthodoxy in physics has mistaken this as a calculation for
-  ;; the Bell test. The correct calculation for the Bell test,
-  ;; however, obviously has to come out the same as what quantum
-  ;; mechanics calculates. This is required by the principle that all
-  ;; mathematical methods must produce the same results.
+  ;; This will be a ‘Clauser-style’ calculation, for a single photon
+  ;; passing through two polarizing beam splitters.
   ;;
   ;; (To get the correct answer for the Bell test, one CAN use the
   ;; following calculation, but RESTRICTED TO φ₂=0 and using φ₁ to
@@ -165,7 +166,9 @@ OTHER DEALINGS IN THE SOFTWARE.
                 ;; phot₁ simply gets counted. (The following is
                 ;; equivalent to a PBS set to zero.)
                 ((detect₁+) (eq? (photon->symbol phot₁) 'H))
-                ;; But phot₂ goes through two PBSes.
+                ;; But phot₂ goes through two PBSes. We will simply
+                ;; pass the photon from either channel of pbs₁ to the
+                ;; input of pbs₂, without change of orientation.
                 ((phot₂+ phot₂-) (pbs-activity pbs₁ phot₂))
                 ((detect₂+ _detect₂-)
                  (if phot₂+
@@ -183,12 +186,24 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; Simulate events and compute frequencies of the different
   ;; detection patterns.
 
-  ;; The first PBS outputs photons whose polarization angles we need
-  ;; to take into account.
+  ;;
+  ;; pbs₁ outputs a photon that we must represent as a <photon>
+  ;; record. In this simulation, the photon retransmitted by pbs₁ will
+  ;; be polarized according to the setting of pbs₁, and we will assume
+  ;; pbs₂ is lined up with pbs₁.
+  ;;
+  ;; The author has empirically determined that this experimental
+  ;; design gives ‘Clauser correlations’ for the Bell test
+  ;; angles.
+  ;;
+  ;; For other given test angles this is not always so. Therefore this
+  ;; is NOT a general ‘Clauser-correlations simulation’. But I include
+  ;; it as, for instance, an example of setting of PBSes in series.
+  ;;
   (define pbs₁ (make-pbs φ₁ φ₁ (+ φ₁ π/2)))
 
-  ;; The second PBS outputs photons into photodetectors. We can ignore
-  ;; polarization.
+  ;; pbs₂ outputs photons into photodetectors and so can return
+  ;; booleans instead of <photon> records.
   (define pbs₂ (make-pbs φ₂))
 
   (define N (*events-per-test-angle*))
@@ -269,6 +284,8 @@ OTHER DEALINGS IN THE SOFTWARE.
     (V + H +) (V + H -) (V - H +) (V - H -)))
 
 (format #t "~%")
+(format #t "  \"Clauser correlations\" -----------------------------~%")
+(format #t "~%")
 
 (format #t "~2Tlegend:~%")
 (format #t "~2T  (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
@@ -306,20 +323,20 @@ OTHER DEALINGS IN THE SOFTWARE.
              (freq (cadr (assoc patt freqs-list))))
         (format #t "  ~A freq~14,5@F~14,5@F~%"
                 patt (inexact prob) (inexact freq))))
-    (format #t "   \"correlation\"~14,5@F~14,5@F~%"
+    (format #t "  \"Clauser corr\"~14,5@F~14,5@F~%"
             nominal-correlation estimated-correlation)
     (format #t "~%")))
 (format #t "                       nominal     simulated~%")
 (format #t "    CHSH S value~14,5@F~14,5@F~%"
         S-nominal S-estimated)
 (format #t "~%")
-(format #t "  (See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
-(format #t "  for a discussion in which an experiment of the kind~%")
-(format #t "  simulated here is mistaken for an EPR-B Bell test.~%")
-(format #t "  Notice the simulation does NOT produce the predicted~%")
-(format #t "  frequencies of events, but DOES approximate the~%")
-(format #t "  predicted correlations. This happens because Clauser-~%")
-(format #t "  style calculations of the correlation coefficient are~%")
-(format #t "  done incorrectly, and give answers for an experiment~%")
-(format #t "  such as we simulate here, instead of the Bell test.)~%")
+(format #t "  See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
+(format #t "  for a discussion in which experiments other than~%")
+(format #t "  EPR-B experiments are mistaken for EPR-B and analyzed~%")
+(format #t "  instead. Perhaps the simulation here is suggestive~%")
+(format #t "  of one class of these ‘Clauser-correlations experiment’.~%")
+(format #t "~%")
+(format #t "  (The author has only lightly examined the topic, and~%")
+(format #t "  welcomes others to explore it more and publish better~%")
+(format #t "  simulations.)~%")
 (format #t "~%")
