@@ -10,11 +10,13 @@ package.*
 
 ## This toolkit versus widespread beliefs
 
-Widespread belief in physics (in 2023) is that experiments of the type
-conducted by Alain Aspect are distinctly ‘quantum’ and distinct from
-‘classical’ physics. There is supposed to be an ‘entangled pair’
-rather than distinct particles, and ‘instantaneous action at a
-distance’ resulting in distinct particles.
+Widespread belief in physics (in 2023) is that [experiments of the
+type conducted by Alain
+Aspect](https://en.wikipedia.org/w/index.php?title=Aspect%27s_experiment&oldid=1187336241)
+are distinctly ‘quantum’ and distinct from ‘classical’ physics. There
+is supposed to be an ‘entangled pair’ rather than distinct particles,
+and ‘instantaneous action at a distance’ resulting in distinct
+particles.
 
 All of this is easily proven false, for instance empirically by
 simulations constructed using this toolkit.
