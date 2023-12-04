@@ -29,7 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;; Date first completed : 3 December 2023
 ;;;
 ;;; Simulation of what the mistaken analysis of John Clauser and
-;;; others ACTUALLY seems to represent. See, for instance,
+;;; others might ACTUALLY represent. See, for instance,
 ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
 ;;;
 ;;; Let us examine J. S. Bell’s 1971 derivation.
@@ -48,27 +48,58 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;; and y.)
 ;;;
 ;;; More importantly, Bell’s expression for E(a,b) (or P(a,b) in
-;;; Bell’s original notation) is NOT an expectation for an EPR-B
-;;; experiment.
+;;; Bell’s original notation) surely is NOT an expectation for an
+;;; EPR-B experiment.
 ;;;
-;;;    IT IS AN EXPECTATION FOR A SINGLE PHOTON HAVING TO PASS THROUGH
-;;;    TWO POLARIZERS!
+;;;    IT IS NOT A CORRECT EXPECTATION UNLESS THE PROBABILITY DENSITY
+;;;    FUNCTION IS CORRECT.
 ;;;
-;;; This should be intuitive once pointed out. It explains why, in the
-;;; analyses of Clauser, the correlations are supposed to disappear
-;;; when a Bell test angle is changed from zero to π/4. An ideal
-;;; polarizing beam splitter set to zero could literally be left out
-;;; of the apparatus, without effect. One will get the same results as
-;;; in the EPR-B experiment. A polarizer set to π/4, on the other
-;;; hand, will obstruct the normal flow of the particle beam.
+;;; Whatever Bell is using surely is not something he devised from
+;;; knowledge of probability theory, but something inappropriate he
+;;; grabbed from his knowledge of statistical mechanics, etc. PROBABLY
+;;; HE IS ACTUALLY MODELING A SINGLE PHOTON PASSING THROUGH TWO
+;;; POLARIZERS, or some similar situation.
 ;;;
-;;; In general it might be necessary to remove some of the photon
-;;; pairs from the data counted: to treat them as ‘absorbed’ by a
-;;; polarizer. The author has not thoroughly explored the topic of
-;;; what ‘Clauser-style’ mis-analysis of EPR-B experiments actually
-;;; represents. Therefore he does not know the answers to questions,
-;;; and presents the following simulation only as a possible (but not
-;;; by him confirmed) special case.
+;;; This should be intuitive once pointed out. It would explain why,
+;;; in the analyses of Clauser, the correlations are supposed to
+;;; disappear when a Bell test angle is changed from zero to π/4. An
+;;; ideal polarizing beam splitter set to zero could literally be left
+;;; out of the apparatus, without effect. One will get the same
+;;; results as in the EPR-B experiment. A polarizer set to π/4, on the
+;;; other hand, will obstruct the normal flow of the particle
+;;; beam. Thus, according to the INCORRECT analysis, the correlations
+;;; vanish.
+;;;
+;;; Before the author of this program found how to derive the
+;;; correlation coefficient of the Bell test CORRECTLY, by using a
+;;; trivial transformation of the argument angles, he found how to do
+;;; it non-trivially, using a joint probability density function
+;;; (pdf). His method was complicated and EXTREMELY error prone. There
+;;; were always little bugs to stamp out, but probably they could all
+;;; have been stamped out. The pdf represented the rotational
+;;; invariance as a delta function and probably looked nothing like
+;;; what Bell had in mind. My point is that one cannot simply multiply
+;;; a bunch of +1 and -1, using any probability density one finds in a
+;;; physics textbook, written in a notation not used by anyone but
+;;; physicists, and expect to get correct results. It is necessary to
+;;; know what one is doing, and that requires knowledge of probability
+;;; theory.
+;;;
+;;; The derivation using a simple transformation of the angles is so
+;;; much better that one ought never again talk about doing it my old
+;;; way or Bell’s way. I myself try to avoid too much exposure to
+;;; incorrect analyses of the EPR-B experiment.
+;;;
+;;;      *  *  *
+;;;
+;;; The following simulation is of one possible arrangement of two
+;;; polarizers in series, and it gives a CHSH ‘contrast’ |S|=√2 < 2.
+;;;
+;;; Also included is an example of faulty correlation calculation. The
+;;; author found himself writing it after some exposure to an
+;;; incorrect analysis of the EPR-B experiment. In horror he realized
+;;; what he had done. However, he saved the mistake for inclusion in
+;;; this example program.
 ;;;
 
 (import (scheme base)
@@ -187,20 +218,10 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; Simulate events and compute frequencies of the different
   ;; detection patterns.
 
-  ;;
   ;; pbs₁ outputs a photon that we must represent as a <photon>
   ;; record. In this simulation, the photon retransmitted by pbs₁ will
   ;; be polarized according to the setting of pbs₁, and we will assume
   ;; pbs₂ is lined up with pbs₁.
-  ;;
-  ;; The author has empirically determined that this experimental
-  ;; design gives ‘Clauser correlations’ for the Bell test
-  ;; angles.
-  ;;
-  ;; For other given test angles this is not always so. Therefore this
-  ;; is NOT a general ‘Clauser-correlations simulation’. But I include
-  ;; it as, for instance, an example of setting of PBSes in series.
-  ;;
   (define pbs₁ (make-pbs φ₁ φ₁ (+ φ₁ π/2)))
 
   ;; pbs₂ outputs photons into photodetectors and so can return
@@ -285,8 +306,6 @@ OTHER DEALINGS IN THE SOFTWARE.
     (V + H +) (V + H -) (V - H +) (V - H -)))
 
 (format #t "~%")
-(format #t "  \"Clauser correlations\" -----------------------------~%")
-(format #t "~%")
 
 (format #t "~2Tlegend:~%")
 (format #t "~2T  (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
@@ -296,7 +315,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ;;; See
 ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
-(define S-nominal 0)   ;; For computing a CHSH contrast.
 (define S-estimated 0) ;; For computing a CHSH contrast.
 (define i 1)           ;; For computing a CHSH contrast.
 
@@ -305,39 +323,58 @@ OTHER DEALINGS IN THE SOFTWARE.
     ((null? test-angles))
   (let* ((φ₁ (caar test-angles))
          (φ₂ (cadar test-angles))
-         (probs-list (detection-probabilities φ₁ φ₂))
          (freqs-list (detection-frequencies φ₁ φ₂))
-         (nominal-correlation (compute-correlation probs-list))
          (estimated-correlation (estimate-correlation freqs-list)))
-    (set! S-nominal
-      ((if (= i 2) - +) S-nominal nominal-correlation))
     (set! S-estimated
       ((if (= i 2) - +) S-estimated estimated-correlation))
     (set! i (+ i 1))
     (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
             (angle->string φ₁) (angle->string φ₂))
-    (format #t "                       nominal     simulated~%")
     (do ((patterns pattern-list (cdr patterns)))
         ((null? patterns))
       (let* ((patt (car patterns))
-             (prob (cadr (assoc patt probs-list)))
              (freq (cadr (assoc patt freqs-list))))
-        (format #t "  ~A freq~14,5@F~14,5@F~%"
-                patt (inexact prob) (inexact freq))))
-    (format #t "  \"Clauser corr\"~14,5@F~14,5@F~%"
-            nominal-correlation estimated-correlation)
+        (format #t "  ~A freq~14,5@F~%" patt (inexact freq))))
+    (format #t "     correlation~14,5@F~%" estimated-correlation)
     (format #t "~%")))
-(format #t "                       nominal     simulated~%")
-(format #t "    CHSH S value~14,5@F~14,5@F~%"
-        S-nominal S-estimated)
+(format #t "    CHSH S value~14,5@F~%" S-estimated)
 (format #t "~%")
 (format #t "  See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
 (format #t "  for a discussion in which experiments other than~%")
 (format #t "  EPR-B experiments are mistaken for EPR-B and analyzed~%")
-(format #t "  instead. Perhaps the simulation here is suggestive~%")
-(format #t "  of one class of these ‘Clauser-correlations experiment’.~%")
+(format #t "  instead. Perhaps the simulation above is an example of~%")
+(format #t "  such a ‘Clauser-correlation experiment’.~%")
 (format #t "~%")
-(format #t "  (The author has only lightly examined the topic, and~%")
-(format #t "  welcomes others to explore it more and publish better~%")
-(format #t "  simulations.)~%")
+
+(format #t "  ------------------------------------------------------~%")
+
+(format #t "~%")
+(format #t "  Here are numbers from an incorrectly done correlation~%")
+(format #t "  coefficient calculation—~%")
+(format #t "~%")
+
+;;; See
+;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
+(define S-computed 0) ;; For computing a CHSH contrast.
+(set! i 1)            ;; For computing a CHSH contrast.
+
+(do ((test-angles bell-test-angles (cdr test-angles)))
+    ((null? test-angles))
+  (let* ((φ₁ (caar test-angles))
+         (φ₂ (cadar test-angles))
+         (probs-list (detection-probabilities φ₁ φ₂))
+         (computed-correlation (compute-correlation probs-list)))
+    (set! S-computed
+      ((if (= i 2) - +) S-computed computed-correlation))
+    (set! i (+ i 1))
+    (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
+            (angle->string φ₁) (angle->string φ₂))
+    (do ((patterns pattern-list (cdr patterns)))
+        ((null? patterns))
+      (let* ((patt (car patterns))
+             (prob (cadr (assoc patt probs-list))))
+        (format #t "  ~A freq~14,5@F~%" patt (inexact prob))))
+    (format #t "     correlation~14,5@F~%" computed-correlation)
+    (format #t "~%")))
+(format #t "    CHSH S value~14,5@F~%" S-computed)
 (format #t "~%")
