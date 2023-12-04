@@ -66,8 +66,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;; pairs from the data counted: to treat them as ‘absorbed’ by a
 ;;; polarizer. The author has not thoroughly explored the topic of
 ;;; what ‘Clauser-style’ mis-analysis of EPR-B experiments actually
-;;; represents. The following simulation is meant to be suggestive
-;;; only.
+;;; represents. Therefore he does not know the answers to questions,
+;;; and presents the following simulation only as a possible (but not
+;;; by him confirmed) special case.
 ;;;
 
 (import (scheme base)
