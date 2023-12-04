@@ -73,8 +73,8 @@ mathematical methods—*all of which must reach the same result*.
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
 correlations is reached that is different from what quantum mechanics
-gives, the authors *definitely* have made errors. For the solution
-from quantum mechanics *is* correct.
+gives, the authors *definitely* have made errors. The solution from
+quantum mechanics *is* correct.
 
 I will prove that below, by deriving the same expression
 independently.
