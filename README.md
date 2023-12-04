@@ -53,9 +53,9 @@ The supposed ‘irreducibility’ of ‘quantum’ physics is not merely
 false: it is a logically solid impossibility.  That is, there is
 really no such thing as ‘quantum’ physics distinct from ‘classical’
 physics. There are, rather, problems that have been believed soluble
-''only'' by quantum mechanical methods, but which actually can be
-solved by ''any'' reasonable mathematical methods—and any method used
-must reach the same result.
+*only* by quantum mechanical methods, but which actually can be solved
+by *any* reasonable mathematical methods—and any method used must
+reach the same result.
 
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
