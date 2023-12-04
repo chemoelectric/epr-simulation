@@ -52,8 +52,9 @@ in a word problem with a ‘frog’ and any ‘polarizer’ with a ‘frog
 channeler’. Even such a trivial change removes the ‘quantum’ from a
 ‘quantum’ physics problem. Also, any method used to solve the problem
 *must* arrive at the same result as does quantum mechanics, if the
-solution by quantum mechanics were itself correct. This is so because
-otherwise mathematics would be uselessly inconsistent.
+solution by quantum mechanics were itself correct. Otherwise
+mathematics would be uselessly inconsistent, and we know from
+experience that it is not.
 
 What is more, quantum mechanics is itself not a fundamental
 mathematical field, but an application of linear algebra, probability
