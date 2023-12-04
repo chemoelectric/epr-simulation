@@ -46,13 +46,12 @@ the same conclusion as any other.
 Thus a problem in ‘quantum’ physics can be converted to, say, a
 problem about Girl Scouts delivering cookies to their customers, or a
 problem about radio signals, or a problem about abstract symbols. The
-new problem may be a contrived one, but the conversion *can* be
-done. This this is so is proven empirically by the fact a person can
-always devise a procedure to contrive the new problem. Also, any
-method used to solve the problem *must* arrive at the same result as
-does quantum mechanics, if the solution by quantum mechanics were
-itself correct. This is so because otherwise mathematics would be
-uselessly inconsistent.
+new problem may be a contrived one, but the conversion *can* be done:
+for example, a person can always devise a procedure to contrive some
+new problem. Also, any method used to solve the problem *must* arrive
+at the same result as does quantum mechanics, if the solution by
+quantum mechanics were itself correct. This is so because otherwise
+mathematics would be uselessly inconsistent.
 
 What is more, quantum mechanics is itself not a fundamental
 mathematical field, but an application of linear algebra, probability
