@@ -65,10 +65,14 @@ OTHER DEALINGS IN THE SOFTWARE.
     (export estimate-pair-correlation)  ; Estimate correlation from
                                         ; detection frequencies.
 
+    (export check-probabilities)        ; Check if a list of
+                                        ; probabilities adds up
+                                        ; approximately to one.
+
   (import (scheme base)
           (scheme case-lambda)
           (scheme inexact)
-          (only (srfi 1) every)
+          (only (srfi 1) every fold)
           (only (srfi 27) random-real)
           (only (srfi 144) fl-epsilon))
 
@@ -377,5 +381,15 @@ OTHER DEALINGS IN THE SOFTWARE.
               (apply estimate-complementary-pair-correlation
                      `(,σ_cosφ₁ ,σ_sinφ₁ ,σ_cosφ₂ ,σ_sinφ₂
                                 . ,detection-freqs))))))
+
+    (define check-probabilities
+      (case-lambda
+        ((probs-list) (check-probabilities probs-list 1000))
+        ((probs-list
+          tolerance) ;; In multiples of one half of fl-epsilon.
+         (let ((sum (fold + 0 probs-list)))
+           (unless (<= (abs (- (+ sum sum) 2)) (* tolerance fl-epsilon))
+             (error "check-probabilities: probabilities do not sum to approx. one"
+                    probs-list))))))
 
     )) ;; end library (epr-simulation)

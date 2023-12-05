@@ -152,10 +152,8 @@ OTHER DEALINGS IN THE SOFTWARE.
                    ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
                    ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
 
-      ;; Sanity check: verify that the probabilities add up to 1.
-      (let ((sum (apply + (map cadr probs))))
-        (unless (<= (abs (- sum 1)) (* 500 fl-epsilon))
-          (error "detection-probabilities: probabilities do not add up to 1")))
+      ;; Sanity check: verify that the probabilities add up to one.
+      (check-probabilities (map cadr probs))
 
       probs)))
 

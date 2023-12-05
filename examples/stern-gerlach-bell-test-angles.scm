@@ -105,10 +105,8 @@ OTHER DEALINGS IN THE SOFTWARE.
                    ((B - W +) ,(* 1/2 PB₁- PW₂+))
                    ((B - W -) ,(* 1/2 PB₁- PW₂-)))))
 
-      ;; Sanity check: verify that the probabilities add up to 1.
-      (let ((sum (apply + (map cadr probs))))
-        (unless (<= (abs (- sum 1)) (* 500 fl-epsilon))
-          (error "detection-probabilities: probabilities do not add up to 1")))
+      ;; Sanity check: verify that the probabilities add up to one.
+      (check-probabilities (map cadr probs))
 
       probs)))
 
