@@ -387,9 +387,15 @@ OTHER DEALINGS IN THE SOFTWARE.
         ((probs-list) (check-probabilities probs-list 1000))
         ((probs-list
           tolerance) ;; In multiples of one half of fl-epsilon.
-         (let ((sum (fold + 0 probs-list)))
-           (unless (<= (abs (- (+ sum sum) 2)) (* tolerance fl-epsilon))
-             (error "check-probabilities: probabilities do not sum to approx. one"
-                    probs-list))))))
+         (let ((tol (* tolerance fl-epsilon)))
+           (for-each (lambda (p)
+                       (unless (and (<= 0 p) (<= (- (+ p p) 2) tol))
+                         (error "check-probabilities: probability outside range"
+                                p)))
+                     probs-list)
+           (let ((sum (fold + 0 probs-list)))
+             (unless (<= (- (+ sum sum) 2) tol)
+               (error "check-probabilities: probabilities sum outside range"
+                      probs-list)))))))
 
     )) ;; end library (epr-simulation)
