@@ -51,7 +51,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (import (scheme base)
         (scheme write)
-        (only (srfi 144) fl-epsilon)
         (epr-simulation))
 
 (cond-expand
@@ -163,17 +162,6 @@ OTHER DEALINGS IN THE SOFTWARE.
      ,(get-freq '(V + H +)) ,(get-freq '(V + H -))
      ,(get-freq '(V - H +)) ,(get-freq '(V - H -)))))
 
-(define (angle->string angle)
-  (let* ((angle/π (/ angle π))
-         (angle/π*64 (* 64 angle/π))
-         (iangle/π*64 (round angle/π*64))
-         (diff (abs (- angle/π*64 iangle/π*64)))
-         (exact-enough (<= diff (* 500 fl-epsilon
-                                   (abs angle/π*64)))))
-    (string-append
-     "π×" (let ((angle/π (if exact-enough (exact angle/π) angle/π)))
-            (number->string angle/π)))))
-
 (define pattern-list
   '((H + V +) (H + V -) (H - V +) (H - V -)
     (V + H +) (V + H -) (V - H +) (V - H -)))
@@ -212,7 +200,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       ((if (= i 2) - +) S-estimated estimated-correlation))
     (set! i (+ i 1))
     (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
-            (angle->string φ₁) (angle->string φ₂))
+            (radians->string φ₁) (radians->string φ₂))
     (format #t "                       nominal     simulated~%")
     (do ((patterns pattern-list (cdr patterns)))
         ((null? patterns))

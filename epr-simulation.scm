@@ -29,6 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export π/180 π/8 π/4 π3/8 π/2 π3/4 π)
 
   (export degrees->radians radians->degrees)
+  (export radians->string)   ; Convert to a string using the symbol π.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -85,18 +86,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     (cond-expand
       (chicken (define (write-angle angle port)
-                 (let* ((angle/π (/ angle π))
-                        (angle/π*64 (* 64 angle/π))
-                        (iangle/π*64 (round angle/π*64))
-                        (diff (abs (- angle/π*64 iangle/π*64)))
-                        (exact-enough (<= diff (* 500 fl-epsilon
-                                                  (abs angle/π*64)))))
-                   (display "π×" port)
-                   (let ((angle/π
-                          (if exact-enough
-                              (exact angle/π)
-                              angle/π)))
-                     (write angle/π port)))))
+                 (display (radians->string angle) port)))
       (else))
 
     ;; OEIS A019685
@@ -122,6 +112,23 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     (define (degrees->radians x) (* x π/180))
     (define (radians->degrees x) (/ x π/180))
+
+    (define radians->string
+      (case-lambda
+        ((angle) (radians->string angle 1000))
+        ((angle
+          tolerance) ;; In multiples of one half of fl-epsilon.
+         (let* ((angle/π (/ angle π))
+                (angle/π*64 (* 64 angle/π))
+                (iangle/π*64 (round angle/π*64))
+                (diff (abs (- angle/π*64 iangle/π*64)))
+                (exact-enough (<= (+ diff diff)
+                                  (* tolerance fl-epsilon
+                                     (abs angle/π*64)))))
+           (string-append
+            "π×" (let ((angle/π
+                        (if exact-enough (exact angle/π) angle/π)))
+                   (number->string angle/π)))))))
 
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
