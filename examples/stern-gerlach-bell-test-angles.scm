@@ -46,9 +46,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;    (2) All methods must reach the same result. Therefore quantum
 ;;;        mechanics NEVER is necessary to solve a problem.
 ;;;
-;;; All the activity is ‘local realistic’. (The author will not accept
-;;; the existence of ‘instantaneous action at a distance’.) The
-;;; ‘particles’ in the simulation are glass beads.
+;;; All the activity is ‘local realistic’. (Surely there is no such
+;;; thing as ‘instantaneous action at a distance’.) The ‘particles’ in
+;;; the simulation are glass beads.
 ;;;
 
 (import (scheme base)
