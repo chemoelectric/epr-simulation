@@ -177,14 +177,14 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;; Take square roots. All the test angles are in Quadrant I, and
       ;; so only positive square roots will be needed. (Be careful!
       ;; You have to account for the quadrants of φ₁ and φ₂, and so
-      ;; sometimes need a NEGATIBE square root when doing this kind of
+      ;; sometimes need a NEGATIVE square root when doing this kind of
       ;; calculation.)
       (let ((cos½φ₁sin½φ₂ (sqrt cos²½φ₁sin²½φ₂))
             (cos½φ₁cos½φ₂ (sqrt cos²½φ₁cos²½φ₂))
             (sin½φ₁sin½φ₂ (sqrt sin²½φ₁sin²½φ₂))
             (sin½φ₁cos½φ₂ (sqrt sin²½φ₁cos²½φ₂)))
         ;; Use angle-difference identities. See, for instance, the CRC
-        ;; Wandbook of Mathematical Sciences, 6th edition, page 170.
+        ;; Handbook of Mathematical Sciences, 6th edition, page 170.
         (let ((sin<½φ₁-½φ₂> (- sin½φ₁cos½φ₂ cos½φ₁sin½φ₂))
               (cos<½φ₁-½φ₂> (+ cos½φ₁cos½φ₂ sin½φ₁sin½φ₂)))
           ;; That is it. We have everthing we need.
