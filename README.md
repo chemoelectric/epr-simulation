@@ -127,8 +127,8 @@ correlation coefficient equal the covariance. That is, no
 normalization is needed. It can be computed (with some care) as
 follows—
 
-    ρ = ½(+1)(+1) sin²φ₀₁ + ½(+1)(−1) cos²φ₀₁
-          + ½(−1)(+1) cos²φ₀₁ + ½(−1)(−1) sin²φ₀₁
+    ρ = ½(+1)(+1)sin²φ₀₁ + ½(+1)(−1)cos²φ₀₁
+          + ½(−1)(+1)cos²φ₀₁ + ½(−1)(−1)sin²φ₀₁
 
 Using a double-angle identity, and taking advantage of φ₀₂ = 0, this
 becomes

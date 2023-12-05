@@ -156,39 +156,16 @@ OTHER DEALINGS IN THE SOFTWARE.
     ((B - W +) ,(/ NB-W+ N))
     ((B - W -) ,(/ NB-W- N))))
 
-(define (estimate-correlation detection-freqs)
-  ;; Use detection frequencies and trigonometry to estimate the value
-  ;; of -cos(φ₁-φ₂)=-(cos²((φ₁-φ₂)/2)-sin²((φ₁-φ₂)/2)).
+(define (estimate-correlation φ₁ φ₂ detection-freqs)
+  ;; Use detection frequencies to estimate the value of -cos(φ₁-φ₂).
   (define (get-freq pattern)
     (cadr (assoc pattern detection-freqs)))
-  (let ((fW+B+ (get-freq '(W + B +)))
-        (fW+B- (get-freq '(W + B -)))
-        (fW-B+ (get-freq '(W - B +)))
-        (fW-B- (get-freq '(W - B -)))
-        (fB+W+ (get-freq '(B + W +)))
-        (fB+W- (get-freq '(B + W -)))
-        (fB-W+ (get-freq '(B - W +)))
-        (fB-W- (get-freq '(B - W -))))
-    ;; Compute estimates of products of squares of cosines and sines.
-    (let ((cos²½φ₁sin²½φ₂ (+ fW+B+ fB-W-))
-          (cos²½φ₁cos²½φ₂ (+ fW+B- fB-W+))
-          (sin²½φ₁sin²½φ₂ (+ fW-B+ fB+W-))
-          (sin²½φ₁cos²½φ₂ (+ fW-B- fB+W+)))
-      ;; Take square roots. All the test angles are in Quadrant I, and
-      ;; so only positive square roots will be needed. (Be careful!
-      ;; You have to account for the quadrants of φ₁ and φ₂, and so
-      ;; sometimes need a NEGATIVE square root when doing this kind of
-      ;; calculation.)
-      (let ((cos½φ₁sin½φ₂ (sqrt cos²½φ₁sin²½φ₂))
-            (cos½φ₁cos½φ₂ (sqrt cos²½φ₁cos²½φ₂))
-            (sin½φ₁sin½φ₂ (sqrt sin²½φ₁sin²½φ₂))
-            (sin½φ₁cos½φ₂ (sqrt sin²½φ₁cos²½φ₂)))
-        ;; Use angle-difference identities. See, for instance, the CRC
-        ;; Handbook of Mathematical Sciences, 6th edition, page 170.
-        (let ((sin<½φ₁-½φ₂> (- sin½φ₁cos½φ₂ cos½φ₁sin½φ₂))
-              (cos<½φ₁-½φ₂> (+ cos½φ₁cos½φ₂ sin½φ₁sin½φ₂)))
-          ;; That is it. We have everthing we need.
-          (- (square sin<½φ₁-½φ₂>) (square cos<½φ₁-½φ₂>)))))))
+  (estimate-pair-correlation
+   φ₁ φ₂ 'stern-gerlach 'complementary
+   `(,(get-freq '(W + B +)) ,(get-freq '(W + B -))
+     ,(get-freq '(W - B +)) ,(get-freq '(W - B -))
+     ,(get-freq '(B + W +)) ,(get-freq '(B + W -))
+     ,(get-freq '(B - W +)) ,(get-freq '(B - W -)))))
 
 (define (angle->string angle)
   (let* ((angle/π (/ angle π))
@@ -236,7 +213,8 @@ OTHER DEALINGS IN THE SOFTWARE.
          (probs-list (detection-probabilities φ₁ φ₂))
          (freqs-list (detection-frequencies φ₁ φ₂))
          (nominal-correlation (- (cos (- φ₁ φ₂))))
-         (estimated-correlation (estimate-correlation freqs-list)))
+         (estimated-correlation
+          (estimate-correlation φ₁ φ₂ freqs-list)))
     (set! S-nominal
       ((if (= i 2) - +) S-nominal nominal-correlation))
     (set! S-estimated
@@ -266,8 +244,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 (format #t "  computed by quantum mechanics rather than other means.~%")
 (format #t "~%")
 (format #t "  Of course, ‘quantum entanglement’ of glass beads would~%")
-(format #t "  be laughed out of the room. However, the original word~%")
-(format #t "  problem was always trivally converted to one about glass~%")
-(format #t "  beads! Therefore ‘entanglement’ should have been laughed~%")
-(format #t "  out of the room for atoms and subatomic particles.~%")
+(format #t "  be laughed out of the room. However, the word problem~%")
+(format #t "  was always equivalent to this one about glass beads!~%")
 (format #t "~%")

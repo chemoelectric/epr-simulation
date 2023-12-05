@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (define-library (epr-simulation)
 
-  (export π/180 π/8 π/4 π3/8 π/2 π)
+  (export π/180 π/8 π/4 π3/8 π/2 π3/4 π)
 
   (export degrees->radians radians->degrees)
 
@@ -62,9 +62,13 @@ OTHER DEALINGS IN THE SOFTWARE.
           sgm-probabilities  ; Probabilities given an incident object.
           sgm-activity)      ; Activity given an incident object.
 
+    (export estimate-pair-correlation)  ; Estimate correlation from
+                                        ; detection frequencies.
+
   (import (scheme base)
           (scheme case-lambda)
           (scheme inexact)
+          (only (srfi 1) every)
           (only (srfi 27) random-real)
           (only (srfi 144) fl-epsilon))
 
@@ -105,6 +109,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     ;; OEIS A019669
     (define π/2 1.57079632679489661923132169163975144209858469968755291048747229615390820314310449931401741267105853)
+
+    ;; OEIS A177870
+    (define π3/4 2.356194490192344928846982537459627163147877049531329365731208444230862304714656748971026119006587800986611)
 
     ;; OEIS A000796
     (define π 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214)
@@ -278,5 +285,97 @@ OTHER DEALINGS IN THE SOFTWARE.
         (if (< (random-real) p+)
             (values particle-kind #f)
             (values #f particle-kind))))
+
+    (define (estimate-complementary-pair-correlation
+             σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂ ; σ = ‘sign’
+             fL+R+ fL+R- fL-R+ fL-R-         ; f = ‘frequency’
+             fR+L+ fR+L- fR-L+ fR-L-)        ; L = ‘left’, R = ‘right’
+
+      ;; Compute an estimate of the correlation coefficient
+      ;; -(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)) = -cos(2(φ₁-φ₂) for a
+      ;; complementary pair of particles, coherent waves, etc.
+
+      ;; Compute estimates of products of squares of cosines and sines.
+      (let ((cos²φ₁sin²φ₂ (+ fL+R+ fR-L-))
+            (cos²φ₁cos²φ₂ (+ fL+R- fR-L+))
+            (sin²φ₁sin²φ₂ (+ fL-R+ fR+L-))
+            (sin²φ₁cos²φ₂ (+ fL-R- fR+L+)))
+        ;; Take square roots. Sometimes one has to use the NEGATIVE
+        ;; square root. It depends on the quadrants of φ₁ or φ₂.
+        (let ((cosφ₁sinφ₂ (* σ_cosφ₁ σ_sinφ₂ (sqrt cos²φ₁sin²φ₂)))
+              (cosφ₁cosφ₂ (* σ_cosφ₁ σ_cosφ₂ (sqrt cos²φ₁cos²φ₂)))
+              (sinφ₁sinφ₂ (* σ_sinφ₁ σ_sinφ₂ (sqrt sin²φ₁sin²φ₂)))
+              (sinφ₁cosφ₂ (* σ_sinφ₁ σ_cosφ₂ (sqrt sin²φ₁cos²φ₂))))
+          ;; Use angle-difference identities. See, for instance, the CRC
+          ;; Handbook of Mathematical Sciences, 6th edition, page 170.
+          (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
+                (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
+            ;; That is it. We have everything we need.
+            (- (square sin<φ₁-φ₂>) (square cos<φ₁-φ₂>))))))
+
+    (define (estimate-matched-pair-correlation
+             σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂ ; σ = ‘sign’
+             fL+R+ fL+R- fL-R+ fL-R-         ; f = ‘frequency’
+             fR+L+ fR+L- fR-L+ fR-L-)        ; L = ‘left’, R = ‘right’
+
+      ;; Compute an estimate of the correlation coefficient
+      ;; +(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)) = +cos(2(φ₁-φ₂) for a
+      ;; matched pair of particles, coherent waves, etc.
+
+      (- (estimate-complementary-pair-correlation
+          σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂
+          fL+R+ fL+R- fL-R+ fL-R- fR+L+ fR+L- fR-L+ fR-L-)))
+
+    (define (estimate-pair-correlation φ₁ φ₂
+                                       optical-or-stern-gerlach
+                                       matched-or-complementary
+                                       detection-freqs)
+      ;;
+      ;; Use detection frequencies and trigonometry to get an
+      ;; EMPIRICAL ESTIMATE of the value of the correlation.
+      ;;
+      ;; The ACTUAL values of φ₁ and φ₂ are needed only to determine
+      ;; whether a positive or a negative square root is needed in
+      ;; certain steps. The signs of the cosine and sine vary
+      ;; according to quadrant, but this information is not available
+      ;; from the squares of those functions. We have to get the
+      ;; information by using the actual angles. However, the actual
+      ;; angles ARE available and so it is valid to use them.
+      ;;
+      (unless (real? φ₁)
+        (error "estimate-pair-correlation: expected a real number" φ₁))
+      (unless (real? φ₂)
+        (error "estimate-pair-correlation: expected a real number" φ₂))
+      (unless (or (eq? optical-or-stern-gerlach 'optical)
+                  (eq? optical-or-stern-gerlach 'stern-gerlach))
+        (error "estimate-pair-correlation: expected 'optical or 'stern-gerlach"
+               optical-or-stern-gerlach))
+      (unless (or (eq? matched-or-complementary 'matched)
+                  (eq? matched-or-complementary 'complementary))
+        (error "estimate-pair-correlation: expected 'matched or 'complementary"
+               matched-or-complementary))
+      (unless (and (list? detection-freqs)
+                   (= (length detection-freqs) 8)
+                   (every (lambda (x)
+                            (and (real? x) (<= 0 x) (<= x 1)))
+                          detection-freqs))
+        (error "estimate-pair-correlation: expected a list of eight frequencies"
+               detection-freqs))
+
+      (let-values (((φ₁ φ₂)
+                    (if (eq? optical-or-stern-gerlach 'stern-gerlach)
+                        (values (* 1/2 φ₁) (* 1/2 φ₂))
+                        (values φ₁ φ₂))))
+        (let ((σ_cosφ₁ (if (negative? (cos φ₁)) -1 1))
+              (σ_sinφ₁ (if (negative? (sin φ₁)) -1 1))
+              (σ_cosφ₂ (if (negative? (cos φ₂)) -1 1))
+              (σ_sinφ₂ (if (negative? (sin φ₂)) -1 1)))
+          (if (eq? matched-or-complementary 'matched)
+              (apply estimate-matched-pair-correlation
+                     `(,σ_cosφ₁ ,σ_sinφ₁ ,σ_cosφ₂ ,σ_sinφ₂
+                                . ,detection-freqs))
+              (apply estimate-complementary-pair-correlation
+                     `(,σ_cosφ₁ ,σ_sinφ₁ ,σ_cosφ₂ ,σ_sinφ₂
+                                . ,detection-freqs))))))
 
     )) ;; end library (epr-simulation)

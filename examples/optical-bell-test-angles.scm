@@ -154,39 +154,16 @@ OTHER DEALINGS IN THE SOFTWARE.
     ((V - H +) ,(/ NV-H+ N))
     ((V - H -) ,(/ NV-H- N))))
 
-(define (estimate-correlation detection-freqs)
-  ;; Use detection frequencies and trigonometry to estimate the value
-  ;; of -cos(2(φ₁-φ₂)=-(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)).
+(define (estimate-correlation φ₁ φ₂ detection-freqs)
+  ;; Use detection frequencies to estimate the value of -cos(2(φ₁-φ₂).
   (define (get-freq pattern)
     (cadr (assoc pattern detection-freqs)))
-  (let ((fH+V+ (get-freq '(H + V +)))
-        (fH+V- (get-freq '(H + V -)))
-        (fH-V+ (get-freq '(H - V +)))
-        (fH-V- (get-freq '(H - V -)))
-        (fV+H+ (get-freq '(V + H +)))
-        (fV+H- (get-freq '(V + H -)))
-        (fV-H+ (get-freq '(V - H +)))
-        (fV-H- (get-freq '(V - H -))))
-    ;; Compute estimates of products of squares of cosines and sines.
-    (let ((cos²φ₁sin²φ₂ (+ fH+V+ fV-H-))
-          (cos²φ₁cos²φ₂ (+ fH+V- fV-H+))
-          (sin²φ₁sin²φ₂ (+ fH-V+ fV+H-))
-          (sin²φ₁cos²φ₂ (+ fH-V- fV+H+)))
-      ;; Take square roots. All the test angles are in Quadrant I, and
-      ;; so only positive square roots will be needed. (Be careful!
-      ;; You have to account for the quadrants of φ₁ and φ₂, and so
-      ;; sometimes need a NEGATIVE square root when doing this kind of
-      ;; calculation.)
-      (let ((cosφ₁sinφ₂ (sqrt cos²φ₁sin²φ₂))
-            (cosφ₁cosφ₂ (sqrt cos²φ₁cos²φ₂))
-            (sinφ₁sinφ₂ (sqrt sin²φ₁sin²φ₂))
-            (sinφ₁cosφ₂ (sqrt sin²φ₁cos²φ₂)))
-        ;; Use angle-difference identities. See, for instance, the CRC
-        ;; Handbook of Mathematical Sciences, 6th edition, page 170.
-        (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
-              (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
-          ;; That is it. We have everthing we need.
-          (- (square sin<φ₁-φ₂>) (square cos<φ₁-φ₂>)))))))
+  (estimate-pair-correlation
+   φ₁ φ₂ 'optical 'complementary
+   `(,(get-freq '(H + V +)) ,(get-freq '(H + V -))
+     ,(get-freq '(H - V +)) ,(get-freq '(H - V -))
+     ,(get-freq '(V + H +)) ,(get-freq '(V + H -))
+     ,(get-freq '(V - H +)) ,(get-freq '(V - H -)))))
 
 (define (angle->string angle)
   (let* ((angle/π (/ angle π))
@@ -204,7 +181,8 @@ OTHER DEALINGS IN THE SOFTWARE.
     (V + H +) (V + H -) (V - H +) (V - H -)))
 
 (format #t "~%")
-
+(format #t "  Simulation of a two-channel optical Bell test.~%")
+(format #t "~%")
 (format #t "  legend:~%")
 (format #t "    (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
 (format #t "               vertical photon in (+) channel of pbs₂,~%")
@@ -228,7 +206,8 @@ OTHER DEALINGS IN THE SOFTWARE.
          (probs-list (detection-probabilities φ₁ φ₂))
          (freqs-list (detection-frequencies φ₁ φ₂))
          (nominal-correlation (- (cos (* 2 (- φ₁ φ₂)))))
-         (estimated-correlation (estimate-correlation freqs-list)))
+         (estimated-correlation
+          (estimate-correlation φ₁ φ₂ freqs-list)))
     (set! S-nominal
       ((if (= i 2) - +) S-nominal nominal-correlation))
     (set! S-estimated
