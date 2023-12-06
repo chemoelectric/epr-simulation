@@ -166,8 +166,9 @@ mechanics, call it ‘quantum correlation’, and think it peculiarly
 the polarizer settings together, without affecting the correlation, so
 one of the polarizers was at zero degrees. One could then have worked
 backwards and found the derivation given above—thus proving ‘quantum
-correlation’ is simply the correlation, and that Einstein, Podolsky,
-and Rosen were correct: ‘quantum’ physics is just *physics*.
+correlation’ is simply the correlation, and that [Einstein, Podolsky,
+and Rosen](https://doi.org/10.1103/PhysRev.47.777) were correct:
+‘quantum’ physics is *ordinary physics* that has been obfuscated.
 
 Physicists finding the derivation above would have discovered, as
 well, that the fabled ‘hidden variables’ are a red herring. One should
