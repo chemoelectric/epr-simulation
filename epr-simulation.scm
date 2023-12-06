@@ -307,7 +307,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;; -(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)) = -cos(2(φ₁-φ₂) for a
       ;; complementary pair of particles, coherent waves, etc.
       ;;
-      ;; This method for computing the estimate is due to
+      ;; This method for computing correlation estimates is due to
       ;; A. F. Kracklauer.
       ;;
 
