@@ -169,6 +169,6 @@ backwards and found the derivation given above—thus proving ‘quantum
 correlation’ is simply the correlation, and that Einstein, Podolsky,
 and Rosen were correct.
 
-They would also, incidentally, have discovered that the fabled ‘hidden
+They would also have discovered, incidentally, that the fabled ‘hidden
 variables’ were a red herring. The correlations come from the
 experimental layout. They require no undiscovered mysteries.
