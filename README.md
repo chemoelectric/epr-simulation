@@ -171,6 +171,8 @@ and Rosen](https://doi.org/10.1103/PhysRev.47.777) were correct:
 ‘quantum’ physics is *ordinary physics* that has been obfuscated.
 
 Physicists finding the derivation above would have discovered, as
-well, that the fabled ‘hidden variables’ are a red herring. One should
-erase the phrase from the lexicon. The correlations come from the
-experimental layout and require no undiscovered mysteries.
+well, that the fabled [‘hidden
+variables’](https://en.wikipedia.org/w/index.php?title=Hidden-variable_theory&oldid=1188516029)
+are a red herring. One should erase the phrase from the lexicon. The
+correlations come from the experimental layout and require no
+undiscovered mysteries.
