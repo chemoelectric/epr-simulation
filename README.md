@@ -170,5 +170,5 @@ correlation’ is simply the correlation, and that Einstein, Podolsky,
 and Rosen were correct.
 
 They would also, incidentally, have discovered that the fabled ‘hidden
-variables’ were a red herring. The correlations are a consequence of
-the experimental layout. They require no undiscovered mysteries.
+variables’ were a red herring. The correlations come from the
+experimental layout. They require no undiscovered mysteries.
