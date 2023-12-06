@@ -177,4 +177,9 @@ well, that the fabled [‘hidden
 variables’](https://en.wikipedia.org/w/index.php?title=Hidden-variable_theory&oldid=1188516029)
 are a red herring. One should erase the phrase from the lexicon. The
 correlations come from the experimental layout and require no
-undiscovered mysteries.
+undiscovered mysteries. It is fallacious to assume that, because
+quantum mechanics deals with probabilities and statistical mechanics
+deals with probabilities, then quantum mechanics must reduce to
+statistical mechanics with ‘hidden variables’. In Aspect-style
+experiments, quantum mechanics reduces to simple division of outcomes
+according to the Law of Malus.
