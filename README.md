@@ -169,6 +169,7 @@ backwards and found the derivation given above—thus proving ‘quantum
 correlation’ is simply the correlation, and that Einstein, Podolsky,
 and Rosen were correct—that ‘quantum’ physics was just physics.
 
-They would also have discovered, incidentally, that the fabled ‘hidden
-variables’ were a red herring. The correlations come from the
-experimental layout. They require no undiscovered mysteries.
+Physicists working backwards would also have discovered, incidentally,
+that the fabled ‘hidden variables’ were a red herring. The
+correlations come from the experimental layout. They require no
+undiscovered mysteries.
