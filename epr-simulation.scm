@@ -302,9 +302,14 @@ OTHER DEALINGS IN THE SOFTWARE.
              fL+R+ fL+R- fL-R+ fL-R-         ; f = ‘frequency’
              fR+L+ fR+L- fR-L+ fR-L-)        ; L = ‘left’, R = ‘right’
 
+      ;;
       ;; Compute an estimate of the correlation coefficient
       ;; -(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)) = -cos(2(φ₁-φ₂) for a
       ;; complementary pair of particles, coherent waves, etc.
+      ;;
+      ;; This method for computing the estimate is due to
+      ;; A. F. Kracklauer.
+      ;;
 
       ;; Compute estimates of products of squares of cosines and sines.
       (let ((cos²φ₁sin²φ₂ (+ fL+R+ fR-L-))
