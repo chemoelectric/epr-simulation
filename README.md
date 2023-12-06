@@ -87,7 +87,7 @@ that is a common name for it in probability theory. This usage has no
 connection to the use of* ρ *in physics to represent a density
 function.*)
 
-### Photons
+### [Photons](https://en.wikipedia.org/w/index.php?title=Photon&oldid=1188018882)
 
 I shall model the light as particles, called ‘photons’. Each photon is
 plane-polarized at angle 0 or π/2, but we will call the first case H
@@ -98,7 +98,7 @@ pairs, polarized thus: (H, V) or (V, H).
 Let the left side be subscripted ₁ and the right side subscripted ₂,
 in whatever follows.
 
-### Two-channel polarizers
+### [Two-channel polarizers](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Beam-splitting_polarizers)
 
 The intensity of the light in a polarizer’s channel, by the [Law of
 Malus](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Malus's_law_and_other_properties),
@@ -124,8 +124,9 @@ splitter on that side, and simply map
 
 Assign the value +1 to a photon detected in a (+) channel and −1 to a
 photon detected in a (−) channel. This choice of values makes the
-correlation coefficient equal the covariance. That is, no
-normalization is needed. It can be computed (with some care) as
+[correlation coefficient equal the
+covariance](https://en.wikipedia.org/w/index.php?title=Covariance_and_correlation&oldid=1144835290). That
+is, no normalization is needed. It can be computed (with some care) as
 follows—
 
     ρ = ½(+1)(+1)sin²φ₀₁ + ½(+1)(−1)cos²φ₀₁
