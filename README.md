@@ -29,7 +29,7 @@ method.
 Another example of scientific method is to make solid logical
 arguments, such as the following.
 
-## The impossibility of ‘irreducibility’
+## The impossibility of ‘quantum’ physics being distinct
 
 That there is no ‘quantum’ physics distinct from physics generally can
 actually be shown *logically* by the following argument—
@@ -62,19 +62,20 @@ theory, etc. Any problem in ‘quantum’ physics surely could be solved
 by someone aware of those fields of study but not of quantum mechanics
 itself.
 
-Therefore the supposed ‘irreducibility’ of ‘quantum’ physics is not
-merely false: it is so implausible we might as well declare it
-impossible. *There does not exist ‘quantum’ physics distinct from
-‘classical’ physics*. The distinction is a myth. Rather, there are
-problems that have been believed soluble *only* by quantum mechanical
-methods, but which actually can be solved by *any* reasonable
-mathematical methods—*all of which must reach the same result*.
+Therefore the supposed distinction of ‘quantum’ physics problems from
+‘classical’ physics problems is not merely false: it is so implausible
+we might as well declare it impossible. *There does not exist
+‘quantum’ physics distinct from ‘classical’ physics*. The distinction
+is a myth. Rather, there are problems that have been believed soluble
+*only* by quantum mechanical methods, but which actually can be solved
+by *any* reasonable mathematical methods—*all of which must reach the
+same result*.
 
 Thus, in the published papers (such as those by J. S. Bell, John
 Clauser, etc.) where a ‘local realistic’ solution for EPR-B
 correlations is reached that is different from what quantum mechanics
-gives, the authors *definitely* have made errors. The solution from
-quantum mechanics *is* correct.
+gives, the authors *definitely* have made errors, because the solution
+from quantum mechanics *is* correct.
 
 I will prove that below, by deriving the same expression
 independently.
