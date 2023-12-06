@@ -57,10 +57,10 @@ mathematics would be uselessly inconsistent, and we know from
 experience that it is not.
 
 What is more, quantum mechanics is itself not a fundamental
-mathematical field, but an application of linear algebra, probability
-theory, etc. Any problem in ‘quantum’ physics surely could be solved
-by someone aware of those fields of study but not of quantum mechanics
-itself.
+mathematical field of study, but an application of linear algebra,
+probability theory, etc. Any problem in ‘quantum’ physics surely could
+be solved by someone aware of those fields of study but not of quantum
+mechanics itself.
 
 Therefore the supposed distinction of ‘quantum’ physics problems from
 ‘classical’ physics problems is not merely false: it is so implausible
