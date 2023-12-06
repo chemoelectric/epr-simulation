@@ -167,9 +167,9 @@ the polarizer settings together, without affecting the correlation, so
 one of the polarizers was at zero degrees. One could then have worked
 backwards and found the derivation given above—thus proving ‘quantum
 correlation’ is simply the correlation, and that Einstein, Podolsky,
-and Rosen were correct: ‘quantum’ physics is just physics.
+and Rosen were correct: ‘quantum’ physics is just *physics*.
 
-Physicists working backwards would also have discovered, incidentally,
-that the fabled ‘hidden variables’ were a red herring. The
-correlations come from the experimental layout. They require no
-undiscovered mysteries.
+Physicists finding the derivation above would have discovered, as
+well, that the fabled ‘hidden variables’ are a red herring. One should
+erase the phrase from the lexicon. The correlations come from the
+experimental layout and require no undiscovered mysteries.
