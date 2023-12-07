@@ -219,7 +219,15 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; record. In this simulation, the photon retransmitted by pbs₁ will
   ;; be polarized according to the setting of pbs₁, and we will assume
   ;; pbs₂ is lined up with pbs₁.
-  (define pbs₁ (make-pbs φ₁ φ₁ (+ φ₁ π/2)))
+  (define pbs₁ (make-pbs φ₁ #t #t))
+
+;;;;; FIXME: Some other things to try.
+;;;;;        This, for instance, also gives |S|=sqrt(2).
+  ;; (define change-pola
+  ;;    (make-photon-polarization-angle-changer
+  ;;     (lambda (θ) (- π/2 θ))))
+  ;; (define pbs₁ (make-pbs φ₁ (lambda (_ phot) (change-pola phot))
+  ;;                        (lambda (_ phot) (change-pola phot))))
 
   ;; pbs₂ outputs photons into photodetectors and so can return
   ;; booleans instead of <photon> records.

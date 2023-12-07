@@ -35,7 +35,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           ;; A plane-polarized photon.
           make-photon
           photon?
-          photon-polarization-angle
+          photon-polarization-angle set-photon-polarization-angle!
+          make-photon-polarization-angle-changer
           *photon-pair-probability* ; Parameter, default 0.5
           photon-pair-probabilities ; Two values, default 0.5, 0.5
           photon-pair-source)       ; Two photons, complementary pair.
@@ -45,8 +46,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-pbs
           pbs?
           pbs-angle-in      ; Angle wrt the incident photon.
-          pbs-angle-out+    ; Output angle wrt the next arm, or #f.
-          pbs-angle-out-    ; Output angle wrt to the next arm, or #f.
+          pbs-photon-out+   ; Output photon or #f.
+          pbs-photon-out-   ; Output photon or #f.
           pbs-probabilities ; Probabilities given an incident photon.
           pbs-activity)     ; Activity given an incident photon.
 
@@ -136,12 +137,23 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;; polarization angle is given by a real number.
       (%%make-photon angle)
       photon?
-      (angle photon-polarization-angle))
+      (angle photon-polarization-angle
+             %%set-photon-polarization-angle!))
 
     (define (make-photon angle)
       (unless (real? angle)
         (error "make-photon: expected a real number" angle))
       (%%make-photon angle))
+
+    (define (set-photon-polarization-angle! photon θ)
+      (unless (real? θ)
+        (error
+         "set-photon-polarization-angle!: expected a real number" θ))
+      (%%set-photon-polarization-angle! photon θ))
+
+    (define (make-photon-polarization-angle-changer proc)
+      (lambda (phot)
+        (make-photon (proc (photon-polarization-angle phot)))))
 
     (cond-expand
       (chicken (define-record-printer (<photon> rectype port)
@@ -176,41 +188,34 @@ OTHER DEALINGS IN THE SOFTWARE.
     (define-record-type <pbs>
       ;; Polarizing beam-splitter with plane-polarized output. (A
       ;; two-channel polarizer.)
-      (%%make-pbs angle-in angle-out+ angle-out-)
+      (%%make-pbs angle-in photon-out+ photon-out-)
       pbs?
       (angle-in pbs-angle-in)
-      (angle-out+ pbs-angle-out+)
-      (angle-out- pbs-angle-out-))
+      (photon-out+ pbs-photon-out+)
+      (photon-out- pbs-photon-out-))
 
     (define make-pbs
       (case-lambda
-        ((angle-in angle-out+ angle-out-)
+        ((angle-in photon-out+ photon-out-)
          (unless (real? angle-in)
            (error "make-pbs: expected a real number" angle-in))
-         (unless (or (not angle-out+) (real? angle-out+))
-           (error "make-pbs: expected a real number or #f"
-                  angle-out+))
-         (unless (or (not angle-out-) (real? angle-out-))
-           (error "make-pbs: expected a real number or #f"
-                  angle-out-))
-         (%%make-pbs angle-in angle-out+ angle-out-))
-        ((angle-in)
-         (make-pbs angle-in #f #f))))
+         (unless (or (boolean? photon-out+) (procedure? photon-out+))
+           (error "make-pbs: expected a procedure or boolean"
+                  photon-out+))
+         (unless (or (boolean? photon-out-) (procedure? photon-out-))
+           (error "make-pbs: expected a procedure or boolean"
+                  photon-out-))
+         (%%make-pbs angle-in photon-out+ photon-out-))
+        ((angle-in) (make-pbs angle-in #f #f))))
 
     (cond-expand
       (chicken (define-record-printer (<pbs> rectype port)
                  (display "<pbs " port)
                  (write-angle (pbs-angle-in rectype) port)
                  (display " " port)
-                 (let ((x (pbs-angle-out+ rectype)))
-                   (if (real? x)
-                       (write-angle x port)
-                       (write x port)))
+                 (write (pbs-photon-out+ rectype))
                  (display " " port)
-                 (let ((x (pbs-angle-out- rectype)))
-                   (if (real? x)
-                       (write-angle x port)
-                       (write x port)))
+                 (write (pbs-photon-out+ rectype))
                  (display ">" port)))
       (else))
 
@@ -225,16 +230,23 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;;   if (+) channel is chosen.
       ;; Output (values #f #t) or (values #f <photon ANGLE-OUT>)
       ;;   if (-) channel is chosen.
+      (define angle-in (pbs-angle-in pbs))
       (let-values (((p+ _p-)
                     (pbs-probabilities
                      pbs (photon-polarization-angle photon))))
         (if (< (random-real) p+)
-            (let ((angle-out (pbs-angle-out+ pbs)))
-              (values (if angle-out (make-photon angle-out) #t)
-                      #f))
-            (let ((angle-out (pbs-angle-out- pbs)))
-              (values #f
-                      (if angle-out (make-photon angle-out) #t))))))
+            (let ((photon-out (pbs-photon-out+ pbs)))
+              (cond ((eq? photon-out #f) (values #t #f))
+                    ((eq? photon-out #t)
+                     (values (make-photon angle-in) #f))
+                    (else
+                     (values (photon-out angle-in photon) #f))))
+            (let ((photon-out (pbs-photon-out- pbs)))
+              (cond ((eq? photon-out #f) (values #f #t))
+                    ((eq? photon-out #t)
+                     (values #f (make-photon (- π/2 angle-in ))))
+                    (else
+                     (values #f (photon-out angle-in photon))))))))
 
     (define-record-type <sgm>
       ;; Any two-channel device similar to a Stern-Gerlach magnet.
