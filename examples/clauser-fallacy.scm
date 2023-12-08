@@ -297,7 +297,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define i 1)           ;; For computing a CHSH contrast.
 
 (format #t "~%")
-(do ((test-angles (append bell-test-angles '((0.1 0.8) (0.2 0.7) (0.3 1.2))) (cdr test-angles)))
+(do ((test-angles bell-test-angles (cdr test-angles)))
     ((null? test-angles))
   (let* ((φ₁ (caar test-angles))
          (φ₂ (cadar test-angles))
