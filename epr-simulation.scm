@@ -244,7 +244,7 @@ OTHER DEALINGS IN THE SOFTWARE.
             (let ((photon-out (pbs-photon-out- pbs)))
               (cond ((eq? photon-out #f) (values #f #t))
                     ((eq? photon-out #t)
-                     (values #f (make-photon (- π/2 angle-in ))))
+                     (values #f (make-photon (+ angle-in π/2))))
                     (else
                      (values #f (photon-out angle-in photon))))))))
 

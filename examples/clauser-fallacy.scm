@@ -228,10 +228,18 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;;     (lambda (θ) (- π/2 θ))))
   ;; (define pbs₁ (make-pbs φ₁ (lambda (_ phot) (change-pola phot))
   ;;                        (lambda (_ phot) (change-pola phot))))
+;;;;;
+;;;;;        This gives |S|=0.
+  ;; (define change-pola
+  ;;   (make-photon-polarization-angle-changer
+  ;;    (lambda (θ) (- π/2 θ))))
+  ;; (define pbs₁ (make-pbs φ₁ (lambda (_ phot) phot)
+  ;;                        (lambda (_ phot) (change-pola phot))))
 
   ;; pbs₂ outputs photons into photodetectors and so can return
   ;; booleans instead of <photon> records.
-  (define pbs₂ (make-pbs φ₂))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  (define pbs₂ (make-pbs φ₂))
+  (define pbs₂ (make-pbs φ₂ #t #t))
 
   (define N (*events-per-test-angle*))
   (define NH+V+ 0) (define NH+V- 0)
@@ -289,7 +297,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define i 1)           ;; For computing a CHSH contrast.
 
 (format #t "~%")
-(do ((test-angles bell-test-angles (cdr test-angles)))
+(do ((test-angles (append bell-test-angles '((0.1 0.8) (0.2 0.7) (0.3 1.2))) (cdr test-angles)))
     ((null? test-angles))
   (let* ((φ₁ (caar test-angles))
          (φ₂ (cadar test-angles))
@@ -317,35 +325,35 @@ OTHER DEALINGS IN THE SOFTWARE.
 (format #t "  such a ‘Clauser-correlation experiment’.~%")
 (format #t "~%")
 
-(format #t "  ------------------------------------------------------~%")
+;; (format #t "  ------------------------------------------------------~%")
 
-(format #t "~%")
-(format #t "  Here are numbers from an incorrectly done correlation~%")
-(format #t "  coefficient calculation—~%")
-(format #t "~%")
+;; (format #t "~%")
+;; (format #t "  Here are numbers from an incorrectly done correlation~%")
+;; (format #t "  coefficient calculation—~%")
+;; (format #t "~%")
 
-;;; See
-;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
-(define S-computed 0) ;; For computing a CHSH contrast.
-(set! i 1)            ;; For computing a CHSH contrast.
+;; ;;; See
+;; ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
+;; (define S-computed 0) ;; For computing a CHSH contrast.
+;; (set! i 1)            ;; For computing a CHSH contrast.
 
-(do ((test-angles bell-test-angles (cdr test-angles)))
-    ((null? test-angles))
-  (let* ((φ₁ (caar test-angles))
-         (φ₂ (cadar test-angles))
-         (probs-list (detection-probabilities φ₁ φ₂))
-         (computed-correlation (compute-correlation probs-list)))
-    (set! S-computed
-      ((if (= i 2) - +) S-computed computed-correlation))
-    (set! i (+ i 1))
-    (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
-            (radians->string φ₁) (radians->string φ₂))
-    (do ((patterns pattern-list (cdr patterns)))
-        ((null? patterns))
-      (let* ((patt (car patterns))
-             (prob (cadr (assoc patt probs-list))))
-        (format #t "  ~A freq~14,5@F~%" patt (inexact prob))))
-    (format #t "     correlation~14,5@F~%" computed-correlation)
-    (format #t "~%")))
-(format #t "    CHSH S value~14,5@F~%" S-computed)
-(format #t "~%")
+;; (do ((test-angles bell-test-angles (cdr test-angles)))
+;;     ((null? test-angles))
+;;   (let* ((φ₁ (caar test-angles))
+;;          (φ₂ (cadar test-angles))
+;;          (probs-list (detection-probabilities φ₁ φ₂))
+;;          (computed-correlation (compute-correlation probs-list)))
+;;     (set! S-computed
+;;       ((if (= i 2) - +) S-computed computed-correlation))
+;;     (set! i (+ i 1))
+;;     (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
+;;             (radians->string φ₁) (radians->string φ₂))
+;;     (do ((patterns pattern-list (cdr patterns)))
+;;         ((null? patterns))
+;;       (let* ((patt (car patterns))
+;;              (prob (cadr (assoc patt probs-list))))
+;;         (format #t "  ~A freq~14,5@F~%" patt (inexact prob))))
+;;     (format #t "     correlation~14,5@F~%" computed-correlation)
+;;     (format #t "~%")))
+;; (format #t "    CHSH S value~14,5@F~%" S-computed)
+;; (format #t "~%")
