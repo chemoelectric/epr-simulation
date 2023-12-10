@@ -28,8 +28,9 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;               Author : Barry Schwartz
 ;;; Date first completed : 5 December 2023
 ;;;
-;;; Simulation of a two-channel Bell test with devices displaying
-;;; behavior similar to Stern-Gerlach magnets. See, for instance,
+;;; Simulation of a two-channel Bell test with devices that sort glass
+;;; beads. The devices behave a lot like Stern-Gerlach magnets. See,
+;;; for instance,
 ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
 ;;;
 ;;; The analysis there is wrong, and the experiments run by Aspect et
@@ -47,8 +48,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;        mechanics NEVER is necessary to solve a problem.
 ;;;
 ;;; All the activity is ‘local realistic’. (Surely there is no such
-;;; thing as ‘instantaneous action at a distance’.) The ‘particles’ in
-;;; the simulation are glass beads.
+;;; thing as ‘instantaneous action at a distance’.)
 ;;;
 
 (import (scheme base)
@@ -86,14 +86,14 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; many do. This implies a quantum mechanical solution is not ‘doing
   ;; physics’, but doing the mathematics by a different method.)
   ;;
-  (define sgm₁ (make-sgm φ₁ '(W) '(B)))
-  (define sgm₂ (make-sgm φ₂ '(W) '(B)))
-  (let-values (((PW₁+ PW₁-) (sgm-probabilities sgm₁ 'W))
-               ((PB₁+ PB₁-) (sgm-probabilities sgm₁ 'B))
-               ((PW₂+ PW₂-) (sgm-probabilities sgm₂ 'W))
-               ((PB₂+ PB₂-) (sgm-probabilities sgm₂ 'B)))
-    ;; (W + B +) -- white bead (+) at sgm₁  black bead (+) at sgm₂
-    ;; (W + B -) -- white bead (+) at sgm₁  black bead (-) at sgm₂
+  (define splitter₁ (make-splitter 'stern-gerlach φ₁ '(W) '(B)))
+  (define splitter₂ (make-splitter 'stern-gerlach φ₂ '(W) '(B)))
+  (let-values (((PW₁+ PW₁-) (splitter-probabilities splitter₁ 'W))
+               ((PB₁+ PB₁-) (splitter-probabilities splitter₁ 'B))
+               ((PW₂+ PW₂-) (splitter-probabilities splitter₂ 'W))
+               ((PB₂+ PB₂-) (splitter-probabilities splitter₂ 'B)))
+    ;; (W + B +) -- white bead (+) at splitter₁  black bead (+) at splitter₂
+    ;; (W + B -) -- white bead (+) at splitter₁  black bead (-) at splitter₂
     ;; etc.
     (let ((probs `(((W + B +) ,(* 1/2 PW₁+ PB₂+))
                    ((W + B -) ,(* 1/2 PW₁+ PB₂-))
@@ -109,12 +109,12 @@ OTHER DEALINGS IN THE SOFTWARE.
 
       probs)))
 
-(define (simulate-one-event sgm₁ sgm₂)
+(define (simulate-one-event splitter₁ splitter₂)
   (let*-values (((bead₁ bead₂) (bead-pair-source))
-                ((detect₁+ _detect₁-) (sgm-activity sgm₁ bead₁))
-                ((detect₂+ _detect₂-) (sgm-activity sgm₂ bead₂)))
-    ;; (W + B +) -- white bead (+) at sgm₁  black bead (+) at sgm₂
-    ;; (W + B -) -- white bead (+) at sgm₁  black bead (-) at sgm₂
+                ((detect₁+ _detect₁-) (splitter-activity splitter₁ bead₁))
+                ((detect₂+ _detect₂-) (splitter-activity splitter₂ bead₂)))
+    ;; (W + B +) -- white bead (+) at splitter₁  black bead (+) at splitter₂
+    ;; (W + B -) -- white bead (+) at splitter₁  black bead (-) at splitter₂
     ;; etc.
     `(,bead₁ ,(if detect₁+ '+ '-) ,bead₂ ,(if detect₂+ '+ '-))))
 
@@ -123,8 +123,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define (detection-frequencies φ₁ φ₂)
   ;; Simulate events and compute frequencies of the different
   ;; detection patterns.
-  (define sgm₁ (make-sgm φ₁ '(W) '(B)))
-  (define sgm₂ (make-sgm φ₂ '(W) '(B)))
+  (define splitter₁ (make-splitter 'stern-gerlach φ₁ '(W) '(B)))
+  (define splitter₂ (make-splitter 'stern-gerlach φ₂ '(W) '(B)))
   (define N (*events-per-test-angle*))
   (define NW+B+ 0) (define NW+B- 0)
   (define NW-B+ 0) (define NW-B- 0)
@@ -132,7 +132,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   (define NB-W+ 0) (define NB-W- 0)
   (do ((i 0 (+ i 1)))
       ((= i N))
-    (match (simulate-one-event sgm₁ sgm₂)
+    (match (simulate-one-event splitter₁ splitter₂)
       ('(W + B +) (set! NW+B+ (+ NW+B+ 1)))
       ('(W + B -) (set! NW+B- (+ NW+B- 1)))
       ('(W - B +) (set! NW-B+ (+ NW-B+ 1)))
@@ -141,8 +141,8 @@ OTHER DEALINGS IN THE SOFTWARE.
       ('(B + W -) (set! NB+W- (+ NB+W- 1)))
       ('(B - W +) (set! NB-W+ (+ NB-W+ 1)))
       ('(B - W -) (set! NB-W- (+ NB-W- 1)))))
-  ;; (W + B +) -- white bead (+) at sgm₁  black bead (+) at sgm₂
-  ;; (W + B -) -- white bead (+) at sgm₁  black bead (-) at sgm₂
+  ;; (W + B +) -- white bead (+) at splitter₁  black bead (+) at splitter₂
+  ;; (W + B -) -- white bead (+) at splitter₁  black bead (-) at splitter₂
   ;; etc.
   `(((W + B +) ,(/ NW+B+ N))
     ((W + B -) ,(/ NW+B- N))
@@ -169,14 +169,14 @@ OTHER DEALINGS IN THE SOFTWARE.
     (B + W +) (B + W -) (B - W +) (B - W -)))
 
 (format #t "~%")
-(format #t "  A simulation of beads passing through two-channel devices~%")
-(format #t "  that behave similarly to Stern-Gerlach magnets.~%")
+(format #t "  A simulation of glass beads passing through two-channel~%")
+(format #t "  devices that behave similarly to Stern-Gerlach magnets.~%")
 (format #t "~%")
 (format #t "  legend:~%")
-(format #t "    (W + B +)  white bead in (+) channel of sgm₁,~%")
-(format #t "               black bead in (+) channel of sgm₂,~%")
-(format #t "    (W + B -)  white bead in (+) channel of sgm₁,~%")
-(format #t "               black bead in (-) channel of sgm₂, etc.~%")
+(format #t "    (W + B +)  white bead in (+) channel of splitter₁,~%")
+(format #t "               black bead in (+) channel of splitter₂,~%")
+(format #t "    (W + B -)  white bead in (+) channel of splitter₁,~%")
+(format #t "               black bead in (-) channel of splitter₂, etc.~%")
 (format #t "~%")
 (format #t "  White beads follow the cos² rule.~%")
 (format #t "  Black beads follow the sin² rule.~%")

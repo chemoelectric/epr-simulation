@@ -51,18 +51,21 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs-probabilities ; Probabilities given an incident photon.
           pbs-activity)     ; Activity given an incident photon.
 
-    (export <sgm>
-          ;; A two-channel device that behaves like a Stern-Gerlach
-          ;; magnet.
-          make-sgm
-          sgm?
-          sgm-angle-in                ; Angle wrt the incident object.
-          sgm-cos²-rule-particles     ; Particles that obey cos² rule.
-          sgm-cos2-rule-particles     ; Synonym.
-          sgm-sin²-rule-particles     ; Particles that obey sin² rule.
-          sgm-sin2-rule-particles     ; Synonym.
-          sgm-probabilities  ; Probabilities given an incident object.
-          sgm-activity)      ; Activity given an incident object.
+    (export <splitter>
+          ;; Any of many possible two-channel devices that sort
+          ;; objects into channels according to cos² and sin² rules.
+          make-splitter
+          splitter?
+          splitter-behavior           ; 'optical or 'stern-gerlach
+          splitter-angle-in           ; Angle wrt the incident object.
+          splitter-cos²-rule          ; Objects that obey cos² rule.
+          splitter-cos2-rule          ; Synonym.
+          splitter-sin²-rule          ; Particles that obey sin² rule.
+          splitter-sin2-rule          ; Synonym.
+          splitter-probabilities      ; Probabilities, given an
+                                      ; incident object.
+          splitter-activity)          ; Activity, given an incident
+                                      ; object.
 
     (export estimate-pair-correlation)  ; Estimate correlation from
                                         ; detection frequencies.
@@ -248,71 +251,80 @@ OTHER DEALINGS IN THE SOFTWARE.
                     (else
                      (values #f (photon-out angle-in photon))))))))
 
-    (define-record-type <sgm>
-      ;; Any two-channel device similar to a Stern-Gerlach magnet.
-      ;; Such a device divides the particle beam into proportions
-      ;; cos²(φ/2) and sin²(φ/2). Which particles go which way will be
-      ;; part of the design of the device. They are specified by lists
-      ;; and distinguished by the ‘equal?’ predicate.
-      (%%make-sgm angle-in cos²-rule-particles sin²-rule-particles)
-      sgm?
-      (angle-in sgm-angle-in)
-      (cos²-rule-particles sgm-cos²-rule-particles)
-      (sin²-rule-particles sgm-sin²-rule-particles))
+    (define-record-type <splitter>
+      ;; Any of many two-channel devices.  Such a device divides the
+      ;; particle beam into proportions cos²(φ) and sin²(φ) if
+      ;; behavior is 'optical, or cos²(φ/2) and sin²(φ/2) if behavior
+      ;; is 'stern-gerlach. Which particles go which way will be part
+      ;; of the design of the device. They are specified by lists and
+      ;; distinguished by the ‘equal?’ predicate.
+      (%%make-splitter behavior angle-in cos²-rule sin²-rule)
+      splitter?
+      (behavior splitter-behavior)
+      (angle-in splitter-angle-in)
+      (cos²-rule splitter-cos²-rule)
+      (sin²-rule splitter-sin²-rule))
 
-    (define sgm-cos2-rule-particles sgm-cos²-rule-particles)
-    (define sgm-sin2-rule-particles sgm-sin²-rule-particles)
+    (define splitter-cos2-rule splitter-cos²-rule)
+    (define splitter-sin2-rule splitter-sin²-rule)
 
-    (define (make-sgm angle-in
-                      cos²-rule-particles sin²-rule-particles)
+    (define (make-splitter behavior angle-in cos²-rule sin²-rule)
+      (unless (or (eq? behavior 'optical)
+                  (eq? behavior 'stern-gerlach))
+        (error "make-splitter: expected a 'optical or 'stern-gerlach"
+               behavior))
       (unless (real? angle-in)
-        (error "make-sgm: expected a real number" angle-in))
-      (unless (and (pair? cos²-rule-particles)
-                   (list? cos²-rule-particles))
-        (error "make-sgm: expected a non-empty list"
-               cos²-rule-particles))
-      (unless (and (pair? sin²-rule-particles)
-                   (list? sin²-rule-particles))
-        (error "make-sgm: expected a non-empty list"
-               sin²-rule-particles))
-      (%%make-sgm angle-in cos²-rule-particles sin²-rule-particles))
+        (error "make-splitter: expected a real number" angle-in))
+      (unless (and (pair? cos²-rule)
+                   (list? cos²-rule))
+        (error "make-splitter: expected a non-empty list" cos²-rule))
+      (unless (and (pair? sin²-rule)
+                   (list? sin²-rule))
+        (error "make-splitter: expected a non-empty list" sin²-rule))
+      (%%make-splitter behavior angle-in cos²-rule sin²-rule))
 
     (cond-expand
-      (chicken (define-record-printer (<sgm> rectype port)
-                 (display "<sgm " port)
-                 (write-angle (sgm-angle-in rectype) port)
+      (chicken (define-record-printer (<splitter> rectype port)
+                 (display "<splitter " port)
+                 (write (splitter-behavior rectype) port)
                  (display " " port)
-                 (write (sgm-cos²-rule-particles rectype) port)
+                 (write-angle (splitter-angle-in rectype) port)
                  (display " " port)
-                 (write (sgm-sin²-rule-particles rectype) port)
+                 (write (splitter-cos²-rule rectype) port)
+                 (display " " port)
+                 (write (splitter-sin²-rule rectype) port)
                  (display ">" port)))
       (else))
 
-    (define (sgm-probabilities sgm particle-kind)
-      (define φ/2 (* 0.5 (sgm-angle-in sgm)))
-      (cond ((member particle-kind (sgm-cos²-rule-particles sgm))
-             (let* ((p+ (square (cos φ/2)))
-                    (p- (- 1 p+)))
-               (values p+ p-)))
-            ((member particle-kind (sgm-sin²-rule-particles sgm))
-             (let* ((p+ (square (sin φ/2)))
-                    (p- (- 1 p+)))
-               (values p+ p-)))
-            (else (error
-                   "sgm-probabilities: not a recognized particle kind"
-                   particle-kind))))
+    (define (splitter-probabilities splitter particle-kind)
+      (let* ((φ (splitter-angle-in splitter))
+             (φ (if (eq? (splitter-behavior splitter) 'stern-gerlach)
+                    (* 0.5 φ)
+                    φ)))
+        (cond ((member particle-kind (splitter-cos²-rule splitter))
+               (let* ((p+ (square (cos φ)))
+                      (p- (- 1 p+)))
+                 (values p+ p-)))
+              ((member particle-kind (splitter-sin²-rule splitter))
+               (let* ((p+ (square (sin φ)))
+                      (p- (- 1 p+)))
+                 (values p+ p-)))
+              (else (error
+                     "splitter-probabilities: not a recognized particle kind"
+                     particle-kind)))))
 
-    (define (sgm-activity sgm particle-kind)
+    (define (splitter-activity splitter particle-kind)
       ;; Let the particle pass through into an appropriate channel.
-      (let-values (((p+ _p-) (sgm-probabilities sgm particle-kind)))
+      (let-values (((p+ _p-)
+                    (splitter-probabilities splitter particle-kind)))
         (if (< (random-real) p+)
             (values particle-kind #f)
             (values #f particle-kind))))
 
     (define (estimate-complementary-pair-correlation
              σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂ ; σ = ‘sign’
-             fL+R+ fL+R- fL-R+ fL-R-         ; f = ‘frequency’
-             fR+L+ fR+L- fR-L+ fR-L-)        ; L = ‘left’, R = ‘right’
+             fH+V+ fH+V- fH-V+ fH-V-         ; f = ‘frequency’
+             fV+H+ fV+H- fV-H+ fV-H-)        ; H = ‘horiz’, V = ‘vert’
 
       ;;
       ;; Compute an estimate of the correlation coefficient
@@ -324,17 +336,17 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;;
 
       ;; Compute estimates of products of squares of cosines and sines.
-      (let ((cos²φ₁sin²φ₂ (+ fL+R+ fR-L-))
-            (cos²φ₁cos²φ₂ (+ fL+R- fR-L+))
-            (sin²φ₁sin²φ₂ (+ fL-R+ fR+L-))
-            (sin²φ₁cos²φ₂ (+ fL-R- fR+L+)))
+      (let ((cos²φ₁sin²φ₂ (+ fH+V+ fV-H-))
+            (cos²φ₁cos²φ₂ (+ fH+V- fV-H+))
+            (sin²φ₁sin²φ₂ (+ fH-V+ fV+H-))
+            (sin²φ₁cos²φ₂ (+ fH-V- fV+H+)))
         ;; Take square roots. Sometimes one has to use the NEGATIVE
         ;; square root. It depends on the quadrants of φ₁ or φ₂.
         (let ((cosφ₁sinφ₂ (* σ_cosφ₁ σ_sinφ₂ (sqrt cos²φ₁sin²φ₂)))
               (cosφ₁cosφ₂ (* σ_cosφ₁ σ_cosφ₂ (sqrt cos²φ₁cos²φ₂)))
               (sinφ₁sinφ₂ (* σ_sinφ₁ σ_sinφ₂ (sqrt sin²φ₁sin²φ₂)))
               (sinφ₁cosφ₂ (* σ_sinφ₁ σ_cosφ₂ (sqrt sin²φ₁cos²φ₂))))
-          ;; Use angle-difference identities. See, for instance, the CRC
+          ;; Use angle-difference identities. See, for instance, the CVC
           ;; Handbook of Mathematical Sciences, 6th edition, page 170.
           (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
                 (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
@@ -343,8 +355,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     (define (estimate-matched-pair-correlation
              σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂ ; σ = ‘sign’
-             fL+R+ fL+R- fL-R+ fL-R-         ; f = ‘frequency’
-             fR+L+ fR+L- fR-L+ fR-L-)        ; L = ‘left’, R = ‘right’
+             fH+V+ fH+V- fH-V+ fH-V-         ; f = ‘frequency’
+             fV+H+ fV+H- fV-H+ fV-H-)        ; H = ‘horiz’, V = ‘vert’
 
       ;; Compute an estimate of the correlation coefficient
       ;; +(cos²(φ₁-φ₂)-sin²(φ₁-φ₂)) = +cos(2(φ₁-φ₂) for a
@@ -352,7 +364,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
       (- (estimate-complementary-pair-correlation
           σ_cosφ₁ σ_sinφ₁ σ_cosφ₂ σ_sinφ₂
-          fL+R+ fL+R- fL-R+ fL-R- fR+L+ fR+L- fR-L+ fR-L-)))
+          fH+V+ fH+V- fH-V+ fH-V- fV+H+ fV+H- fV-H+ fV-H-)))
 
     (define (estimate-pair-correlation φ₁ φ₂
                                        optical-or-stern-gerlach

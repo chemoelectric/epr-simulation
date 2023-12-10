@@ -119,73 +119,73 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define θH 0)
 (define θV π/2)
 
-(define (detection-probabilities φ₁ φ₂)
-  ;;
-  ;; The probabilities of detections are computed below without
-  ;; quantum mechanics. This is the solution demanded by probability
-  ;; theory. It is merely the division of possible events into their
-  ;; proper proportions.
-  ;;
-  ;; The calculation via quantum mechanics is merely the following,
-  ;; obfuscated. The orthodoxy in physics attributes physical meaning
-  ;; to this obfuscated, more difficult calculation. There is no
-  ;; physical meaning. It is simply a peculiar way to do the same
-  ;; calculation as here.
-  ;;
-  (define pbs₁ (make-pbs φ₁))
-  (define pbs₂ (make-pbs φ₂))
-  (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities))
-               ((PH₁+ PH₁-) (pbs-probabilities pbs₁ θH))
-               ((PV₁+ PV₁-) (pbs-probabilities pbs₁ θV))
-               ((PH₂+ PH₂-) (pbs-probabilities pbs₂ θH))
-               ((PV₂+ PV₂-) (pbs-probabilities pbs₂ θV)))
-    ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
-    ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
-    ;; etc.
-    (let ((probs `(((H + V +) ,(* PH₁V₂ PH₁+ PV₂+))
-                   ((H + V -) ,(* PH₁V₂ PH₁+ PV₂-))
-                   ((H - V +) ,(* PH₁V₂ PH₁- PV₂+))
-                   ((H - V -) ,(* PH₁V₂ PH₁- PV₂-))
-                   ((V + H +) ,(* PV₁H₂ PV₁+ PH₂+))
-                   ((V + H -) ,(* PV₁H₂ PV₁+ PH₂-))
-                   ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
-                   ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
+;; (define (detection-probabilities φ₁ φ₂)
+;;   ;;
+;;   ;; The probabilities of detections are computed below without
+;;   ;; quantum mechanics. This is the solution demanded by probability
+;;   ;; theory. It is merely the division of possible events into their
+;;   ;; proper proportions.
+;;   ;;
+;;   ;; The calculation via quantum mechanics is merely the following,
+;;   ;; obfuscated. The orthodoxy in physics attributes physical meaning
+;;   ;; to this obfuscated, more difficult calculation. There is no
+;;   ;; physical meaning. It is simply a peculiar way to do the same
+;;   ;; calculation as here.
+;;   ;;
+;;   (define pbs₁ (make-pbs φ₁))
+;;   (define pbs₂ (make-pbs φ₂))
+;;   (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities))
+;;                ((PH₁+ PH₁-) (pbs-probabilities pbs₁ θH))
+;;                ((PV₁+ PV₁-) (pbs-probabilities pbs₁ θV))
+;;                ((PH₂+ PH₂-) (pbs-probabilities pbs₂ θH))
+;;                ((PV₂+ PV₂-) (pbs-probabilities pbs₂ θV)))
+;;     ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
+;;     ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
+;;     ;; etc.
+;;     (let ((probs `(((H + V +) ,(* PH₁V₂ PH₁+ PV₂+))
+;;                    ((H + V -) ,(* PH₁V₂ PH₁+ PV₂-))
+;;                    ((H - V +) ,(* PH₁V₂ PH₁- PV₂+))
+;;                    ((H - V -) ,(* PH₁V₂ PH₁- PV₂-))
+;;                    ((V + H +) ,(* PV₁H₂ PV₁+ PH₂+))
+;;                    ((V + H -) ,(* PV₁H₂ PV₁+ PH₂-))
+;;                    ((V - H +) ,(* PV₁H₂ PV₁- PH₂+))
+;;                    ((V - H -) ,(* PV₁H₂ PV₁- PH₂-)))))
 
-      ;; Sanity check: verify that the probabilities add up to one.
-      (check-probabilities (map cadr probs))
+;;       ;; Sanity check: verify that the probabilities add up to one.
+;;       (check-probabilities (map cadr probs))
 
-      probs)))
+;;       probs)))
 
-(define (compute-correlation probabilities)
-  ;;
-  ;; The correlation coefficient, assigning +1 to (+) detections and
-  ;; -1 to (-) detections. With this assignment, the correlation
-  ;; coefficient equals the covariance.
-  ;;
-  ;; This will be a ‘Clauser-style’ calculation, for a single photon
-  ;; passing through two polarizing beam splitters.
-  ;;
-  ;; (To get the correct answer for the Bell test, one CAN use the
-  ;; following calculation, but RESTRICTED TO φ₂=0 and using φ₁ to
-  ;; represent the difference between settings. This is then the
-  ;; general answer, believe it or not. Adding any necessary number Δφ
-  ;; to both φ₁ and φ₂ covers all possible cases. This should have
-  ;; become obvious from the correlation expression itself
-  ;; [-cos(2(φ₁-φ₂))] and worked backwards to a proof of EPR! The
-  ;; expression is invariant under such rotations by Δφ.)
-  ;;
-  (define (get-prob pattern)
-    (cadr (assoc pattern probabilities)))
-  (let ((PH+V+ (get-prob '(H + V +)))
-        (PH+V- (get-prob '(H + V -)))
-        (PH-V+ (get-prob '(H - V +)))
-        (PH-V- (get-prob '(H - V -)))
-        (PV+H+ (get-prob '(V + H +)))
-        (PV+H- (get-prob '(V + H -)))
-        (PV-H+ (get-prob '(V - H +)))
-        (PV-H- (get-prob '(V - H -))))
-    (- (+ PH+V+ PH-V- PV+H+ PV-H-)
-       (+ PH+V- PH-V+ PV+H- PV-H+))))
+;; (define (compute-correlation probabilities)
+;;   ;;
+;;   ;; The correlation coefficient, assigning +1 to (+) detections and
+;;   ;; -1 to (-) detections. With this assignment, the correlation
+;;   ;; coefficient equals the covariance.
+;;   ;;
+;;   ;; This will be a ‘Clauser-style’ calculation, for a single photon
+;;   ;; passing through two polarizing beam splitters.
+;;   ;;
+;;   ;; (To get the correct answer for the Bell test, one CAN use the
+;;   ;; following calculation, but RESTRICTED TO φ₂=0 and using φ₁ to
+;;   ;; represent the difference between settings. This is then the
+;;   ;; general answer, believe it or not. Adding any necessary number Δφ
+;;   ;; to both φ₁ and φ₂ covers all possible cases. This should have
+;;   ;; become obvious from the correlation expression itself
+;;   ;; [-cos(2(φ₁-φ₂))] and worked backwards to a proof of EPR! The
+;;   ;; expression is invariant under such rotations by Δφ.)
+;;   ;;
+;;   (define (get-prob pattern)
+;;     (cadr (assoc pattern probabilities)))
+;;   (let ((PH+V+ (get-prob '(H + V +)))
+;;         (PH+V- (get-prob '(H + V -)))
+;;         (PH-V+ (get-prob '(H - V +)))
+;;         (PH-V- (get-prob '(H - V -)))
+;;         (PV+H+ (get-prob '(V + H +)))
+;;         (PV+H- (get-prob '(V + H -)))
+;;         (PV-H+ (get-prob '(V - H +)))
+;;         (PV-H- (get-prob '(V - H -))))
+;;     (- (+ PH+V+ PH-V- PV+H+ PV-H-)
+;;        (+ PH+V- PH-V+ PV+H- PV-H+))))
 
 (define (photon->symbol phot)
   (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
