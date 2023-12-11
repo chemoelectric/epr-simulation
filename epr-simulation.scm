@@ -31,6 +31,8 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export degrees->radians radians->degrees)
   (export radians->string)   ; Convert to a string using the symbol π.
 
+  (export tensor+)
+
   (export <photon>
           ;; A plane-polarized photon.
           make-photon
@@ -77,8 +79,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   (import (scheme base)
           (scheme case-lambda)
           (scheme inexact)
-          (only (srfi 1) every fold)
+          (only (srfi 1) concatenate every fold)
           (only (srfi 27) random-real)
+          (only (srfi 132) list-sort)
           (only (srfi 144) fl-epsilon))
 
   (cond-expand
@@ -133,6 +136,38 @@ OTHER DEALINGS IN THE SOFTWARE.
             "π×" (let ((angle/π
                         (if exact-enough (exact angle/π) angle/π)))
                    (number->string angle/π)))))))
+
+    (define (%%check-term caller term)
+      (unless (and (pair? term)
+                   (number? (car term))
+                   (string? (cdr term)))
+        (error (append caller ": expected a (number . string) pair")
+               term)))
+
+    (define (%%check-tensor caller tensor)
+      (unless (list? tensor)
+        (error (append caller ": expected a list") tensor))
+      (for-each (lambda (term) (%%check-term caller term)) tensor))
+
+    (define (%%combine-terms tensor)
+      (let ((tensor (list-sort (lambda (term1 term2)
+                                 (string>=? (cdr term1) (cdr term2)))
+                               tensor)))
+        (let loop ((p tensor)
+                   (q '()))
+          (cond ((null? p) q)
+                ((null? q) (loop (cdr p) (cons (car p) q)))
+                ((string=? (cdar p) (cdar q))
+                 (loop (cdr p) (cons (cons (+ (caar p) (caar q))
+                                           (cdar p))
+                                     (cdr q))))
+                (else (loop (cdr p) (cons (car p) q)))))))
+
+    (define (tensor+ tensor . tensor*)
+      (%%check-tensor "tensor+" tensor)
+      (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensor*)
+      (let ((tensor (concatenate (cons tensor tensor*))))
+        (%%combine-terms tensor)))
 
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
