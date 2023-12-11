@@ -31,7 +31,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export degrees->radians radians->degrees)
   (export radians->string)   ; Convert to a string using the symbol π.
 
-  (export tensor+)
+  (export tensor+) ; Vectors/tensors as lists of cons-pairs. Each car
+                   ; is a number representing the amplitude and each
+                   ; cdr is a string representing the basis tensor.
 
   (export <photon>
           ;; A plane-polarized photon.
