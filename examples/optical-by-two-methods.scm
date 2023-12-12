@@ -216,7 +216,8 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;; (format #t "  computed by quantum mechanics rather than other means.)~%")
 ;; (format #t "~%")
 
-(define t1 (tensor+ '((1.2 . "a,b,c") (2.3 . "b,a,c")  (3.4 . "c,a,b"))))
+(define t1 (tensor-normalize
+            '((1.2 . "a,b,c") (2.3 . "b,a,c")  (3.4 . "c,a,b"))))
 (write t1)(newline)
 (define t1.0 (tensor./ t1 0))
 (define t1.1 (tensor./ t1 1))

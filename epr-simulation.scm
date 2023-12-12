@@ -36,7 +36,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; number representing the amplitude and each cdr is a string
   ;; representing the basis tensor. This is a simplified notation for
   ;; all that is needed to handle EPR-B by quantum mechanics.
-  (export tensor+   ; Add tensors or collect terms in just one tensor.
+  (export tensor-normalize    ; Normalize a tensor to probability one.
+          tensor+   ; Add tensors or collect terms in just one tensor.
+          tensor.*  ; Combine tensors to form longer tuples.
           tensor./) ; Extract a vector from a tensor.
 
   (export <photon>
@@ -86,6 +88,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
   (import (scheme base)
           (scheme case-lambda)
+          (scheme complex)
           (scheme inexact)
           (only (srfi 1) concatenate every fold)
           (only (srfi 27) random-real)
@@ -172,20 +175,37 @@ OTHER DEALINGS IN THE SOFTWARE.
                                      (cdr q))))
                 (else (loop (cdr p) (cons (car p) q)))))))
 
-    (define (tensor+ tensor . tensor*)
+    (define (%%add-amplitude-as-probability term sum)
+      (+ sum (square (magnitude (car term)))))
+
+    (define (tensor-normalize tensor)
+      ;; Normalize a tensor so its amplitudes represent a total
+      ;; probability of one.
+      (let* ((tensor (tensor+ tensor))
+             (sum (fold %%add-amplitude-as-probability 0 tensor))
+             (denom (sqrt sum)))
+        (map (lambda (term) (cons (/ (car term) denom) (cdr term)))
+             tensor)))
+
+    (define (tensor+ tensor . tensors)
+      ;; Add tensors, or combine terms in one tensor.
       (%%check-tensor "tensor+" tensor)
-      (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensor*)
-      (let ((tensor (concatenate (cons tensor tensor*))))
+      (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensors)
+      (let ((tensor (concatenate (cons tensor tensors))))
         (%%combine-terms tensor)))
+
+    (define (tensor.* tensor . tensors)
+      ;; Lengthen the tuples.
+      'FIXME)
 
     (define (tensor./ tensor i)
       ;; Extract the i’th vector (starting from i=0) from the ordered
       ;; tuple.
-      (tensor+
+      (tensor-normalize
        (map (lambda (term)
               (cons (car term)
                     (list-ref (string-split (cdr term) ",") i)))
-            tensor)))
+            (tensor+ tensor))))
 
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
