@@ -37,9 +37,8 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; representing the basis tensor. This is a simplified notation for
   ;; all that is needed to handle EPR-B by quantum mechanics.
   (export tensor-normalize    ; Normalize a tensor to probability one.
-          tensor+   ; Add tensors or collect terms in just one tensor.
-          tensor.*  ; Combine tensors to form longer tuples.
-          tensor./) ; Extract a vector from a tensor.
+          tensor+    ; Add tensors or collect terms. No normalization.
+          tensor./)  ; Extract a vector from a tensor.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -188,15 +187,12 @@ OTHER DEALINGS IN THE SOFTWARE.
              tensor)))
 
     (define (tensor+ tensor . tensors)
-      ;; Add tensors, or combine terms in one tensor.
+      ;; Add tensors, or combine terms in one tensor. Does not
+      ;; normalize.
       (%%check-tensor "tensor+" tensor)
       (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensors)
       (let ((tensor (concatenate (cons tensor tensors))))
         (%%combine-terms tensor)))
-
-    (define (tensor.* tensor . tensors)
-      ;; Lengthen the tuples.
-      'FIXME)
 
     (define (tensor./ tensor i)
       ;; Extract the i’th vector (starting from i=0) from the ordered
