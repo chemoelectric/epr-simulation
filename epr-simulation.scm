@@ -31,9 +31,13 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export degrees->radians radians->degrees)
   (export radians->string)   ; Convert to a string using the symbol π.
 
-  (export tensor+) ; Vectors/tensors as lists of cons-pairs. Each car
-                   ; is a number representing the amplitude and each
-                   ; cdr is a string representing the basis tensor.
+  ;; Support for vectors and tensors (ordered tuples of vectors,
+  ;; forming vectors themselves) as lists of cons-pairs. Each car is a
+  ;; number representing the amplitude and each cdr is a string
+  ;; representing the basis tensor. This is a simplified notation for
+  ;; all that is needed to handle EPR-B by quantum mechanics.
+  (export tensor+   ; Add tensors or collect terms in just one tensor.
+          tensor./) ; Extract a vector from a tensor.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -43,6 +47,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-photon-polarization-angle-changer
           *photon-pair-probability* ; Parameter, default 0.5
           photon-pair-probabilities ; Two values, default 0.5, 0.5
+          photon-pair-tensor        ; Two amplitudes, default √0.5
           photon-pair-source)       ; Two photons, complementary pair.
 
   (export <pbs>
@@ -53,6 +58,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs-photon-out+   ; Output photon or #f.
           pbs-photon-out-   ; Output photon or #f.
           pbs-probabilities ; Probabilities given an incident photon.
+          pbs-tensor        ; Tensor operation.
           pbs-activity)     ; Activity given an incident photon.
 
     (export <splitter>
@@ -84,7 +90,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           (only (srfi 1) concatenate every fold)
           (only (srfi 27) random-real)
           (only (srfi 132) list-sort)
-          (only (srfi 144) fl-epsilon))
+          (only (srfi 144) fl-epsilon)
+          (only (srfi 152) string-split))
 
   (cond-expand
     (chicken (import (only (chicken base) define-record-printer)
@@ -171,6 +178,15 @@ OTHER DEALINGS IN THE SOFTWARE.
       (let ((tensor (concatenate (cons tensor tensor*))))
         (%%combine-terms tensor)))
 
+    (define (tensor./ tensor i)
+      ;; Extract the i’th vector (starting from i=0) from the ordered
+      ;; tuple.
+      (tensor+
+       (map (lambda (term)
+              (cons (car term)
+                    (list-ref (string-split (cdr term) ",") i)))
+            tensor)))
+
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
       ;; polarization angle orthogonal to its direction of motion. The
@@ -216,6 +232,18 @@ OTHER DEALINGS IN THE SOFTWARE.
       (let* ((p₁ (*photon-pair-probability*))
              (p₂ (- 1 p₁)))
         (values p₁ p₂)))
+
+    (define (photon-pair-tensor angle1-string angle2-string)
+      (unless (string? angle1-string)
+        (error "photon-pair-tensor: expected a string" angle1-string))
+      (unless (string? angle2-string)
+        (error "photon-pair-tensor: expected a string" angle2-string))
+      (call-with-values photon-pair-probabilities
+        (lambda (p₁ p₂)
+          `((,(sqrt p₁) . ,(string-append angle1-string ","
+                                          angle2-string))
+            (,(sqrt p₂) . ,(string-append angle2-string ","
+                                          angle1-string))))))
 
     (define (photon-pair-source angle1 angle2)
       (call-with-values photon-pair-probabilities
@@ -264,6 +292,9 @@ OTHER DEALINGS IN THE SOFTWARE.
                                  photon-pola-angle))))
              (p- (- 1 p+)))
         (values p+ p-)))
+
+    (define (pbs-tensor pbs photon-tensor)
+      'FIXME)
 
     (define (pbs-activity pbs photon)
       ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)

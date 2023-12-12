@@ -13,7 +13,8 @@
   srfi-1                                ; list library
   srfi-27                               ; random bits
   srfi-132                              ; sort libraries
-  srfi-144)                             ; flonums
+  srfi-144                              ; flonums
+  srfi-152)                             ; string library
  (component-options
   (csc-options "-O3" "-X" "r7rs" "-R" "r7rs"))
  (components
