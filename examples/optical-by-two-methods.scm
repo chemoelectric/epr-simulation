@@ -225,3 +225,6 @@ OTHER DEALINGS IN THE SOFTWARE.
 (write t1.0)(newline)
 (write t1.1)(newline)
 (write t1.2)(newline)
+(write (tensor.* t1.0 t1.1))(newline)
+(write (apply + (map square (map car (tensor.* t1.0 t1.1)))))(newline)
+

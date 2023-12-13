@@ -38,7 +38,8 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; all that is needed to handle EPR-B by quantum mechanics.
   (export tensor-normalize    ; Normalize a tensor to probability one.
           tensor+    ; Add tensors or collect terms. No normalization.
-          tensor./)  ; Extract a vector from a tensor.
+          tensor.*   ; Lengthen the tuples by one. No normalization.
+          tensor./)  ; Extract a vector from a tensor. Normalizes.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -88,6 +89,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   (import (scheme base)
           (scheme case-lambda)
           (scheme complex)
+          (scheme cxr)
           (scheme inexact)
           (only (srfi 1) concatenate every fold)
           (only (srfi 27) random-real)
@@ -193,6 +195,25 @@ OTHER DEALINGS IN THE SOFTWARE.
       (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensors)
       (let ((tensor (concatenate (cons tensor tensors))))
         (%%combine-terms tensor)))
+
+    (define (tensor.* tensor vect)
+      ;; Lengthen the ordered tuples by one. This means taking the
+      ;; Cartesian product of the tensor’s bases with the vector’s
+      ;; bases. Does not normalize.
+      (let loop ((t tensor)
+                 (v vect)
+                 (p '()))
+        (cond ((null? t) (tensor+ p))
+              ((null? v) (loop (cdr t) vect p))
+              (else (let ((ampl_t (caar t))
+                          (basis_t (cdar t))
+                          (ampl_v (caar v))
+                          (basis_v (cdar v)))
+                      (let ((new-term
+                             (cons (* ampl_t ampl_v)
+                                   (string-append basis_t ","
+                                                  basis_v))))
+                        (loop t (cdr v) (cons new-term p))))))))
 
     (define (tensor./ tensor i)
       ;; Extract the i’th vector (starting from i=0) from the ordered
@@ -310,7 +331,17 @@ OTHER DEALINGS IN THE SOFTWARE.
         (values p+ p-)))
 
     (define (pbs-tensor pbs photon-tensor)
-      'FIXME)
+      (%%check-tensor "pbs-tensor" photon-tensor)
+      (unless (= (length photon-tensor) 2)
+        (error "pbs-tensor: expected a length-2 tensor"
+               photon-tensor))
+      (let ((ampl1 (caar photon-tensor))
+            (angle1 (string->number (cdar photon-tensor)))
+            (ampl2 (caadr photon-tensor))
+            (angle2 (string->number (cdadr photon-tensor))))
+        (let ((prob1 (square (magnitude ampl1)))
+              (prob2 (square (magnitude ampl2))))
+          'FIXME)))
 
     (define (pbs-activity pbs photon)
       ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
