@@ -29,7 +29,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export π/180 π/8 π/4 π3/8 π/2 π3/4 π)
 
   (export degrees->radians radians->degrees)
-  (export radians->string)   ; Convert to a string using the symbol π.
+  (export radians->string string->radians) ; Using the prefix π or π×.
 
   ;; Support for vectors and tensors (ordered tuples of vectors,
   ;; forming vectors themselves) as lists of cons-pairs. Each car is a
@@ -63,7 +63,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs-tensor        ; Tensor operation.
           pbs-activity)     ; Activity given an incident photon.
 
-    (export <splitter>
+  (export <splitter>
           ;; Any of many possible two-channel devices that sort
           ;; objects into channels according to cos² and sin² rules.
           make-splitter
@@ -75,14 +75,14 @@ OTHER DEALINGS IN THE SOFTWARE.
           splitter-sin²-rule          ; Particles that obey sin² rule.
           splitter-sin2-rule          ; Synonym.
           splitter-probabilities      ; Probabilities, given an
-                                      ; incident object.
+                                        ; incident object.
           splitter-activity)          ; Activity, given an incident
-                                      ; object.
+                                        ; object.
 
-    (export estimate-pair-correlation)  ; Estimate correlation from
+  (export estimate-pair-correlation)  ; Estimate correlation from
                                         ; detection frequencies.
 
-    (export check-probabilities)        ; Check if a list of
+  (export check-probabilities)        ; Check if a list of
                                         ; probabilities adds up
                                         ; approximately to one.
 
@@ -91,11 +91,14 @@ OTHER DEALINGS IN THE SOFTWARE.
           (scheme complex)
           (scheme cxr)
           (scheme inexact)
-          (only (srfi 1) concatenate every fold)
+          (srfi 1)                      ; R⁷RS-large (scheme list)
           (only (srfi 27) random-real)
-          (only (srfi 132) list-sort)
-          (only (srfi 144) fl-epsilon)
-          (only (srfi 152) string-split))
+          (only (srfi 132) list-sort)   ; R⁷RS-large (scheme sort)
+          (only (srfi 144) fl-epsilon))  ; R⁷RS-large (scheme flonum)
+
+  ;; It is necessary to use a string library that understands some
+  ;; Unicode. For CHICKEN Scheme, this will suffice.
+  (import (srfi 152))                   ; String library (reduced).
 
   (cond-expand
     (chicken (import (only (chicken base) define-record-printer)
@@ -149,6 +152,16 @@ OTHER DEALINGS IN THE SOFTWARE.
             "π×" (let ((angle/π
                         (if exact-enough (exact angle/π) angle/π)))
                    (number->string angle/π)))))))
+
+    (define length-of-π× (string-length "π×"))
+    (define length-of-π (string-length "π"))
+
+    (define (string->radians s)
+      (cond ((string-prefix? "π×" s)
+             (* π (string->number (string-drop s length-of-π×))))
+            ((string-prefix? "π" s)
+             (* π (string->number (string-drop s length-of-π))))
+            (else (string->number s))))
 
     (define (%%check-term caller term)
       (unless (and (pair? term)
@@ -270,11 +283,9 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p₂ (- 1 p₁)))
         (values p₁ p₂)))
 
-    (define (photon-pair-tensor angle1-string angle2-string)
-      (unless (string? angle1-string)
-        (error "photon-pair-tensor: expected a string" angle1-string))
-      (unless (string? angle2-string)
-        (error "photon-pair-tensor: expected a string" angle2-string))
+    (define (photon-pair-tensor angle1 angle2)
+      (define angle1-string (radians->string angle1))
+      (define angle2-string (radians->string angle2))
       (call-with-values photon-pair-probabilities
         (lambda (p₁ p₂)
           `((,(sqrt p₁) . ,(string-append angle1-string ","
@@ -330,18 +341,35 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p- (- 1 p+)))
         (values p+ p-)))
 
-    (define (pbs-tensor pbs photon-tensor)
-      (%%check-tensor "pbs-tensor" photon-tensor)
-      (unless (= (length photon-tensor) 2)
+    (define (pbs-tensor pbs photon-vect)
+      (%%check-tensor "pbs-vect" photon-vect)
+      (unless (= (length photon-vect) 2)
         (error "pbs-tensor: expected a length-2 tensor"
-               photon-tensor))
-      (let ((ampl1 (caar photon-tensor))
-            (angle1 (string->number (cdar photon-tensor)))
-            (ampl2 (caadr photon-tensor))
-            (angle2 (string->number (cdadr photon-tensor))))
-        (let ((prob1 (square (magnitude ampl1)))
-              (prob2 (square (magnitude ampl2))))
-          'FIXME)))
+               photon-vect))
+      (define φ₁ (pbs-angle-in pbs))
+      (define φ₂ (- π/2 φ₁))
+      (let* ((ampl₁ (caar photon-vect))
+             (θ₁-string (cdar photon-vect))
+             (θ₁ (string->radians θ₁-string))
+             (ampl₂ (caadr photon-vect))
+             (θ₂-string (cdadr photon-vect))
+             (θ₂ (string->radians θ₂-string))
+             (ampl_1a ampl₁)
+             (ampl_1b (abs (cos (- φ₁ θ₁))))
+             (ampl_1c (abs (cos (- φ₂ θ₁))))
+             (ampl_2a ampl₂)
+             (ampl_2b (abs (cos (- φ₁ θ₂))))
+             (ampl_2c (abs (cos (- φ₂ θ₂))))
+             (φ₁-string (radians->string φ₁))
+             (φ₂-string (radians->string φ₂)))
+        (list (cons (* ampl_1a ampl_1b)
+                    (string-append θ₁-string "," φ₁-string))
+              (cons (* ampl_1a ampl_1c)
+                    (string-append θ₁-string "," φ₂-string))
+              (cons (* ampl_2a ampl_2b)
+                    (string-append θ₂-string "," φ₁-string))
+              (cons (* ampl_2a ampl_2c)
+                    (string-append θ₂-string "," φ₂-string)))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
