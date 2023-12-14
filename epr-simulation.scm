@@ -92,7 +92,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           (srfi 1)                      ; R⁷RS-large (scheme list)
           (only (srfi 27) random-real)
           (only (srfi 132) list-sort)   ; R⁷RS-large (scheme sort)
-          (only (srfi 144) fl-epsilon)) ; R⁷RS-large (scheme flonum)
+          (only (srfi 144) fl-epsilon))  ; R⁷RS-large (scheme flonum)
 
   ;; It is necessary to use a string library that understands some
   ;; Unicode. For CHICKEN Scheme, this will suffice.
@@ -337,36 +337,22 @@ OTHER DEALINGS IN THE SOFTWARE.
              (ampl₂ (caadr photon-vect))
              (θ₂-string (cdadr photon-vect))
              (θ₂ (string->radians θ₂-string))
-             (prob_1a (square (magnitude ampl₁)))
-             (prob_1b (square (cos (- φ₁ θ₁))))
-             (prob_1c (square (cos (- φ₂ θ₁))))
-             (prob_2a (square (magnitude ampl₂)))
-             (prob_2b (square (cos (- φ₁ θ₂))))
-             (prob_2c (square (cos (- φ₂ θ₂))))
+             (ampl_1a ampl₁)
+             (ampl_1b (abs (cos (- φ₁ θ₁))))
+             (ampl_1c (abs (cos (- φ₂ θ₁))))
+             (ampl_2a ampl₂)
+             (ampl_2b (abs (cos (- φ₁ θ₂))))
+             (ampl_2c (abs (cos (- φ₂ θ₂))))
              (φ₁-string (radians->string φ₁))
-             (φ₂-string (radians->string φ₂))
-             ;; The probabilities, not the amplitudes, have to be
-             ;; combined. (This is an artifact of using polarization
-             ;; angles as vector names. It is not a property of
-             ;; quantum mechanics. However, it does no harm—unless
-             ;; someone tries to play tricks with non-positive
-             ;; amplitudes of photons.)
-             (probs (%%combine-terms
-                     `((,(* prob_1a prob_1b) . ,(string-append
-                                                 θ₁-string ","
-                                                 φ₁-string))
-                       (,(* prob_1a prob_1c) . ,(string-append
-                                                 θ₁-string ","
-                                                 φ₂-string))
-                       (,(* prob_2a prob_2b) . ,(string-append
-                                                 θ₂-string ","
-                                                 φ₁-string))
-                       (,(* prob_2a prob_2c) . ,(string-append
-                                                 θ₂-string ","
-                                                 φ₂-string))))))
-        ;; Return amplitudes instead of probabilities.
-        (map (lambda (term) (cons (sqrt (car term)) (cdr term)))
-             probs)))
+             (φ₂-string (radians->string φ₂)))
+        (list (cons (* ampl_1a ampl_1b)
+                    (string-append θ₁-string "," φ₁-string))
+              (cons (* ampl_1a ampl_1c)
+                    (string-append θ₁-string "," φ₂-string))
+              (cons (* ampl_2a ampl_2b)
+                    (string-append θ₂-string "," φ₁-string))
+              (cons (* ampl_2a ampl_2c)
+                    (string-append θ₂-string "," φ₂-string)))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
