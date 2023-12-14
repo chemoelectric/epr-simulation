@@ -346,13 +346,13 @@ OTHER DEALINGS IN THE SOFTWARE.
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂)))
         (list (cons (* ampl_1a ampl_1b)
-                    (string-append θ₁-string "," φ₁-string))
+                    (string-append θ₁-string ",+:" φ₁-string))
               (cons (* ampl_1a ampl_1c)
-                    (string-append θ₁-string "," φ₂-string))
+                    (string-append θ₁-string ",-:" φ₂-string))
               (cons (* ampl_2a ampl_2b)
-                    (string-append θ₂-string "," φ₁-string))
+                    (string-append θ₂-string ",-:" φ₁-string))
               (cons (* ampl_2a ampl_2c)
-                    (string-append θ₂-string "," φ₂-string)))))
+                    (string-append θ₂-string ",+:" φ₂-string)))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
