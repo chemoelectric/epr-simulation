@@ -233,6 +233,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define phot (photon-pair-tensor 0 π/2))
 (write phot)(newline)
 (define pbs1 (make-pbs π/4))
+;;(define pbs1 (make-pbs 0))
 (define pbs2 (make-pbs π/8))
 (define t1 (pbs-tensor pbs1 (tensor./ phot 0)))
 (write t1)(newline)

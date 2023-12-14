@@ -346,7 +346,11 @@ OTHER DEALINGS IN THE SOFTWARE.
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂))
              ;; The probabilities, not the amplitudes, have to be
-             ;; combined.
+             ;; combined. (This is an artifact of using polarization
+             ;; angles as vector names. It is not a property of
+             ;; quantum mechanics. However, it does no harm—unless
+             ;; someone tries to play tricks with non-positive
+             ;; amplitudes of photons.)
              (probs (%%combine-terms
                      `((,(* prob_1a prob_1b) . ,(string-append
                                                  θ₁-string ","
