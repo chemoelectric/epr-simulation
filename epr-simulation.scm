@@ -345,6 +345,8 @@ OTHER DEALINGS IN THE SOFTWARE.
              (prob_2c (square (cos (- φ₂ θ₂))))
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂))
+             ;; The probabilities have to be combined, not the
+             ;; amplitudes.
              (probs (%%combine-terms
                      `((,(* prob_1a prob_1b) . ,(string-append
                                                  θ₁-string ","
@@ -358,6 +360,7 @@ OTHER DEALINGS IN THE SOFTWARE.
                        (,(* prob_2a prob_2c) . ,(string-append
                                                  θ₂-string ","
                                                  φ₂-string))))))
+        ;; Return amplitudes instead of probabilities.
         (map (lambda (term) (cons (sqrt (car term)) (cdr term)))
              probs)))
 
