@@ -56,12 +56,10 @@ OTHER DEALINGS IN THE SOFTWARE.
           ;; Polarizing beam-splitter with plane-polarized output.
           make-pbs
           pbs?
-          pbs-angle-in      ; Angle wrt the incident photon.
-          pbs-photon-out+   ; Output photon or #f.
-          pbs-photon-out-   ; Output photon or #f.
-          pbs-probabilities ; Probabilities given an incident photon.
-          pbs-tensor        ; Tensor operation.
-          pbs-activity)     ; Activity given an incident photon.
+          pbs-angle          ; Angle wrt the incident photon.
+          pbs-probabilities  ; Probabilities given an incident photon.
+          pbs-tensor         ; Tensor operation.
+          pbs-activity)      ; Activity given an incident photon.
 
   (export <splitter>
           ;; Any of many possible two-channel devices that sort
@@ -69,7 +67,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-splitter
           splitter?
           splitter-behavior           ; 'optical or 'stern-gerlach
-          splitter-angle-in           ; Angle wrt the incident object.
+          splitter-angle              ; Angle wrt the incident object.
           splitter-cos²-rule          ; Objects that obey cos² rule.
           splitter-cos2-rule          ; Synonym.
           splitter-sin²-rule          ; Particles that obey sin² rule.
@@ -304,39 +302,24 @@ OTHER DEALINGS IN THE SOFTWARE.
     (define-record-type <pbs>
       ;; Polarizing beam-splitter with plane-polarized output. (A
       ;; two-channel polarizer.)
-      (%%make-pbs angle-in photon-out+ photon-out-)
+      (%%make-pbs angle)
       pbs?
-      (angle-in pbs-angle-in)
-      (photon-out+ pbs-photon-out+)
-      (photon-out- pbs-photon-out-))
+      (angle pbs-angle))
 
-    (define make-pbs
-      (case-lambda
-        ((angle-in photon-out+ photon-out-)
-         (unless (real? angle-in)
-           (error "make-pbs: expected a real number" angle-in))
-         (unless (or (boolean? photon-out+) (procedure? photon-out+))
-           (error "make-pbs: expected a procedure or boolean"
-                  photon-out+))
-         (unless (or (boolean? photon-out-) (procedure? photon-out-))
-           (error "make-pbs: expected a procedure or boolean"
-                  photon-out-))
-         (%%make-pbs angle-in photon-out+ photon-out-))
-        ((angle-in) (make-pbs angle-in #f #f))))
+    (define (make-pbs angle)
+      (unless (real? angle)
+        (error "make-pbs: expected a real number" angle))
+      (%%make-pbs angle))
 
     (cond-expand
       (chicken (define-record-printer (<pbs> rectype port)
                  (display "<pbs " port)
-                 (write-angle (pbs-angle-in rectype) port)
-                 (display " " port)
-                 (write (pbs-photon-out+ rectype))
-                 (display " " port)
-                 (write (pbs-photon-out+ rectype))
+                 (write-angle (pbs-angle rectype) port)
                  (display ">" port)))
       (else))
 
     (define (pbs-probabilities pbs photon-pola-angle)
-      (let* ((p+ (square (cos (- (pbs-angle-in pbs)
+      (let* ((p+ (square (cos (- (pbs-angle pbs)
                                  photon-pola-angle))))
              (p- (- 1 p+)))
         (values p+ p-)))
@@ -346,7 +329,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       (unless (= (length photon-vect) 2)
         (error "pbs-tensor: expected a length-2 tensor"
                photon-vect))
-      (define φ₁ (pbs-angle-in pbs))
+      (define φ₁ (pbs-angle pbs))
       (define φ₂ (- π/2 φ₁))
       (let* ((ampl₁ (caar photon-vect))
              (θ₁-string (cdar photon-vect))
@@ -372,27 +355,15 @@ OTHER DEALINGS IN THE SOFTWARE.
                     (string-append θ₂-string "," φ₂-string)))))
 
     (define (pbs-activity pbs photon)
-      ;; Output (values #t #f) or (values <photon ANGLE-OUT> #f)
-      ;;   if (+) channel is chosen.
-      ;; Output (values #f #t) or (values #f <photon ANGLE-OUT>)
-      ;;   if (-) channel is chosen.
-      (define angle-in (pbs-angle-in pbs))
+      ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
+      ;; Output (values #f <photon PERPENDICULAR-ANGLE>) if (-).
+      (define φ (pbs-angle pbs))
       (let-values (((p+ _p-)
                     (pbs-probabilities
                      pbs (photon-polarization-angle photon))))
         (if (< (random-real) p+)
-            (let ((photon-out (pbs-photon-out+ pbs)))
-              (cond ((eq? photon-out #f) (values #t #f))
-                    ((eq? photon-out #t)
-                     (values (make-photon angle-in) #f))
-                    (else
-                     (values (photon-out angle-in photon) #f))))
-            (let ((photon-out (pbs-photon-out- pbs)))
-              (cond ((eq? photon-out #f) (values #f #t))
-                    ((eq? photon-out #t)
-                     (values #f (make-photon (+ angle-in π/2))))
-                    (else
-                     (values #f (photon-out angle-in photon))))))))
+            (values (make-photon φ) #f)
+            (values #f (make-photon (+ φ π/2))))))
 
     (define-record-type <splitter>
       ;; Any of many two-channel devices.  Such a device divides the
@@ -401,37 +372,37 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;; is 'stern-gerlach. Which particles go which way will be part
       ;; of the design of the device. They are specified by lists and
       ;; distinguished by the ‘equal?’ predicate.
-      (%%make-splitter behavior angle-in cos²-rule sin²-rule)
+      (%%make-splitter behavior angle cos²-rule sin²-rule)
       splitter?
       (behavior splitter-behavior)
-      (angle-in splitter-angle-in)
+      (angle splitter-angle)
       (cos²-rule splitter-cos²-rule)
       (sin²-rule splitter-sin²-rule))
 
     (define splitter-cos2-rule splitter-cos²-rule)
     (define splitter-sin2-rule splitter-sin²-rule)
 
-    (define (make-splitter behavior angle-in cos²-rule sin²-rule)
+    (define (make-splitter behavior angle cos²-rule sin²-rule)
       (unless (or (eq? behavior 'optical)
                   (eq? behavior 'stern-gerlach))
         (error "make-splitter: expected a 'optical or 'stern-gerlach"
                behavior))
-      (unless (real? angle-in)
-        (error "make-splitter: expected a real number" angle-in))
+      (unless (real? angle)
+        (error "make-splitter: expected a real number" angle))
       (unless (and (pair? cos²-rule)
                    (list? cos²-rule))
         (error "make-splitter: expected a non-empty list" cos²-rule))
       (unless (and (pair? sin²-rule)
                    (list? sin²-rule))
         (error "make-splitter: expected a non-empty list" sin²-rule))
-      (%%make-splitter behavior angle-in cos²-rule sin²-rule))
+      (%%make-splitter behavior angle cos²-rule sin²-rule))
 
     (cond-expand
       (chicken (define-record-printer (<splitter> rectype port)
                  (display "<splitter " port)
                  (write (splitter-behavior rectype) port)
                  (display " " port)
-                 (write-angle (splitter-angle-in rectype) port)
+                 (write-angle (splitter-angle rectype) port)
                  (display " " port)
                  (write (splitter-cos²-rule rectype) port)
                  (display " " port)
@@ -440,7 +411,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       (else))
 
     (define (splitter-probabilities splitter particle-kind)
-      (let* ((φ (splitter-angle-in splitter))
+      (let* ((φ (splitter-angle splitter))
              (φ (if (eq? (splitter-behavior splitter) 'stern-gerlach)
                     (* 0.5 φ)
                     φ)))
