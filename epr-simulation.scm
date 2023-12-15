@@ -228,12 +228,17 @@ OTHER DEALINGS IN THE SOFTWARE.
 
     (define (tensor./ tensor i)
       ;; Extract the i’th vector (starting from i=0) from the ordered
-      ;; tuple.
-      (tensor-normalize
-       (map (lambda (term)
-              (cons (car term)
-                    (list-ref (string-split (cdr term) ",") i)))
-            (tensor+ tensor))))
+      ;; tuple. This is done with probabilities rather than
+      ;; amplitudes, and returns positive real amplitudes.
+      (let* ((probs
+              (map (lambda (term)
+                     `(,(square (magnitude (car term)))
+                       . ,(list-ref (string-split (cdr term) ",") i)))
+                   tensor))
+             (probs (%%combine-terms probs))
+             (denom (fold %%add-amplitude-as-probability 0 probs)))
+        (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))
+             probs)))
 
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
