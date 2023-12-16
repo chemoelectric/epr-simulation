@@ -39,7 +39,11 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export tensor-normalize    ; Normalize a tensor to probability one.
           tensor+    ; Add tensors or collect terms. No normalization.
           tensor.*   ; Lengthen the tuples by one. No normalization.
-          tensor./)  ; Extract a vector from a tensor. Normalizes.
+          tensor./   ; Extract a vector from a tensor. Normalizes.
+          tensor->probabilities         ; Convert from amplitudes to
+                                        ; probabilities.
+          tensor->amplitudes)           ; Convert from probabilities
+                                        ; to amplitudes.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -242,6 +246,15 @@ OTHER DEALINGS IN THE SOFTWARE.
                               . ,(cdr term)))
              probs)))
 
+    (define (tensor->probabilities tensor)
+      (map (lambda (term) `(,(square (magnitude (car term)))
+                            . ,(cdr term)))
+           tensor))
+
+    (define (tensor->amplitudes tensor)
+      (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))
+           tensor))
+
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
       ;; polarization angle orthogonal to its direction of motion. The
@@ -353,13 +366,13 @@ OTHER DEALINGS IN THE SOFTWARE.
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂)))
         (list (cons (* ampl_1a ampl_1b)
-                    (string-append θ₁-string ",+:" φ₁-string))
+                    (string-append θ₁-string "," φ₁-string ",+"))
               (cons (* ampl_1a ampl_1c)
-                    (string-append θ₁-string ",-:" φ₂-string))
+                    (string-append θ₁-string "," φ₂-string ",-"))
               (cons (* ampl_2a ampl_2b)
-                    (string-append θ₂-string ",-:" φ₁-string))
+                    (string-append θ₂-string "," φ₁-string ",-"))
               (cons (* ampl_2a ampl_2c)
-                    (string-append θ₂-string ",+:" φ₂-string)))))
+                    (string-append θ₂-string "," φ₂-string ",+")))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
