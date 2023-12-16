@@ -236,8 +236,10 @@ OTHER DEALINGS IN THE SOFTWARE.
                        . ,(list-ref (string-split (cdr term) ",") i)))
                    tensor))
              (probs (%%combine-terms probs))
-             (denom (fold %%add-amplitude-as-probability 0 probs)))
-        (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))
+             (denom (fold (lambda (term sum) (+ sum (car term)))
+                          0 probs)))
+        (map (lambda (term) `(,(sqrt (/ (car term) denom))
+                              . ,(cdr term)))
              probs)))
 
     (define-record-type <photon>
