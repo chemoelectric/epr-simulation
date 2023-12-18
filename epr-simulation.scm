@@ -36,14 +36,15 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; number representing the amplitude and each cdr is a string
   ;; representing the basis tensor. This is a simplified notation for
   ;; all that is needed to handle EPR-B by quantum mechanics.
-  (export tensor-normalize    ; Normalize a tensor to probability one.
-          tensor+    ; Add tensors or collect terms. No normalization.
-          tensor.*   ; Lengthen the tuples by one. No normalization.
-          tensor./   ; Extract a vector from a tensor. Normalizes.
-          tensor->probabilities         ; Convert from amplitudes to
+  (export tensor+                  ; Add tensors or collect terms.
+          tensor.*                 ; Lengthen the tuples.
+          tensor./                 ; Extract a vector from a tensor.
+          tensor->probabilities    ; Convert from amplitudes to
                                         ; probabilities.
-          tensor->amplitudes)           ; Convert from probabilities
-                                        ; to amplitudes.
+          tensor->amplitudes       ; Convert from probabilities to
+                                        ; amplitudes.
+          tensor-normalize)        ; Normalize a tensor to probability
+                                        ; one. Use with care.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -62,8 +63,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs?
           pbs-angle          ; Angle wrt the incident photon.
           pbs-probabilities  ; Probabilities given an incident photon.
-          pbs-tensor         ; Tensor operation.
-          pbs-activity)      ; Activity given an incident photon.
+          pbs-tensor-operation    ; Quantum mechanical representation.
+          pbs-activity)           ; Activity given an incident photon.
 
   (export <splitter>
           ;; Any of many possible two-channel devices that sort
@@ -177,6 +178,15 @@ OTHER DEALINGS IN THE SOFTWARE.
         (error (append caller ": expected a list") tensor))
       (for-each (lambda (term) (%%check-term caller term)) tensor))
 
+    (define (%%check-vector caller vect)
+      (%%check-tensor caller vect)
+      (for-each (lambda (term)
+                  (when (string-index (cdr term)
+                                      (lambda (c) (char=? c #\,)))
+                    (error (append caller ": commas are not allowed")
+                           term)))
+                vect))
+
     (define (%%combine-terms tensor)
       (let ((tensor (list-sort (lambda (term1 term2)
                                  (string>=? (cdr term1) (cdr term2)))
@@ -204,17 +214,17 @@ OTHER DEALINGS IN THE SOFTWARE.
              tensor)))
 
     (define (tensor+ tensor . tensors)
-      ;; Add tensors, or combine terms in one tensor. Does not
-      ;; normalize.
+      ;; Add tensors, or combine terms in one tensor.
       (%%check-tensor "tensor+" tensor)
       (for-each (lambda (t) (%%check-tensor "tensor+" t)) tensors)
       (let ((tensor (concatenate (cons tensor tensors))))
         (%%combine-terms tensor)))
 
-    (define (tensor.* tensor vect)
+    (define (%%tensor.* caller tensor vect)
       ;; Lengthen the ordered tuples by one. This means taking the
       ;; Cartesian product of the tensor’s bases with the vector’s
-      ;; bases. Does not normalize.
+      ;; bases.
+      (%%check-vector caller vect)
       (let loop ((t tensor)
                  (v vect)
                  (p '()))
@@ -230,6 +240,12 @@ OTHER DEALINGS IN THE SOFTWARE.
                                                   basis_v))))
                         (loop t (cdr v) (cons new-term p))))))))
 
+    (define (tensor.* tensor vect . vects)
+      (define (.* t v) (%%tensor.* "tensor.*" t v))
+      (let loop ((p vects)
+                 (q (.* tensor vect)))
+        (if (null? p) q (loop (cdr p) (.* q (car p))))))
+
     (define (tensor./ tensor i)
       ;; Extract the i’th vector (starting from i=0) from the ordered
       ;; tuple. This is done with probabilities rather than
@@ -239,11 +255,8 @@ OTHER DEALINGS IN THE SOFTWARE.
                      `(,(square (magnitude (car term)))
                        . ,(list-ref (string-split (cdr term) ",") i)))
                    tensor))
-             (probs (%%combine-terms probs))
-             (denom (fold (lambda (term sum) (+ sum (car term)))
-                          0 probs)))
-        (map (lambda (term) `(,(sqrt (/ (car term) denom))
-                              . ,(cdr term)))
+             (probs (%%combine-terms probs)))
+        (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))
              probs)))
 
     (define (tensor->probabilities tensor)
@@ -344,35 +357,25 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p- (- 1 p+)))
         (values p+ p-)))
 
-    (define (pbs-tensor pbs photon-vect)
-      (%%check-tensor "pbs-vect" photon-vect)
-      (unless (= (length photon-vect) 2)
-        (error "pbs-tensor: expected a length-2 tensor"
-               photon-vect))
+    (define (pbs-tensor-operation pbs photon-term)
+      (%%check-tensor "pbs-tensor-operation" photon-term)
+      (unless (= (length photon-term) 1)
+        (error "pbs-tensor-operation: expected a length-1 tensor"
+               photon-term))
       (define φ₁ (pbs-angle pbs))
       (define φ₂ (- π/2 φ₁))
-      (let* ((ampl₁ (caar photon-vect))
-             (θ₁-string (cdar photon-vect))
-             (θ₁ (string->radians θ₁-string))
-             (ampl₂ (caadr photon-vect))
-             (θ₂-string (cdadr photon-vect))
-             (θ₂ (string->radians θ₂-string))
-             (ampl_1a ampl₁)
-             (ampl_1b (abs (cos (- φ₁ θ₁))))
-             (ampl_1c (abs (cos (- φ₂ θ₁))))
-             (ampl_2a ampl₂)
-             (ampl_2b (abs (cos (- φ₁ θ₂))))
-             (ampl_2c (abs (cos (- φ₂ θ₂))))
+      (let* ((ampl (caar photon-term))
+             (θ-string (cdar photon-term))
+             (θ (string->radians θ-string))
+             (ampl_a ampl)
+             (ampl_b (abs (cos (- φ₁ θ))))
+             (ampl_c (abs (cos (- φ₂ θ))))
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂)))
-        (list (cons (* ampl_1a ampl_1b)
-                    (string-append θ₁-string "," φ₁-string ",+"))
-              (cons (* ampl_1a ampl_1c)
-                    (string-append θ₁-string "," φ₂-string ",-"))
-              (cons (* ampl_2a ampl_2b)
-                    (string-append θ₂-string "," φ₁-string ",-"))
-              (cons (* ampl_2a ampl_2c)
-                    (string-append θ₂-string "," φ₂-string ",+")))))
+        (list (cons (* ampl_a ampl_b)
+                    (string-append θ-string "," φ₁-string ",+"))
+              (cons (* ampl_a ampl_c)
+                    (string-append θ-string "," φ₂-string ",-")))))
 
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
