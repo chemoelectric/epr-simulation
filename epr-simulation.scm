@@ -38,7 +38,7 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; all that is needed to handle EPR-B by quantum mechanics.
   (export tensor+                  ; Add tensors or collect terms.
           tensor.*                 ; Lengthen the tuples.
-          tensor./                 ; Extract a vector from a tensor.
+          tensor./                 ; Shorten the tuples.
           tensor->probabilities    ; Convert from amplitudes to
                                         ; probabilities.
           tensor->amplitudes       ; Convert from probabilities to
@@ -246,14 +246,24 @@ OTHER DEALINGS IN THE SOFTWARE.
                  (q (.* tensor vect)))
         (if (null? p) q (loop (cdr p) (.* q (car p))))))
 
-    (define (tensor./ tensor i)
-      ;; Extract the i’th vector (starting from i=0) from the ordered
-      ;; tuple. This is done with probabilities rather than
-      ;; amplitudes, and returns positive real amplitudes.
+    (define (tensor./ tensor i-list)
+      ;; Extract the (i₁ i₂ ... iₙ)’th vectors (starting from i=0)
+      ;; from the ordered tuple. This is done with probabilities
+      ;; rather than amplitudes, and returns positive real amplitudes.
+      (define (subcomponent v*-string)
+        (let* ((v* (string-split v*-string ","))
+               (v* (map (lambda (i) (list-ref v* i)) i-list)))
+          (string-join v* ",")))
+      (%%check-tensor "tensor./" tensor)
+      (unless (and (pair? i-list)
+                   (list? i-list)
+                   (every integer? i-list)
+                   (not (any negative? i-list)))
+        (error "tensor./: expected list of indices" i-list))
       (let* ((probs
               (map (lambda (term)
                      `(,(square (magnitude (car term)))
-                       . ,(list-ref (string-split (cdr term) ",") i)))
+                       . ,(subcomponent (cdr term))))
                    tensor))
              (probs (%%combine-terms probs)))
         (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))

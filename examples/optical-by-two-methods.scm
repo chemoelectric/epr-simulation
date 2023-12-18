@@ -50,6 +50,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 (import (scheme base)
         (scheme write)
+        (srfi 1)                        ; R⁷RS-large (scheme list)
         (epr-simulation))
 
 (cond-expand
@@ -216,26 +217,75 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;; (format #t "  computed by quantum mechanics rather than other means.)~%")
 ;; (format #t "~%")
 
-(define t1 (tensor-normalize
-            '((1.2 . "a,b,c") (2.3 . "b,a,c")  (3.4 . "c,a,b"))))
-(write t1)(newline)
-(define t1.0 (tensor./ t1 0))
-(define t1.1 (tensor./ t1 1))
-(define t1.2 (tensor./ t1 2))
-(write t1.0)(newline)
-(write t1.1)(newline)
-(write t1.2)(newline)
-(write (tensor.* t1.0 t1.1))(newline)
-(write (apply + (map square (map car (tensor.* t1.0 t1.1)))))(newline)
-(write (radians->string (string->radians "π×3/8")))(newline)
-(write (radians->string (string->radians "π-3/8")))(newline)
+;; (define t1 (tensor-normalize
+;;             '((1.2 . "a,b,c") (2.3 . "b,a,c")  (3.4 . "c,a,b"))))
+;; (write t1)(newline)
+;; (define t1.0 (tensor./ t1 0))
+;; (define t1.1 (tensor./ t1 1))
+;; (define t1.2 (tensor./ t1 2))
+;; (write t1.0)(newline)
+;; (write t1.1)(newline)
+;; (write t1.2)(newline)
+;; (write (tensor.* t1.0 t1.1))(newline)
+;; (write (apply + (map square (map car (tensor.* t1.0 t1.1)))))(newline)
+;; (write (radians->string (string->radians "π×3/8")))(newline)
+;; (write (radians->string (string->radians "π-3/8")))(newline)
+
+(newline)
+
+(define pbs_L (make-pbs π/4))
+(define pbs_R (make-pbs π/8))
 
 (define phot (photon-pair-tensor 0 π/2))
-(write phot)(newline)
-(define pbs1 (make-pbs π/4))
-;;(define pbs1 (make-pbs 0))
-(define pbs2 (make-pbs π/8))
-(define t1 (pbs-tensor pbs1 (tensor./ phot 0)))
-(write t1)(newline)
-(define t2 (pbs-tensor pbs2 (tensor./ phot 1)))
-(write t2)(newline)
+;; Now phot = `(,(sqrt 1/2) . "π×0,π×1/2") (,(sqrt 1/2) . "π×1/2,π×0"))
+(write (tensor->probabilities phot))(newline)
+
+(newline)
+
+;;
+;; If we separated the photon’s tensor into vectors and THEN did the
+;; calculations, the results would be wrong. Instead, the photon’s
+;; tensor must be operated on one term at a time, to preserve the
+;; correlations.
+;;
+;; In short: A tensor such as we have here is how one writes, in
+;; quantum mechanics, that the two photons must have opposite
+;; polarizations. Our method of calculation must not destroy that
+;; information.
+;;
+;; Thus, in the following, there appear the ‘take’ and ‘drop’
+;; procedures from SRFI-1. The former returns the first term of two,
+;; the latter the second term.
+;;
+
+(define phot_L₁ (tensor./ (take phot 1) '(0)))
+(define phot_R₁ (tensor./ (take phot 1) '(1)))
+(write (tensor->probabilities phot_L₁))(newline)
+(write (tensor->probabilities phot_R₁))(newline)
+
+(newline)
+
+(define phot_L₂ (tensor./ (drop phot 1) '(0)))
+(define phot_R₂ (tensor./ (drop phot 1) '(1)))
+(write (tensor->probabilities phot_L₂))(newline)
+(write (tensor->probabilities phot_R₂))(newline)
+
+(newline)
+
+(define channels_L₁ (pbs-tensor-operation pbs_L phot_L₁))
+(define channels_L₂ (pbs-tensor-operation pbs_L phot_L₂))
+(define channels_L (tensor./ (tensor+ channels_L₁ channels_L₂) '(0 2)))
+(write (tensor->probabilities channels_L₁))(newline)
+(write (tensor->probabilities channels_L₂))(newline)
+(write (tensor->probabilities channels_L))(newline)
+
+(newline)
+
+(define channels_R₁ (pbs-tensor-operation pbs_R phot_R₁))
+(define channels_R₂ (pbs-tensor-operation pbs_R phot_R₂))
+(define channels_R (tensor./ (tensor+ channels_R₁ channels_R₂) '(0 2)))
+(write (tensor->probabilities channels_R₁))(newline)
+(write (tensor->probabilities channels_R₂))(newline)
+(write (tensor->probabilities channels_R))(newline)
+
+(newline)
