@@ -235,7 +235,10 @@ OTHER DEALINGS IN THE SOFTWARE.
                           (ampl_v (caar v))
                           (basis_v (cdar v)))
                       (let ((new-term
-                             (cons (* ampl_t ampl_v)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+                            (cons (* ampl_t ampl_v) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; THIS IS WRONG SOMEHOW.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME       Also, make this able to merge two tensors.
                                    (string-append basis_t ","
                                                   basis_v))))
                         (loop t (cdr v) (cons new-term p))))))))
