@@ -26,7 +26,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 ;;;
 ;;;               Author : Barry Schwartz
-;;; Date first completed : ????????????????????????????
+;;; Date first completed : 19 December 2023
 ;;;
 ;;; Simulation of a two-channel optical Bell test by two different
 ;;; methods.
@@ -57,11 +57,15 @@ OTHER DEALINGS IN THE SOFTWARE.
   (chicken (import (format))
            (import (matchable))))
 
-(define bell-test-angles
+(define my-test-angles
   `((0 ,π/8)
+    (0 ,π/4)
     (0 ,π3/8)
+    (0 ,π/2)
+    (,π/4 ,0)
     (,π/4 ,π/8)
-    (,π/4 ,π3/8)))
+    (,π/4 ,π3/8)
+    (,π/4 ,π/2)))
 
 (define θH 0)
 (define θV π/2)
@@ -115,14 +119,10 @@ OTHER DEALINGS IN THE SOFTWARE.
       (tensor+ (tensor* (sqrt PH₁V₂) (tensor.* pbs₁H pbs₂V))
                (tensor* (sqrt PV₁H₂) (tensor.* pbs₁V pbs₂H))))))
 
-(define (probabilities-from-system-state tensor)
-  (map (lambda (term)
-         `(,(tensor-basis->HV-symbols (cdr term))
-           ,(square (car term))))
-       tensor))
-
 (define (detection-probabilities-by-quantum-mechanics φ₁ φ₂)
-  (probabilities-from-system-state (system-state φ₁ φ₂)))
+  (map (lambda (term) `(,(tensor-basis->HV-symbols (cdr term))
+                        ,(car term)))
+       (tensor->probabilities (system-state φ₁ φ₂))))
 
 (define (angle->symbol angle)
   (if (< angle 0.0001) 'H 'V))
@@ -133,5 +133,39 @@ OTHER DEALINGS IN THE SOFTWARE.
     ,(angle->symbol (string->radians (tensor-basis-ref basis 2)))
     ,(string->symbol (tensor-basis-ref basis 3))))
 
-(write (detection-probabilities-by-probability-theory π/4 π/8))(newline)
-(write (detection-probabilities-by-quantum-mechanics π/4 π/8))(newline)
+(define pattern-list
+  '((H + V +) (H + V -) (H - V +) (H - V -)
+    (V + H +) (V + H -) (V - H +) (V - H -)))
+
+(format #t "~%")
+(format #t "  Calculation of probabilities of outcomes of a~%")
+(format #t "  two-channel optical Bell test by two methods:~%")
+(format #t "  ordinary probability theory and quantum mechanics.~%")
+(format #t "~%")
+(format #t "  legend:~%")
+(format #t "    (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "               vertical photon in (+) channel of pbs₂,~%")
+(format #t "    (H + V -)  horizontal photon in (+) channel of pbs₁,~%")
+(format #t "               vertical photon in (-) channel of pbs₂, etc.~%")
+
+(do ((test-angles my-test-angles (cdr test-angles)))
+    ((null? test-angles))
+  (let* ((φ₁ (caar test-angles))
+         (φ₂ (cadar test-angles))
+         (pprobs
+          (detection-probabilities-by-probability-theory φ₁ φ₂))
+         (qprobs
+          (detection-probabilities-by-quantum-mechanics φ₁ φ₂)))
+    (format #t "~%")
+    (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
+            (radians->string φ₁) (radians->string φ₂))
+    (format #t "              probability       quantum~%")
+    (format #t "                   theory     mechanics~%")
+    (do ((patterns pattern-list (cdr patterns)))
+        ((null? patterns))
+      (let* ((patt (car patterns))
+             (pprob (cadr (assoc patt pprobs)))
+             (qprob (cadr (assoc patt qprobs))))
+        (format #t "    ~A~12,5@F~14,5@F~%"
+                patt (inexact pprob) (inexact qprob))))))
+(format #t "~%")

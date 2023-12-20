@@ -393,7 +393,7 @@ OTHER DEALINGS IN THE SOFTWARE.
              (φ₂-string (radians->string φ₂)))
         `((,ampl₁ . ,(string-append θ-string "," φ₁-string ",+"))
           (,ampl₂ . ,(string-append θ-string "," φ₂-string ",-")))))
- 
+    
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
       ;; Output (values #f <photon PERPENDICULAR-ANGLE>) if (-).
