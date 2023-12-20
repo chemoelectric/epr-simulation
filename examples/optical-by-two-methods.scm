@@ -109,6 +109,11 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; calculation. Points in the linear space represent states of a
   ;; computation, not of physical entities.
   ;;
+  ;; Because quantum mechanics is a method of calculation and not
+  ;; actually a physical theory, we can feel free to include whatever
+  ;; information is available. Thus the final system state will
+  ;; include the original photon polarization angles.
+  ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
   (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities)))
