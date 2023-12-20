@@ -31,20 +31,25 @@ OTHER DEALINGS IN THE SOFTWARE.
   (export degrees->radians radians->degrees)
   (export radians->string string->radians) ; Using the prefix π or π×.
 
+  (export approx=)
+
   ;; Support for vectors and tensors (ordered tuples of vectors,
   ;; forming vectors themselves) as lists of cons-pairs. Each car is a
   ;; number representing the amplitude and each cdr is a string
   ;; representing the basis tensor. This is a simplified notation for
   ;; all that is needed to handle EPR-B by quantum mechanics.
   (export tensor+                  ; Add tensors or collect terms.
+          tensor*                  ; Scalar multiplication.
           tensor.*                 ; Lengthen the tuples.
-          tensor./                 ; Shorten the tuples.
+          tensor./                 ; Shorten or rearrange the tuples.
           tensor->probabilities    ; Convert from amplitudes to
                                         ; probabilities.
           tensor->amplitudes       ; Convert from probabilities to
                                         ; amplitudes.
-          tensor-normalize)        ; Normalize a tensor to probability
+          tensor-normalize         ; Normalize a tensor to probability
                                         ; one. Use with care.
+          tensor-basis-split       ; Split a basis tensor string.
+          tensor-basis-ref)        ; Return the i’th part of a split.
 
   (export <photon>
           ;; A plane-polarized photon.
@@ -54,7 +59,6 @@ OTHER DEALINGS IN THE SOFTWARE.
           make-photon-polarization-angle-changer
           *photon-pair-probability* ; Parameter, default 0.5
           photon-pair-probabilities ; Two values, default 0.5, 0.5
-          photon-pair-tensor        ; Two amplitudes, default √0.5
           photon-pair-source)       ; Two photons, complementary pair.
 
   (export <pbs>
@@ -63,8 +67,8 @@ OTHER DEALINGS IN THE SOFTWARE.
           pbs?
           pbs-angle          ; Angle wrt the incident photon.
           pbs-probabilities  ; Probabilities given an incident photon.
-          pbs-tensor-operation    ; Quantum mechanical representation.
-          pbs-activity)           ; Activity given an incident photon.
+          pbs-tensor         ; Quantum mechanical representation.
+          pbs-activity)      ; Activity given an incident photon.
 
   (export <splitter>
           ;; Any of many possible two-channel devices that sort
@@ -97,7 +101,7 @@ OTHER DEALINGS IN THE SOFTWARE.
           (srfi 1)                      ; R⁷RS-large (scheme list)
           (only (srfi 27) random-real)
           (only (srfi 132) list-sort)   ; R⁷RS-large (scheme sort)
-          (only (srfi 144) fl-epsilon))  ; R⁷RS-large (scheme flonum)
+          (only (srfi 144) fl-epsilon)) ; R⁷RS-large (scheme flonum)
 
   ;; It is necessary to use a string library that understands some
   ;; Unicode. For CHICKEN Scheme, this will suffice.
@@ -166,6 +170,20 @@ OTHER DEALINGS IN THE SOFTWARE.
              (* π (string->number (string-drop s length-of-π))))
             (else (string->number s))))
 
+    (define approx=
+      (case-lambda
+        ((x y) (approx= x y 1000))
+        ((x y tolerance) ;; In multiples of one half of fl-epsilon.
+         (unless (real? x)
+           (error "approx=: expected a real number" x))
+         (unless (real? y)
+           (error "approx=: expected a real number" y))
+         (unless (positive? tolerance)
+           (error "approx=: expected a positive number" tolerance))
+         (let* ((tol (* tolerance fl-epsilon))
+                (tol (* tol (max (abs x) (abs y) (/ tol 2)))))
+           (<= (* 2 (abs (- x y))) tol)))))
+
     (define (%%check-term caller term)
       (unless (and (pair? term)
                    (number? (car term))
@@ -177,15 +195,6 @@ OTHER DEALINGS IN THE SOFTWARE.
       (unless (list? tensor)
         (error (append caller ": expected a list") tensor))
       (for-each (lambda (term) (%%check-term caller term)) tensor))
-
-    (define (%%check-vector caller vect)
-      (%%check-tensor caller vect)
-      (for-each (lambda (term)
-                  (when (string-index (cdr term)
-                                      (lambda (c) (char=? c #\,)))
-                    (error (append caller ": commas are not allowed")
-                           term)))
-                vect))
 
     (define (%%combine-terms tensor)
       (let ((tensor (list-sort (lambda (term1 term2)
@@ -220,33 +229,40 @@ OTHER DEALINGS IN THE SOFTWARE.
       (let ((tensor (concatenate (cons tensor tensors))))
         (%%combine-terms tensor)))
 
-    (define (%%tensor.* caller tensor vect)
-      ;; Lengthen the ordered tuples by one. This means taking the
-      ;; Cartesian product of the tensor’s bases with the vector’s
-      ;; bases.
-      (%%check-vector caller vect)
-      (let loop ((t tensor)
-                 (v vect)
-                 (p '()))
-        (cond ((null? t) (tensor+ p))
-              ((null? v) (loop (cdr t) vect p))
-              (else (let ((ampl_t (caar t))
-                          (basis_t (cdar t))
-                          (ampl_v (caar v))
-                          (basis_v (cdar v)))
-                      (let ((new-term
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-                            (cons (* ampl_t ampl_v) ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; THIS IS WRONG SOMEHOW.
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME FIXME
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; FIXME FIXME       Also, make this able to merge two tensors.
-                                   (string-append basis_t ","
-                                                  basis_v))))
-                        (loop t (cdr v) (cons new-term p))))))))
+    (define (tensor* scalar tensor)
+      (if (and (complex? tensor) (pair? scalar))
+          (tensor* tensor scalar)
+          (begin
+            (unless (complex? scalar)
+              (error "tensor*: expected a complex number" scalar))
+            (%%check-tensor "tensor*" tensor)
+            (map (lambda (term)
+                   `(,(* scalar (car term)) . ,(cdr term)))
+                 tensor))))
 
-    (define (tensor.* tensor vect . vects)
-      (define (.* t v) (%%tensor.* "tensor.*" t v))
-      (let loop ((p vects)
-                 (q (.* tensor vect)))
+    (define (%%tensor.* caller tensor1 tensor2)
+      (%%check-tensor caller tensor2)
+      (let loop ((t1 tensor1)
+                 (t2 tensor2)
+                 (p '()))
+        (cond ((null? t1) (tensor+ p))
+              ((null? t2) (loop (cdr t1) tensor2 p))
+              (else (let ((ampl_t1 (caar t1))
+                          (basis_t1 (cdar t1))
+                          (ampl_t2 (caar t2))
+                          (basis_t2 (cdar t2)))
+                      (let ((new-term
+                             (cons (* ampl_t1 ampl_t2)
+                                   (string-append basis_t1 ","
+                                                  basis_t2))))
+                        (loop t1 (cdr t2) (cons new-term p))))))))
+
+    (define (tensor.* tensor1 tensor2 . tensors)
+      (define caller "tensor.*")
+      (define (.* t1 t2) (%%tensor.* caller t1 t2))
+      (%%check-tensor caller tensor1)
+      (let loop ((p tensors)
+                 (q (.* tensor1 tensor2)))
         (if (null? p) q (loop (cdr p) (.* q (car p))))))
 
     (define (tensor./ tensor i-list)
@@ -254,7 +270,7 @@ OTHER DEALINGS IN THE SOFTWARE.
       ;; from the ordered tuple. This is done with probabilities
       ;; rather than amplitudes, and returns positive real amplitudes.
       (define (subcomponent v*-string)
-        (let* ((v* (string-split v*-string ","))
+        (let* ((v* (tensor-basis-split v*-string))
                (v* (map (lambda (i) (list-ref v* i)) i-list)))
           (string-join v* ",")))
       (%%check-tensor "tensor./" tensor)
@@ -280,6 +296,12 @@ OTHER DEALINGS IN THE SOFTWARE.
     (define (tensor->amplitudes tensor)
       (map (lambda (term) `(,(sqrt (car term)) . ,(cdr term)))
            tensor))
+
+    (define (tensor-basis-split basis-tensor-string)
+      (string-split basis-tensor-string ","))
+
+    (define (tensor-basis-ref basis-tensor-string i)
+      (list-ref (tensor-basis-split basis-tensor-string) i))
 
     (define-record-type <photon>
       ;; A photon is a light pulse of unit intensity. It has some
@@ -327,16 +349,6 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p₂ (- 1 p₁)))
         (values p₁ p₂)))
 
-    (define (photon-pair-tensor angle1 angle2)
-      (define angle1-string (radians->string angle1))
-      (define angle2-string (radians->string angle2))
-      (call-with-values photon-pair-probabilities
-        (lambda (p₁ p₂)
-          `((,(sqrt p₁) . ,(string-append angle1-string ","
-                                          angle2-string))
-            (,(sqrt p₂) . ,(string-append angle2-string ","
-                                          angle1-string))))))
-
     (define (photon-pair-source angle1 angle2)
       (call-with-values photon-pair-probabilities
         (lambda (p₁ _p₂)
@@ -370,26 +382,18 @@ OTHER DEALINGS IN THE SOFTWARE.
              (p- (- 1 p+)))
         (values p+ p-)))
 
-    (define (pbs-tensor-operation pbs photon-term)
-      (%%check-tensor "pbs-tensor-operation" photon-term)
-      (unless (= (length photon-term) 1)
-        (error "pbs-tensor-operation: expected a length-1 tensor"
-               photon-term))
-      (define φ₁ (pbs-angle pbs))
-      (define φ₂ (- π/2 φ₁))
-      (let* ((ampl (caar photon-term))
-             (θ-string (cdar photon-term))
-             (θ (string->radians θ-string))
-             (ampl_a ampl)
-             (ampl_b (abs (cos (- φ₁ θ))))
-             (ampl_c (abs (cos (- φ₂ θ))))
+    (define (pbs-tensor pbs photon-pola-angle)
+      (let* ((φ₁ (pbs-angle pbs))
+             (φ₂ (- π/2 φ₁))
+             (θ photon-pola-angle)
+             (ampl₁ (abs (cos (- φ₁ θ))))
+             (ampl₂ (abs (cos (- φ₂ θ))))
+             (θ-string (radians->string θ))
              (φ₁-string (radians->string φ₁))
              (φ₂-string (radians->string φ₂)))
-        (list (cons (* ampl_a ampl_b)
-                    (string-append θ-string "," φ₁-string ",+"))
-              (cons (* ampl_a ampl_c)
-                    (string-append θ-string "," φ₂-string ",-")))))
-
+        `((,ampl₁ . ,(string-append θ-string "," φ₁-string ",+"))
+          (,ampl₂ . ,(string-append θ-string "," φ₂-string ",-")))))
+ 
     (define (pbs-activity pbs photon)
       ;; Output (values <photon PBS-ANGLE> #f) if (+) channel.
       ;; Output (values #f <photon PERPENDICULAR-ANGLE>) if (-).

@@ -66,7 +66,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 (define θH 0)
 (define θV π/2)
 
-(define (detection-probabilities φ₁ φ₂)
+(define (detection-probabilities-by-probability-theory φ₁ φ₂)
   ;;
   ;; The probabilities of detections are computed below without
   ;; quantum mechanics. This is the solution demanded by probability
@@ -97,213 +97,41 @@ OTHER DEALINGS IN THE SOFTWARE.
 
       probs)))
 
-;; (define (photon->symbol phot)
-;;   (if (< (photon-polarization-angle phot) 0.0001) 'H 'V))
+(define (system-state φ₁ φ₂)
+  ;;
+  ;; Return the tensor for the system state according to quantum
+  ;; mechanics. Although some attribute physical meaning to this
+  ;; expression, it is actually an obfuscated form of the probability
+  ;; calculation. Points in the linear space represent states of a
+  ;; computation, not of physical entities.
+  ;;
+  (define pbs₁ (make-pbs φ₁))
+  (define pbs₂ (make-pbs φ₂))
+  (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities)))
+    (let ((pbs₁H (tensor./ (pbs-tensor pbs₁ θH) '(0 2)))
+          (pbs₁V (tensor./ (pbs-tensor pbs₁ θV) '(0 2)))
+          (pbs₂H (tensor./ (pbs-tensor pbs₂ θH) '(0 2)))
+          (pbs₂V (tensor./ (pbs-tensor pbs₂ θV) '(0 2))))
+      (tensor+ (tensor* (sqrt PH₁V₂) (tensor.* pbs₁H pbs₂V))
+               (tensor* (sqrt PV₁H₂) (tensor.* pbs₁V pbs₂H))))))
 
-;; (define (simulate-one-event pbs₁ pbs₂)
-;;   (let*-values (((phot₁ phot₂) (photon-pair-source θH θV))
-;;                 ((detect₁+ _detect₁-) (pbs-activity pbs₁ phot₁))
-;;                 ((detect₂+ _detect₂-) (pbs-activity pbs₂ phot₂)))
-;;     ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
-;;     ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
-;;     ;; etc.
-;;     `(,(photon->symbol phot₁) ,(if detect₁+ '+ '-)
-;;       ,(photon->symbol phot₂) ,(if detect₂+ '+ '-))))
+(define (probabilities-from-system-state tensor)
+  (map (lambda (term)
+         `(,(tensor-basis->HV-symbols (cdr term))
+           ,(square (car term))))
+       tensor))
 
-;; (define *events-per-test-angle* (make-parameter 1000000))
+(define (detection-probabilities-by-quantum-mechanics φ₁ φ₂)
+  (probabilities-from-system-state (system-state φ₁ φ₂)))
 
-;; (define (detection-frequencies φ₁ φ₂)
-;;   ;; Simulate events and compute frequencies of the different
-;;   ;; detection patterns.
-;;   (define pbs₁ (make-pbs φ₁))
-;;   (define pbs₂ (make-pbs φ₂))
-;;   (define N (*events-per-test-angle*))
-;;   (define NH+V+ 0) (define NH+V- 0)
-;;   (define NH-V+ 0) (define NH-V- 0)
-;;   (define NV+H+ 0) (define NV+H- 0)
-;;   (define NV-H+ 0) (define NV-H- 0)
-;;   (do ((i 0 (+ i 1)))
-;;       ((= i N))
-;;     (match (simulate-one-event pbs₁ pbs₂)
-;;       ('(H + V +) (set! NH+V+ (+ NH+V+ 1)))
-;;       ('(H + V -) (set! NH+V- (+ NH+V- 1)))
-;;       ('(H - V +) (set! NH-V+ (+ NH-V+ 1)))
-;;       ('(H - V -) (set! NH-V- (+ NH-V- 1)))
-;;       ('(V + H +) (set! NV+H+ (+ NV+H+ 1)))
-;;       ('(V + H -) (set! NV+H- (+ NV+H- 1)))
-;;       ('(V - H +) (set! NV-H+ (+ NV-H+ 1)))
-;;       ('(V - H -) (set! NV-H- (+ NV-H- 1)))))
-;;   ;; (H + V +) -- horiz (+) at pbs₁  vert (+) at pbs₂
-;;   ;; (H + V -) -- horiz (+) at pbs₁  vert (-) at pbs₂
-;;   ;; etc.
-;;   `(((H + V +) ,(/ NH+V+ N))
-;;     ((H + V -) ,(/ NH+V- N))
-;;     ((H - V +) ,(/ NH-V+ N))
-;;     ((H - V -) ,(/ NH-V- N))
-;;     ((V + H +) ,(/ NV+H+ N))
-;;     ((V + H -) ,(/ NV+H- N))
-;;     ((V - H +) ,(/ NV-H+ N))
-;;     ((V - H -) ,(/ NV-H- N))))
+(define (angle->symbol angle)
+  (if (< angle 0.0001) 'H 'V))
 
-;; (define (estimate-correlation φ₁ φ₂ detection-freqs)
-;;   ;; Use detection frequencies to estimate the value of -cos(2(φ₁-φ₂).
-;;   (define (get-freq pattern)
-;;     (cadr (assoc pattern detection-freqs)))
-;;   (estimate-pair-correlation
-;;    φ₁ φ₂ 'optical 'complementary
-;;    `(,(get-freq '(H + V +)) ,(get-freq '(H + V -))
-;;      ,(get-freq '(H - V +)) ,(get-freq '(H - V -))
-;;      ,(get-freq '(V + H +)) ,(get-freq '(V + H -))
-;;      ,(get-freq '(V - H +)) ,(get-freq '(V - H -)))))
+(define (tensor-basis->HV-symbols basis)
+  `(,(angle->symbol (string->radians (tensor-basis-ref basis 0)))
+    ,(string->symbol (tensor-basis-ref basis 1))
+    ,(angle->symbol (string->radians (tensor-basis-ref basis 2)))
+    ,(string->symbol (tensor-basis-ref basis 3))))
 
-;; (define pattern-list
-;;   '((H + V +) (H + V -) (H - V +) (H - V -)
-;;     (V + H +) (V + H -) (V - H +) (V - H -)))
-
-;; (format #t "~%")
-;; (format #t "  Simulation of a two-channel optical Bell test.~%")
-;; (format #t "~%")
-;; (format #t "  legend:~%")
-;; (format #t "    (H + V +)  horizontal photon in (+) channel of pbs₁,~%")
-;; (format #t "               vertical photon in (+) channel of pbs₂,~%")
-;; (format #t "    (H + V -)  horizontal photon in (+) channel of pbs₁,~%")
-;; (format #t "               vertical photon in (-) channel of pbs₂, etc.~%")
-
-;; ;;; See
-;; ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
-;; ;;; Be aware that the contents of the page is mostly wrong. That is
-;; ;;; proven by this simulation. This contrast calculation is included
-;; ;;; to emphasize our proof.
-;; (define S-nominal 0)   ;; For computing a CHSH contrast.
-;; (define S-estimated 0) ;; For computing a CHSH contrast.
-;; (define i 1)           ;; For computing a CHSH contrast.
-
-;; (format #t "~%")
-;; (do ((test-angles bell-test-angles (cdr test-angles)))
-;;     ((null? test-angles))
-;;   (let* ((φ₁ (caar test-angles))
-;;          (φ₂ (cadar test-angles))
-;;          (probs-list (detection-probabilities φ₁ φ₂))
-;;          (freqs-list (detection-frequencies φ₁ φ₂))
-;;          (nominal-correlation (- (cos (* 2 (- φ₁ φ₂)))))
-;;          (estimated-correlation
-;;           (estimate-correlation φ₁ φ₂ freqs-list)))
-;;     (set! S-nominal
-;;       ((if (= i 2) - +) S-nominal nominal-correlation))
-;;     (set! S-estimated
-;;       ((if (= i 2) - +) S-estimated estimated-correlation))
-;;     (set! i (+ i 1))
-;;     (format #t "  test angles:  φ₁ = ~A   φ₂ = ~A~%"
-;;             (radians->string φ₁) (radians->string φ₂))
-;;     (format #t "                       nominal     simulated~%")
-;;     (do ((patterns pattern-list (cdr patterns)))
-;;         ((null? patterns))
-;;       (let* ((patt (car patterns))
-;;              (prob (cadr (assoc patt probs-list)))
-;;              (freq (cadr (assoc patt freqs-list))))
-;;         (format #t "  ~A freq~14,5@F~14,5@F~%"
-;;                 patt (inexact prob) (inexact freq))))
-;;     (format #t "     correlation~14,5@F~14,5@F~%"
-;;             nominal-correlation estimated-correlation)
-;;     (format #t "~%")))
-;; (format #t "                       nominal     simulated~%")
-;; (format #t "    CHSH S value~14,5@F~14,5@F~%"
-;;         S-nominal S-estimated)
-;; (format #t "~%")
-;; (format #t "  (See https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217~%")
-;; (format #t "  for a page making the false claim this result cannot be~%")
-;; (format #t "  gotten without ‘quantum entanglement’. Note ‘quantum~%")
-;; (format #t "  correlation’ is simply the correlation coefficient when~%")
-;; (format #t "  computed by quantum mechanics rather than other means.)~%")
-;; (format #t "~%")
-
-;; (define t1 (tensor-normalize
-;;             '((1.2 . "a,b,c") (2.3 . "b,a,c")  (3.4 . "c,a,b"))))
-;; (write t1)(newline)
-;; (define t1.0 (tensor./ t1 0))
-;; (define t1.1 (tensor./ t1 1))
-;; (define t1.2 (tensor./ t1 2))
-;; (write t1.0)(newline)
-;; (write t1.1)(newline)
-;; (write t1.2)(newline)
-;; (write (tensor.* t1.0 t1.1))(newline)
-;; (write (apply + (map square (map car (tensor.* t1.0 t1.1)))))(newline)
-;; (write (radians->string (string->radians "π×3/8")))(newline)
-;; (write (radians->string (string->radians "π-3/8")))(newline)
-
-(newline)
-
-(define pbs_L (make-pbs π/4))
-(define pbs_R (make-pbs π/8))
-
-(define phot (photon-pair-tensor 0 π/2))
-;; Now phot = `(,(sqrt 1/2) . "π×0,π×1/2") (,(sqrt 1/2) . "π×1/2,π×0"))
-(write (tensor->probabilities phot))(newline)
-
-(newline)
-
-;;
-;; If we separated the photon’s tensor into vectors and THEN did the
-;; calculations, the results would be wrong. Instead, the photon’s
-;; tensor must be operated on one term at a time, to preserve the
-;; correlations.
-;;
-;; In short: A tensor such as we have here is how one writes, in
-;; quantum mechanics, that the two photons must have opposite
-;; polarizations. Our method of calculation must not destroy that
-;; information.
-;;
-;; Thus, in the following, there appear the ‘take’ and ‘drop’
-;; procedures from SRFI-1. The former returns the first term of two,
-;; the latter the second term.
-;;
-
-(define phot_L₁ (tensor./ (take phot 1) '(0)))
-(define phot_R₁ (tensor./ (take phot 1) '(1)))
-(write (tensor->probabilities phot_L₁))(newline)
-(write (tensor->probabilities phot_R₁))(newline)
-
-(newline)
-
-(define phot_L₂ (tensor./ (drop phot 1) '(0)))
-(define phot_R₂ (tensor./ (drop phot 1) '(1)))
-(write (tensor->probabilities phot_L₂))(newline)
-(write (tensor->probabilities phot_R₂))(newline)
-
-(newline)
-
-(define channels_L₁ (tensor./ (pbs-tensor-operation pbs_L phot_L₁)
-                              '(0 2)))
-(define channels_L₂ (tensor./ (pbs-tensor-operation pbs_L phot_L₂)
-                              '(0 2)))
-;;(define channels_L (tensor./ (tensor+ channels_L₁ channels_L₂) '(0 2)))
-(write (tensor->probabilities channels_L₁))(newline)
-(write (tensor->probabilities channels_L₂))(newline)
-;;(write (tensor->probabilities channels_L))(newline)
-
-(newline)
-
-(define channels_R₁ (tensor./ (pbs-tensor-operation pbs_R phot_R₁)
-                              '(0 2)))
-(define channels_R₂ (tensor./ (pbs-tensor-operation pbs_R phot_R₂)
-                              '(0 2)))
-;;(define channels_R (tensor./ (tensor+ channels_R₁ channels_R₂) '(0 2)))
-(write (tensor->probabilities channels_R₁))(newline)
-(write (tensor->probabilities channels_R₂))(newline)
-;;(write (tensor->probabilities channels_R))(newline)
-
-(newline)
-(define t₁ (tensor.* (tensor./ channels_L₁ '(1))
-;;;                     (tensor./ channels_R₁ '(0))
-                     (tensor./ channels_R₁ '(1))))
-(define t₂ (tensor.* (tensor./ channels_L₂ '(1))
-;;;                     (tensor./ channels_R₂ '(0))
-                     (tensor./ channels_R₂ '(1))))
-
-(write (tensor->probabilities t₁))(newline)
-(write (tensor->probabilities t₂))(newline)
-(write (tensor->probabilities (tensor-normalize t₁)))(newline)
-(write (tensor->probabilities (tensor-normalize t₂)))(newline)
-;;;;;;;;;;;;;(write (tensor->probabilities (tensor+ t₁ t₂)))(newline)
-
-(newline)
+(write (detection-probabilities-by-probability-theory π/4 π/8))(newline)
+(write (detection-probabilities-by-quantum-mechanics π/4 π/8))(newline)
