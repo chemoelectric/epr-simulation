@@ -232,7 +232,19 @@ the corresponding basis tensor is the `cdr` of the pair. A linear
 combination of such primitive tensors is represented by simply putting
 them in a list. The order of the list is immaterial.
 
-Here, for example, is tensor that, in quantum mechanics, represents a
-bit that with equal probability is either a zero or a one:
+Here, for example, is a tensor that, in the notations of quantum
+mechanics, represents a bit that with equal probability is either `0`
+or `1`:
 
     `((,(sqrt 0.5) . "0") (,(sqrt 0.5) . "1"))
+
+Here is a three-bit register that is either `100` or `011`, with
+probabilities 0.75 and 0.25, respectively:
+
+    `((,(sqrt 0.75) . "1,0,0") (,(sqrt 0.25) . "0,1,1"))
+
+The tuples could be ordered differently, if one wished (and of course
+the list order is immaterial):
+
+    `((,(sqrt 0.25) . "1,1,0") (,(sqrt 0.75) . "0,0,1"))
+
