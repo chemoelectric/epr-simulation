@@ -248,3 +248,18 @@ the list order is immaterial):
 
     `((,(sqrt 0.25) . "1,1,0") (,(sqrt 0.75) . "0,0,1"))
 
+In general the ‘lengths’ of tensor components are allowed to be
+complex numbers.
+
+Often, in quantum mechanics, the ‘lengths’ are called
+*amplitudes*. When multiplied by its complex conjugate, such an
+*amplitude* yields a probability. Storing complex conjugate roots of
+probabilities as ‘lengths’ of vector components becomes a form of
+bookkeeping. Quantum mechanics can end up as nothing more than an
+obfuscation of probability theory.
+
+This is, in fact, what has happened with EPR-B experiments. Thus the
+toolkit provides means for comparing probability theory calculations
+with quantum mechanical calculations, and showing that they arrive at
+the same results.
+
