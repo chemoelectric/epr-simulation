@@ -220,3 +220,19 @@ Converts a string such as `"π×3/8"`, `"π3/8"`, `"π×-0.1234"`, or just
 Compare two real numbers `x` and `y` for approximate equality. If
 `tolerance` is specified, it represents a multiple of one half of
 `fl-epsilon`. The value of `tolerance` defaults to `1000`.
+
+### Tensors
+
+In the context of this toolkit, *tensors* are abstract vectors that
+are ordered tuples of abstract vectors, and the basis tensors are
+ordered tuples of basis vectors. The ordered tuples of basis vectors
+will be represented as strings, with commas as separators of the parts
+of the tuples. A ‘length’ is represented as the `car` of a pair and
+the corresponding basis tensor is the `cdr` of the pair. A linear
+combination of such primitive tensors is represented by simply putting
+them in a list. The order of the list is immaterial.
+
+The following is an example of a tensor representing a bit that may be
+either a zero or a one, with equal probability:
+
+    `((,(sqrt 0.5) . "0,1") (,(sqrt 0.5) . "1,0"))
