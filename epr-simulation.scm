@@ -500,7 +500,7 @@ OTHER DEALINGS IN THE SOFTWARE.
               (cosφ₁cosφ₂ (* σ_cosφ₁ σ_cosφ₂ (sqrt cos²φ₁cos²φ₂)))
               (sinφ₁sinφ₂ (* σ_sinφ₁ σ_sinφ₂ (sqrt sin²φ₁sin²φ₂)))
               (sinφ₁cosφ₂ (* σ_sinφ₁ σ_cosφ₂ (sqrt sin²φ₁cos²φ₂))))
-          ;; Use angle-difference identities. See, for instance, the CVC
+          ;; Use angle-difference identities. See, for instance, the CRC
           ;; Handbook of Mathematical Sciences, 6th edition, page 170.
           (let ((sin<φ₁-φ₂> (- sinφ₁cosφ₂ cosφ₁sinφ₂))
                 (cos<φ₁-φ₂> (+ cosφ₁cosφ₂ sinφ₁sinφ₂)))
