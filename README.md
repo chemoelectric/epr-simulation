@@ -235,4 +235,4 @@ them in a list. The order of the list is immaterial.
 Here, for example, is tensor that, in quantum mechanics, represents a
 bit that with equal probability is either a zero or a one:
 
-    `((,(sqrt 0.5) . "0,1") (,(sqrt 0.5) . "1,0"))
+    `((,(sqrt 0.5) . "0") (,(sqrt 0.5) . "1"))
