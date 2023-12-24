@@ -181,3 +181,42 @@ probabilities and statistical mechanics deals with probabilities, then
 quantum mechanics must reduce to statistical mechanics with ‘hidden
 variables’. In Aspect-style experiments, quantum mechanics reduces to
 simple division of outcomes according to the Law of Malus.
+
+## Toolkit reference
+
+### Constant values
+
+    [constant] π/180 π/8 π/4 π3/8 π/2 π3/4 π
+
+Approximations of fractions of π, stored as the values of variables.
+
+### Angular conversions
+
+    [procedure] (radians->degrees angle-in-radians)
+    [procedure] (degrees->radians angle-in-degrees)
+
+The toolkit generally measures angles in radians. These procedures can
+help you convert to and from degrees.
+
+    [procedure] (radians->string angle-in-radians)
+    [procedure] (radians->string angle-in-radians tolerance)
+
+Converts an angle in radians to a string such as `"π×3/8"` or
+`"π×-0.1234"`. If `tolerance` is specified, it represents a multiple
+of one half of `fl-epsilon`, and determines whether a number is
+rounded off to an exact fraction. The value of `tolerance` defaults to
+`1000`.
+
+    [procedure] (string->radians string)
+
+Converts a string such as `"π×3/8"`, `"π3/8"`, `"π×-0.1234"`, or just
+`"0.1234"` to a number representing an angle in radians.
+
+### Numerical utilities
+
+    [procedure] (approx= x y)
+    [procedure] (approx= x y tolerance)
+
+Compare two real numbers `x` and `y` for approximate equality. If
+`tolerance` is specified, it represents a multiple of one half of
+`fl-epsilon`. The value of `tolerance` defaults to `1000`.
