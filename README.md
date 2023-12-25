@@ -8,7 +8,7 @@ accepted physics wrong, including physics for which the Nobel Prize
 was awarded in 2022. Some example simulations are included in the
 package.*
 
-## Scheme implementations currently supported
+## Scheme implementations supported
 
 - [CHICKEN 5](http://call-cc.org/)
 
