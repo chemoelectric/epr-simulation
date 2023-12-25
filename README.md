@@ -8,6 +8,10 @@ accepted physics wrong, including physics for which the Nobel Prize
 was awarded in 2022. Some example simulations are included in the
 package.*
 
+## Scheme implementations currently supported
+
+- CHICKEN 5
+
 ## This toolkit versus widespread beliefs
 
 Widespread belief in physics (in 2023) is that [experiments of the
