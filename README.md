@@ -10,7 +10,7 @@ package.*
 
 ## Scheme implementations currently supported
 
-- CHICKEN 5
+- [CHICKEN 5](http://call-cc.org/)
 
 ## This toolkit versus widespread beliefs
 
