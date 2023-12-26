@@ -106,11 +106,12 @@ in whatever follows.
 
 The intensity of the light in a polarizer’s channel, by the [Law of
 Malus](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Malus's_law_and_other_properties),
-is inferred to be the probability of a photon being retransmitted into
-that channel. Mathematical consistency requires this inference. The
-same probability may be deduced from quantum mechanics.
+is inferred to determine the probability of a photon being
+retransmitted into that channel. Mathematical consistency requires
+this inference. The same probability may be deduced from quantum
+mechanics.
 
-Let the angle setting of the polarizer by φ. Then the probability of a
+Let the angle setting of the polarizer be φ. Then the probability of a
 photon being retransmitted into the (+) channel is cos²(φ) for an H
 photon or sin²(φ) for a V photon, and into the (−) channel is sin²(φ)
 for an H photon or cos²(φ) for a V photon.
