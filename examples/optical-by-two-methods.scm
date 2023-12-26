@@ -112,7 +112,9 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;; Because quantum mechanics is a method of calculation and not a
   ;; physical theory, we can feel free to include whatever information
   ;; is available. Thus the final system state will include the
-  ;; original photon polarization angles.
+  ;; original photon polarization angles. (One would need this
+  ;; information if computing the correlation. This is one reason CHSH
+  ;; inequalities are invalid.)
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
