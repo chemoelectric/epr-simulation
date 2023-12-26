@@ -104,7 +104,8 @@ in whatever follows.
 
 ### [Two-channel polarizers](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Beam-splitting_polarizers)
 
-The intensity of the light in a polarizer’s channel, by the [Law of
+The relative intensity of the light in a polarizer’s channel, by the
+[Law of
 Malus](https://en.wikipedia.org/w/index.php?title=Polarizer&oldid=1173590658#Malus's_law_and_other_properties),
 is inferred to determine the probability of a photon being
 retransmitted into that channel. Mathematical consistency requires
