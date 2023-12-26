@@ -28,7 +28,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 ;;;               Author : Barry Schwartz
 ;;; Date first completed : 19 December 2023
 ;;;
-;;; Simulation of a two-channel optical Bell test by two different
+;;; Analysis of a two-channel optical Bell test by two different
 ;;; methods.
 ;;; https://en.wikipedia.org/w/index.php?title=CHSH_inequality&oldid=1185876217
 ;;;
