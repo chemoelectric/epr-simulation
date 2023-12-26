@@ -132,8 +132,8 @@ Assign the value +1 to a photon detected in a (+) channel and −1 to a
 photon detected in a (−) channel. This choice of values makes the
 [correlation coefficient equal the
 covariance](https://en.wikipedia.org/w/index.php?title=Covariance_and_correlation&oldid=1144835290). That
-is, no normalization is needed. It can be computed (with some care) as
-follows—
+is, no normalization is needed. This covariance can be computed (with
+some care) as follows—
 
     ρ = ½(+1)(+1)sin²φ₀₁ + ½(+1)(−1)cos²φ₀₁
           + ½(−1)(+1)cos²φ₀₁ + ½(−1)(−1)sin²φ₀₁
