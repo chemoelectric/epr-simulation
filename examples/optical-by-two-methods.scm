@@ -118,11 +118,18 @@ OTHER DEALINGS IN THE SOFTWARE.
   ;;
   (define pbs₁ (make-pbs φ₁))
   (define pbs₂ (make-pbs φ₂))
-  (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities)))
-    (let ((pbs₁H (tensor./ (pbs-tensor pbs₁ θH) '(0 1)))
-          (pbs₁V (tensor./ (pbs-tensor pbs₁ θV) '(0 1)))
-          (pbs₂H (tensor./ (pbs-tensor pbs₂ θH) '(0 1)))
-          (pbs₂V (tensor./ (pbs-tensor pbs₂ θV) '(0 1))))
+  ;; Compute the tensors for pbs₁ and pbs₂ and incident photons of
+  ;; either polarization. Keep only the information about incident
+  ;; photon polarization and + or - channel.
+  (let ((pbs₁H (tensor./ (pbs-tensor pbs₁ θH) '(0 1)))
+        (pbs₁V (tensor./ (pbs-tensor pbs₁ θV) '(0 1)))
+        (pbs₂H (tensor./ (pbs-tensor pbs₂ θH) '(0 1)))
+        (pbs₂V (tensor./ (pbs-tensor pbs₂ θV) '(0 1))))
+    ;; For either of the two possible source photon pairs, compute the
+    ;; tensor product for pbs₁ and pbs₂. Then compute a linear
+    ;; combination of the two tensor products, weighted by amplitudes
+    ;; of the source photon pairs. The result is the system state.
+    (let-values (((PH₁V₂ PV₁H₂) (photon-pair-probabilities)))
       (tensor+ (tensor* (sqrt PH₁V₂) (tensor.* pbs₁H pbs₂V))
                (tensor* (sqrt PV₁H₂) (tensor.* pbs₁V pbs₂H))))))
 
